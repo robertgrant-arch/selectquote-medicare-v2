@@ -1,3 +1,4 @@
+import TermTip from '@/features/education/components/TermTip';
 // FilterSidebar component — plan filtering controls
 // Design: Chapter-style | Navy #1B365D | Red #C41E3A | Light Blue #E8F0FE
 

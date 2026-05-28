@@ -82,3 +82,19 @@ export function calculateAnnualCost(inputs: CostCalculationInputs): AnnualCostEs
     confidenceReason: confidenceReasonFor(hasRxDrugs, hasDoctors),
     improvementHint: improvementHintFor(hasRxDrugs, hasDoctors) };
 }
+
+// Convenience: compute from a MedicarePlan directly
+import type { MedicarePlan } from '@/lib/types';
+export function calculateFromPlan(plan: MedicarePlan, hasRxDrugs: boolean, hasDoctors: boolean): AnnualCostEstimate {
+  const p = plan as any;
+  const hasDrugCoverage = p.hasDrugCoverage ?? (p.rxDrugs?.tier1 != null && p.rxDrugs.tier1 !== '' && p.rxDrugs.tier1 !== 'N/A');
+  return calculateAnnualCost({
+    premiumAnnual: plan.premium * 12,
+    deductible: plan.deductible,
+    maxOutOfPocket: plan.maxOutOfPocket,
+    primaryCareCopay: plan.copays?.primaryCare ?? '$0',
+    specialistCopay: plan.copays?.specialist ?? '$0',
+    estimatedAnnualDrugCost: p.estimatedAnnualDrugCost ?? null,
+    hasDrugCoverage, hasRxDrugs, hasDoctors,
+  });
+}

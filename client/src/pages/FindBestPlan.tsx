@@ -1,4 +1,5 @@
 /**
+import TermTip from '@/features/education/components/TermTip';
  * FindBestPlan — Health Profile Wizard with AI-Powered Plan Recommendations
  *
  * Design: Bold Civic | Navy #1B365D | Red #C41E3A | Green #16A34A

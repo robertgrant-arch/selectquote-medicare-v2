@@ -30,6 +30,8 @@ import FilterSidebar from "@/components/FilterSidebar";
 import RxDrugsModal from "@/components/RxDrugsModal";
 import DoctorsModal from "@/components/DoctorsModal";
 import EnrollModal from "@/components/EnrollModal";
+import { useCompareStore } from "@/features/plan-compare/lib/compareStore";
+import CompareSelectionTray from "@/features/plan-compare/components/CompareSelectionTray";
 import PlanDetailsModal from "@/components/PlanDetailsModal";
 import AITop3Cards from "@/components/AITop3Cards";
 import { scoreAllPlans, MODEL_A, MODEL_B } from "@/lib/aiRecommendationEngine";
@@ -215,6 +217,7 @@ export default function Plans() {
   const [eligibility, setEligibility] = useState<MBIVerifyResult | null>(null);
   const [showCurrentPlanBanner, setShowCurrentPlanBanner] = useState(true);
   const [aiModel, setAiModel] = useState<ScoringModel>('B');
+  const compareStore = useCompareStore();
   const [doctorNetworkMap, setDoctorNetworkMap] = useState<Record<string, PlanDoctorNetworkStatus>>({});
 
   // Read MBI eligibility from sessionStorage
@@ -350,6 +353,7 @@ export default function Plans() {
   }, [filteredPlans, rxDrugs, doctors, aiModel, doctorNetworkMap]);
 
   const topPlan = aiScores.length > 0 ? aiScores[0] : null;
+  const aiScoreMap = useMemo(() => Object.fromEntries(aiScores.map(s => [s.planId, s])), [aiScores]);
 
   const availableCarriers = useMemo(
     () => Array.from(new Set(plans.map((p) => p.carrier))).sort(),
@@ -396,6 +400,22 @@ export default function Plans() {
     (filters.premiumRange[1] < 200 ? 1 : 0) +
     (filters.planStructure?.length ?? 0) +
     (filters.drugCostRange && (filters.drugCostRange[0] > 0 || filters.drugCostRange[1] < 5000) ? 1 : 0);
+
+  // Wire annual-cost and match-score modal events
+  useEffect(() => {
+    const openRx  = () => setRxModalOpen(true);
+    const openDoc = () => setDoctorsModalOpen(true);
+    window.addEventListener('annual-cost:open-rx-modal',      openRx);
+    window.addEventListener('annual-cost:open-doctors-modal', openDoc);
+    window.addEventListener('match-score:open-rx-modal',      openRx);
+    window.addEventListener('match-score:open-doctors-modal', openDoc);
+    return () => {
+      window.removeEventListener('annual-cost:open-rx-modal',      openRx);
+      window.removeEventListener('annual-cost:open-doctors-modal', openDoc);
+      window.removeEventListener('match-score:open-rx-modal',      openRx);
+      window.removeEventListener('match-score:open-doctors-modal', openDoc);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#F8FAFC", fontFamily: "'DM Sans', sans-serif" }}>
@@ -678,7 +698,26 @@ export default function Plans() {
                       </div>
                     )}
 
-                    <PlanCard plan={plan} onEnroll={handleEnroll} onFavorite={toggleFavorite} isFavorite={favorites.has(plan.id)} viewMode={viewMode} onCompareActivate={handleCompareActivate} isCompareActive={activeCompareId === plan.id} allPlans={filteredPlans} rxDrugs={rxDrugs} doctors={doctors} doctorNetworkStatus={doctorNetworkMap[plan.planId]} />
+                    <PlanCard
+                        plan={plan}
+                        onEnroll={handleEnroll}
+                        onFavorite={toggleFavorite}
+                        isFavorite={favorites.has(plan.id)}
+                        viewMode={viewMode}
+                        onCompareActivate={handleCompareActivate}
+                        isCompareActive={activeCompareId === plan.id}
+                        allPlans={filteredPlans}
+                        rxDrugs={rxDrugs}
+                        doctors={doctors}
+                        doctorNetworkStatus={doctorNetworkMap[plan.planId]}
+                        hasRxDrugs={rxDrugs.length > 0}
+                        hasDoctors={doctors.length > 0}
+                        matchScore={aiScoreMap[plan.id]?.score}
+                        matchLabel={aiScoreMap[plan.id] ? (() => { const s = aiScoreMap[plan.id].score; return s >= 85 ? 'Excellent fit' : s >= 70 ? 'Strong fit' : s >= 55 ? 'Good fit' : s >= 40 ? 'Possible fit' : 'Low fit'; })() : undefined}
+                        isInCompare={compareStore.isSelected(plan.id)}
+                        isCompareFull={compareStore.isFull() && !compareStore.isSelected(plan.id)}
+                        onCompareToggle={(p) => compareStore.toggle(p)}
+                      />
                   </div>
                 );
               })}
@@ -691,6 +730,9 @@ export default function Plans() {
           </div>
         </main>
       </div>
+
+      {/* Compare Tray */}
+      <CompareSelectionTray onCompare={() => {}} />
 
       {/* ── Mobile Filter Drawer ──────────────────────────────────────── */}
       {sidebarOpen && (
