@@ -33,6 +33,7 @@ import EnrollModal from "@/components/EnrollModal";
 import { useCompareStore } from "@/features/plan-compare/lib/compareStore";
 import { isValidZipFormat, doctorSearchLabel, buildValidResult } from "@/features/zip-validation/lib/zipValidator";
 import CompareSelectionTray from "@/features/plan-compare/components/CompareSelectionTray";
+import AICompareModal from "@/features/plan-compare/components/AICompareModal";
 import PlanDetailsModal from "@/components/PlanDetailsModal";
 import AITop3Cards from "@/components/AITop3Cards";
 import { scoreAllPlans, MODEL_A, MODEL_B } from "@/lib/aiRecommendationEngine";
@@ -219,6 +220,7 @@ export default function Plans() {
   const [showCurrentPlanBanner, setShowCurrentPlanBanner] = useState(true);
   const [aiModel, setAiModel] = useState<ScoringModel>('B');
   const compareStore = useCompareStore();
+  const [aiCompareOpen, setAICompareOpen] = useState(false);
   const [doctorNetworkMap, setDoctorNetworkMap] = useState<Record<string, PlanDoctorNetworkStatus>>({});
 
   // Read MBI eligibility from sessionStorage
@@ -737,7 +739,13 @@ export default function Plans() {
       </div>
 
       {/* Compare Tray */}
-      <CompareSelectionTray onCompare={() => {}} />
+      <CompareSelectionTray onCompare={() => setAICompareOpen(true)} />
+
+      <AICompareModal
+        open={aiCompareOpen}
+        plans={compareStore.selected}
+        onClose={() => setAICompareOpen(false)}
+      />
 
       {/* ── Mobile Filter Drawer ──────────────────────────────────────── */}
       {sidebarOpen && (
