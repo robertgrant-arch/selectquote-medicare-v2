@@ -2,6 +2,7 @@
 // Design: Chapter-style | Navy #1B365D | Red #C41E3A | White background
 
 import { Phone, Shield, ChevronDown, Menu, X, Sparkles, BookOpen } from "lucide-react";
+import SkipLink from './SkipLink';
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 

@@ -28,6 +28,10 @@ import type { MedicarePlan, PlanDoctorNetworkStatus, RxDrug } from "@/lib/types"
 import StarRating from "./StarRating";
 import CarrierLogo from "./CarrierLogo";
 import InlineCompare from "./InlineCompare";
+import MatchScoreBadge from "@/features/match-score/components/MatchScoreBadge";
+import AnnualCostDisplay from "@/features/plan-cost/components/AnnualCostDisplay";
+import CompareCheckbox from "@/features/plan-compare/components/CompareCheckbox";
+import TermTip from "@/features/education/components/TermTip";
 
 interface PlanCardProps {
   plan: MedicarePlan;
@@ -78,6 +82,14 @@ export default function PlanCard({
   doctorNetworkStatus,
   rxDrugs = [],
   subsidyLevel = "none",
+  hasRxDrugs = false,
+  hasDoctors = false,
+  matchScore,
+  matchLabel,
+  isInCompare = false,
+  isCompareFull = false,
+  onCompareToggle,
+  verificationSummary,
 }: PlanCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [heartAnimating, setHeartAnimating] = useState(false);
@@ -153,7 +165,7 @@ export default function PlanCard({
           </div>
           <div className="flex flex-col items-end gap-1">
             <StarRating rating={plan.starRating.overall} label={plan.starRating.label} />
-            <button onClick={handleFavorite} className={`p-1.5 rounded-full transition-all ${heartAnimating ? "scale-125" : ""}`}>
+            <button onClick={handleFavorite} aria-label={isFavorited ? `Remove ${plan.planName} from saved plans` : `Save ${plan.planName} to favorites`} aria-pressed={isFavorited} className={`p-1.5 rounded-full transition-all ${heartAnimating ? "scale-125" : ""}`}>
               <Heart size={16} className={isFavorited ? "fill-red-500 text-red-500" : "text-gray-300 hover:text-red-400"} />
             </button>
           </div>
@@ -177,6 +189,16 @@ export default function PlanCard({
             <p className="text-[10px] text-gray-400">max out-of-pocket</p>
           </div>
         </div>
+
+        {/* Annual Cost Display */}
+        <AnnualCostDisplay plan={plan} hasRxDrugs={hasRxDrugs} hasDoctors={hasDoctors} />
+
+        {/* Match Score */}
+        {matchScore !== undefined && matchLabel && (
+          <div style={{ padding: "4px 16px 0" }}>
+            <MatchScoreBadge score={matchScore} variant="inline" />
+          </div>
+        )}
 
         {/* Doctor Network Status */}
         {doctorNetworkStatus && doctorNetworkStatus.doctors.length > 0 && (
@@ -391,6 +413,11 @@ export default function PlanCard({
             isActive={isCompareActive}
             onActivate={onCompareActivate}
           />
+        )}
+
+        {/* Compare Checkbox */}
+        {onCompareToggle && (
+          <CompareCheckbox plan={plan} isSelected={isInCompare} isFull={isCompareFull} onToggle={onCompareToggle} />
         )}
 
         {/* Card Footer */}

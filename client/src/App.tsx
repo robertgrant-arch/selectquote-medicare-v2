@@ -114,7 +114,7 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster position="top-right" richColors />
-          <Router />
+          <main id="main-content" tabIndex={-1} style={{ outline: "none" }}><Router /></main>
           <ChatWidget />
                       <VoiceWidget />
         </TooltipProvider>
