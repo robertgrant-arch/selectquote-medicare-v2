@@ -9,6 +9,9 @@ import {
   BadgeCheck, Clock, DollarSign
 } from "lucide-react";
 import GuidedWorkflowModal, { type MBIVerifyResult } from "@/components/GuidedWorkflowModal";
+import { useZipValidation } from "@/features/zip-validation/lib/useZipValidation";
+import CountySelector from "@/features/zip-validation/components/CountySelector";
+import { inputAriaProps } from "@/lib/a11y/focusTrap";
 import Header from "@/components/Header";
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663319810046/5TY7JcF275WMujMHZWWJT8/medicare-doctor-network-UbrpVenqJHVZiygzeBgcKi.webp";
@@ -100,6 +103,8 @@ function useReveal() {
 export default function Home() {
   const [zip, setZip] = useState("");
   const [inputError, setInputError] = useState("");
+  const zipValidation = useZipValidation();
+  const zipInputRef = useRef<HTMLInputElement>(null);
   const [showMBIModal, setShowMBIModal] = useState(false);
   const [pendingZip, setPendingZip] = useState("");
   const [, navigate] = useLocation();
@@ -109,15 +114,28 @@ export default function Home() {
   const trustRef = useReveal();
   const ctaRef = useReveal();
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     const trimmed = zip.trim();
-    if (!/^\d{5}$/.test(trimmed)) {
-      setInputError("Please enter a valid 5-digit ZIP code.");
+    const result = await zipValidation.validate(trimmed);
+
+    if (result.status === 'invalid_format' || result.status === 'invalid_zip' || result.status === 'error') {
+      setInputError(result.errorMessage);
+      // Return focus to ZIP input for accessibility
+      setTimeout(() => zipInputRef.current?.focus(), 50);
       return;
     }
-    setInputError("");
-    setPendingZip(trimmed);
-    setShowMBIModal(true);
+
+    if (result.status === 'needs_county_selection') {
+      setInputError('');
+      // County selector renders below — user must pick before proceeding
+      return;
+    }
+
+    if (result.status === 'valid') {
+      setInputError('');
+      setPendingZip(trimmed);
+      setShowMBIModal(true);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -250,10 +268,32 @@ export default function Home() {
                     See Plans
                   </button>
                 </div>
-                {inputError && (
-                  <p className="text-sm mt-2 flex items-center gap-1" style={{ color: "#C41E3A" }}>
-                    <span>⚠</span> {inputError}
-                  </p>
+                {/* Accessible error — always in DOM as live region */}
+                <p
+                  id="zip-error-msg"
+                  role="alert"
+                  aria-live="assertive"
+                  aria-atomic="true"
+                  className="text-sm mt-2 flex items-center gap-1"
+                  style={{ color: "#C41E3A", minHeight: "20px" }}
+                >
+                  {inputError && <><span aria-hidden="true">⚠</span> {inputError}</>}
+                </p>
+
+                {/* Multi-county selector — shown before advancing */}
+                {zipValidation.result.status === 'needs_county_selection' && zipValidation.result.counties && (
+                  <CountySelector
+                    zip={zip}
+                    counties={zipValidation.result.counties}
+                    onSelect={(county) => {
+                      const r = zipValidation.selectCounty(county);
+                      if (r.status === 'valid') {
+                        setInputError('');
+                        setPendingZip(zip.trim());
+                        setShowMBIModal(true);
+                      }
+                    }}
+                  />
                 )}
 
                 {/* Popular ZIPs */}

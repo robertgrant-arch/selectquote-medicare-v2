@@ -5,6 +5,7 @@
  * If NO -> doctors/drugs lookup -> AI recommendation
  * v2: uses /api/doctors with ZIP-based 25-mile radius filtering
  */
+import { isValidZipFormat } from "@/features/zip-validation/lib/zipValidator";
 import { useState, useEffect, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import { POPULAR_RX_DRUGS } from "@/lib/mockData";
@@ -350,7 +351,7 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
                 <div className="flex items-center gap-2 mb-2">
                   <Stethoscope size={16} style={{ color: "#1B365D" }} />
                   <span className="text-sm font-bold" style={{ color: "#1B365D" }}>Your Doctors</span>
-                  <span className="text-xs text-gray-400 ml-auto">Within 25 miles of {zip}</span>
+                  <span className="text-xs text-gray-400 ml-auto">{isValidZipFormat(zip) ? `Within 25 miles of ${zip}` : "Within your area"}</span>
                 </div>
                 <div className="relative mb-2">
                   <Search size={14} className="absolute left-3 top-3 text-gray-400" />

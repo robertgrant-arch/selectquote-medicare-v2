@@ -284,6 +284,50 @@ function annotatePlans(plans: unknown[], overrides: AdminOverrides = EMPTY_OVERR
   });
 }
 
+// ── /api/validate-zip — ZIP validation endpoint for client-side slice ──────────
+// Returns all counties for a ZIP (multi-county support) so the client can
+// surface county selection when needed. Never called directly to CMS from client.
+export function registerValidateZipRoute(app: Express): void {
+  app.get("/api/validate-zip", async (req, res) => {
+    const zip = (req.query.zip as string | undefined)?.trim();
+
+    // Format check
+    if (!zip || !/^\d{5}$/.test(zip)) {
+      return res.status(400).json({ valid: false, error: "INVALID_FORMAT", counties: [] });
+    }
+
+    try {
+      const url = `${CMS_ZIP_API}/${zip}?apikey=${CMS_API_KEY}`;
+      const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+
+      if (!r.ok) {
+        if (r.status === 404) {
+          return res.status(404).json({ valid: false, error: "NOT_FOUND", counties: [] });
+        }
+        return res.status(502).json({ valid: false, error: "SERVER_ERROR", counties: [] });
+      }
+
+      const data = await r.json() as { counties?: Array<{ state: string; name: string; fips?: string }> };
+      const raw = data.counties ?? [];
+
+      if (raw.length === 0) {
+        return res.status(404).json({ valid: false, error: "NOT_FOUND", counties: [] });
+      }
+
+      const counties = raw.map((c) => ({
+        name:  toTitleCase(c.name) + " County",
+        state: c.state.toUpperCase(),
+        fips:  c.fips,
+      }));
+
+      return res.json({ valid: true, counties });
+    } catch (err) {
+      console.error(`[ValidateZip] Error for ZIP ${zip}:`, err);
+      return res.status(503).json({ valid: false, error: "SERVER_ERROR", counties: [] });
+    }
+  });
+}
+
 // ── Register the /api/plans route ─────────────────────────────────────────────
 export function registerPlansRoute(app: Express): void {
   app.get("/api/plans", async (req, res) => {

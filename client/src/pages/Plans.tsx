@@ -31,6 +31,7 @@ import RxDrugsModal from "@/components/RxDrugsModal";
 import DoctorsModal from "@/components/DoctorsModal";
 import EnrollModal from "@/components/EnrollModal";
 import { useCompareStore } from "@/features/plan-compare/lib/compareStore";
+import { isValidZipFormat, doctorSearchLabel, buildValidResult } from "@/features/zip-validation/lib/zipValidator";
 import CompareSelectionTray from "@/features/plan-compare/components/CompareSelectionTray";
 import PlanDetailsModal from "@/components/PlanDetailsModal";
 import AITop3Cards from "@/components/AITop3Cards";
@@ -273,7 +274,11 @@ export default function Plans() {
 
   // Fetch real CMS plans when ZIP changes
   useEffect(() => {
-    if (!zip || !/^\d{5}$/.test(zip)) return;
+    if (!zip || !isValidZipFormat(zip)) {
+      // Invalid ZIP reached /plans directly — redirect to home
+      navigate("/");
+      return;
+    }
     setPlansLoading(true);
     setPlansError(null);
     const drugsStr = rxDrugs.length > 0 ? JSON.stringify(rxDrugs.map(d => ({ name: d.name, dosage: d.dosage }))) : '';
