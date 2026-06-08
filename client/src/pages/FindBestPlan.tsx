@@ -1,5 +1,7 @@
 /**
 import TermTip from '@/features/education/components/TermTip';
+import { useZipValidation } from '@/features/zip-validation/lib/useZipValidation';
+import CountySelector from '@/features/zip-validation/components/CountySelector';
  * FindBestPlan — Health Profile Wizard with AI-Powered Plan Recommendations
  *
  * Design: Bold Civic | Navy #1B365D | Red #C41E3A | Green #16A34A
@@ -205,6 +207,7 @@ export default function FindBestPlan() {
   const [step, setStep] = useState<"zip" | 1 | 2 | 3 | 4 | 5 | "results">("zip");
   const [zip, setZip] = useState("");
   const [zipError, setZipError] = useState("");
+  const zipValidation = useZipValidation();
   const [profile, setProfile] = useState<HealthProfile>(EMPTY_PROFILE);
   const [plans, setPlans] = useState<MedicarePlan[]>([]);
   const [plansLoading, setPlansLoading] = useState(false);
@@ -220,27 +223,36 @@ export default function FindBestPlan() {
   };
 
   // Fetch plans when ZIP is confirmed
-  const handleZipSubmit = () => {
+  const handleZipSubmit = async () => {
     const trimmed = zip.trim();
-    if (!/^\d{5}$/.test(trimmed)) {
-      setZipError("Please enter a valid 5-digit ZIP code.");
+    const result = await zipValidation.validate(trimmed);
+
+    if (result.status === 'invalid_format' || result.status === 'invalid_zip' || result.status === 'error') {
+      setZipError(result.errorMessage);
       return;
     }
-    setZipError("");
-    setPlansLoading(true);
-    setPlansError(null);
-    fetch(`/api/plans?zip=${trimmed}`)
-      .then((r) => r.json())
-      .then((data: { plans?: MedicarePlan[]; error?: string }) => {
-        if (data.error) {
-          setPlansError(data.error);
-        } else {
-          setPlans(data.plans ?? []);
-          setStep(1);
-        }
-      })
-      .catch(() => setPlansError("Failed to load plans. Please try again."))
-      .finally(() => setPlansLoading(false));
+    if (result.status === 'needs_county_selection') {
+      setZipError('');
+      // County selector will appear — wait for selection
+      return;
+    }
+    if (result.status === 'valid') {
+      setZipError('');
+      setPlansLoading(true);
+      setPlansError(null);
+      fetch(`/api/plans?zip=${trimmed}`)
+        .then((r) => r.json())
+        .then((data: { plans?: MedicarePlan[]; error?: string }) => {
+          if (data.error) {
+            setPlansError(data.error);
+          } else {
+            setPlans(data.plans ?? []);
+            setStep(1);
+          }
+        })
+        .catch(() => setPlansError('Unable to load plans. Please try again.'))
+        .finally(() => setPlansLoading(false));
+    }
   };
 
   // Validate current step before advancing

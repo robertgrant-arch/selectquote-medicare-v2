@@ -11,7 +11,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { registerCompareStreamRoute } from "../compareStream";
 import recommendStreamRouter from "../recommendStream";
-import { registerPlansRoute, prewarmPlanCache } from "../plansRouter";
+import { registerPlansRoute, registerValidateZipRoute, prewarmPlanCache } from "../plansRouter";
 import { seedCmsDataSources, startCmsPipelineCron } from "../cmsPipeline";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -91,6 +91,7 @@ async function startServer() {
   registerOAuthRoutes(app);
   // Real CMS plans endpoint
   registerPlansRoute(app);
+  registerValidateZipRoute(app);
   // Streaming AI compare endpoint (SSE) — registered before tRPC
   registerCompareStreamRoute(app);
   // Streaming Plan Recommender AI narrative endpoint
