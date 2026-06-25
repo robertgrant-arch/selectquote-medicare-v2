@@ -85,48 +85,138 @@ const CARRIERS = [
   "WellCare", "Blue Cross", "Devoted Health", "Clover Health",
 ] as const;
 
-// ─── SVG Illustration ─────────────────────────────────────────────────────────
-function PlanIllustration() {
+// ─── Hero Panel ───────────────────────────────────────────────────────────────
+// A premium service-summary card. Communicates what the comparison includes —
+// no fake plan names, no mock charts, no overloaded UI. Feels like a concierge
+// brief, not a product screenshot.
+function HeroPanel() {
+  const checks = [
+    {
+      title: "Every plan in your county",
+      note: "All carriers · Nothing filtered",
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <rect width="14" height="14" rx="7" fill="#237A92" fillOpacity="0.12"/>
+          <path d="M3.5 7L5.8 9.5L10.5 4.5" stroke="#237A92" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      title: "Doctors verified in-network",
+      note: "Checked before results appear",
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <rect width="14" height="14" rx="7" fill="#237A92" fillOpacity="0.12"/>
+          <path d="M3.5 7L5.8 9.5L10.5 4.5" stroke="#237A92" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      title: "Annual Rx cost calculated",
+      note: "Deductible + tier copays + gap",
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <rect width="14" height="14" rx="7" fill="#237A92" fillOpacity="0.12"/>
+          <path d="M3.5 7L5.8 9.5L10.5 4.5" stroke="#237A92" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      title: "CMS star ratings on every plan",
+      note: "Quality + cost · Full picture",
+      icon: (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <rect width="14" height="14" rx="7" fill="#237A92" fillOpacity="0.12"/>
+          <path d="M3.5 7L5.8 9.5L10.5 4.5" stroke="#237A92" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+  ] as const;
+
   return (
-    <svg
-      viewBox="0 0 480 520"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      style={{ width: "100%", maxWidth: "400px", height: "auto", display: "block" }}
+    <figure
+      aria-label="What your free Medicare Advantage comparison includes"
+      style={{
+        margin: 0, width: "100%", maxWidth: "400px",
+        borderRadius: "18px", overflow: "hidden",
+        boxShadow: "0 24px 72px rgba(11,27,36,0.1), 0 2px 8px rgba(11,27,36,0.06)",
+        fontFamily: F.sans,
+      }}
     >
-      <ellipse cx="240" cy="280" rx="200" ry="210" fill="#EBF3F6" fillOpacity="0.5" />
-      <g transform="rotate(10 240 300)">
-        <rect x="115" y="110" width="210" height="280" rx="14" fill="#D6E8EE" />
-      </g>
-      <g transform="rotate(-7 240 300)">
-        <rect x="120" y="115" width="210" height="280" rx="14" fill="#C8DDE6" />
-      </g>
-      <rect x="110" y="95" width="228" height="296" rx="16" fill="white"
-        style={{ filter: "drop-shadow(0 8px 32px rgba(11,27,36,0.09)) drop-shadow(0 2px 6px rgba(11,27,36,0.05))" }}
-      />
-      <rect x="110" y="95" width="228" height="5" rx="2.5" fill="#237A92" fillOpacity="0.65" />
-      <rect x="134" y="122" width="52" height="6" rx="3" fill="#237A92" fillOpacity="0.18" />
-      <rect x="194" y="122" width="80" height="6" rx="3" fill="#0B1B24" fillOpacity="0.09" />
-      <line x1="134" y1="145" x2="314" y2="145" stroke={T.rule} strokeWidth="1" />
-      <rect x="134" y="162" width="32" height="32" rx="8" fill="#EAF3F6" />
-      <rect x="178" y="168" width="78" height="5" rx="2.5" fill="#0B1B24" fillOpacity="0.11" />
-      <rect x="178" y="179" width="52" height="4" rx="2" fill="#0B1B24" fillOpacity="0.07" />
-      <rect x="284" y="165" width="30" height="10" rx="3" fill="#0B1B24" fillOpacity="0.08" />
-      <rect x="124" y="207" width="248" height="50" rx="10" fill="#237A92" fillOpacity="0.08" />
-      <rect x="138" y="217" width="32" height="32" rx="8" fill="#237A92" fillOpacity="0.22" />
-      <rect x="182" y="223" width="78" height="5" rx="2.5" fill="#0B1B24" fillOpacity="0.22" />
-      <rect x="182" y="234" width="52" height="4" rx="2" fill="#237A92" fillOpacity="0.4" />
-      <rect x="288" y="220" width="30" height="10" rx="3" fill="#237A92" fillOpacity="0.55" />
-      <rect x="134" y="272" width="32" height="32" rx="8" fill="#EAF3F6" />
-      <rect x="178" y="278" width="78" height="5" rx="2.5" fill="#0B1B24" fillOpacity="0.11" />
-      <rect x="178" y="289" width="52" height="4" rx="2" fill="#0B1B24" fillOpacity="0.07" />
-      <rect x="284" y="275" width="30" height="10" rx="3" fill="#0B1B24" fillOpacity="0.08" />
-      <rect x="110" y="366" width="228" height="25" rx="0" fill="#F3F7F9" />
-      <rect x="134" y="375" width="96" height="4" rx="2" fill="#0B1B24" fillOpacity="0.1" />
-      <circle cx="340" cy="120" r="26" fill="#237A92" />
-      <path d="M330 120 L337.5 127.5 L352 113" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+      {/* Header */}
+      <div style={{
+        backgroundColor: T.dark,
+        padding: "28px 28px 24px",
+      }}>
+        <p style={{
+          fontFamily: F.sans, fontSize: "11px", fontWeight: 600,
+          letterSpacing: "0.09em", textTransform: "uppercase",
+          color: "rgba(235,245,248,0.45)", marginBottom: "10px",
+        }}>
+          Your comparison includes
+        </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <p style={{
+            fontFamily: F.serif, fontSize: "22px", fontWeight: 400,
+            color: "#fff", letterSpacing: "-0.01em", lineHeight: 1.2,
+          }}>
+            Every Medicare<br />Advantage plan<br />in your county.
+          </p>
+          <div style={{ textAlign: "right", flexShrink: 0, paddingLeft: "16px" }}>
+            <div style={{
+              fontFamily: F.serif, fontSize: "42px", fontWeight: 400,
+              color: T.teal, lineHeight: 1, letterSpacing: "-0.03em",
+            }}>
+              24+
+            </div>
+            <div style={{
+              fontFamily: F.sans, fontSize: "11px",
+              color: "rgba(235,245,248,0.4)", marginTop: "4px",
+            }}>
+              plans typical
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Check items */}
+      <div style={{ backgroundColor: "#fff" }}>
+        {checks.map((c, i) => (
+          <div
+            key={c.title}
+            style={{
+              display: "flex", alignItems: "center", gap: "14px",
+              padding: "16px 28px",
+              borderBottom: i < checks.length - 1 ? `1px solid ${T.rule}` : "none",
+            }}
+          >
+            <div style={{ flexShrink: 0 }}>{c.icon}</div>
+            <div>
+              <div style={{ fontSize: "13px", fontWeight: 600, color: T.ink, lineHeight: 1.3 }}>{c.title}</div>
+              <div style={{ fontSize: "11px", color: T.sub, marginTop: "2px" }}>{c.note}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer */}
+      <figcaption style={{
+        backgroundColor: T.warm,
+        padding: "13px 28px",
+        borderTop: `1px solid ${T.rule}`,
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+      }}>
+        <span style={{ fontFamily: F.sans, fontSize: "11px", color: T.sub }}>
+          Data from CMS.gov · Updated annually
+        </span>
+        <span style={{
+          fontFamily: F.sans, fontSize: "11px", fontWeight: 600,
+          color: T.teal, letterSpacing: "0.01em",
+        }}>
+          No cost to you
+        </span>
+      </figcaption>
+    </figure>
   );
 }
 
@@ -259,38 +349,47 @@ export default function Home() {
             backgroundColor: "#fff",
           }}
         >
-          <div style={{ width: "100%", maxWidth: "1160px", margin: "0 auto", padding: "80px 40px" }}>
+          <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "96px 40px" }}>
             <div
               className="hero-g"
-              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "80px", alignItems: "center" }}
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "96px", alignItems: "center" }}
             >
-              {/* Left — content */}
+              {/* ── Left ── */}
               <div>
-                <p style={overline}>Independent advisors · Licensed in all 50 states</p>
+                {/* Eyebrow */}
+                <p style={{
+                  fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
+                  letterSpacing: "0.1em", textTransform: "uppercase",
+                  color: T.teal, marginBottom: "36px",
+                }}>
+                  Independent advisors · Licensed in all 50 states
+                </p>
 
+                {/* Headline */}
                 <h1 style={{
                   fontFamily: F.serif,
-                  fontSize: "clamp(48px, 6.5vw, 88px)",
-                  fontWeight: 400, lineHeight: 1.04,
+                  fontSize: "clamp(46px, 6vw, 82px)",
+                  fontWeight: 400, lineHeight: 1.05,
                   letterSpacing: "-0.025em",
-                  color: T.ink, marginBottom: "24px",
+                  color: T.ink, marginBottom: "28px",
                 }}>
                   Medicare<br />
                   Advantage,<br />
-                  <em style={{ color: T.teal, fontStyle: "italic" }}>on your terms.</em>
+                  <em style={{ color: T.teal, fontStyle: "italic" }}>made clear.</em>
                 </h1>
 
+                {/* Subhead */}
                 <p style={{
                   fontFamily: F.sans, fontSize: "18px",
-                  lineHeight: 1.78, color: T.body,
-                  maxWidth: "40ch", marginBottom: "48px",
+                  lineHeight: 1.75, color: T.body,
+                  maxWidth: "38ch", marginBottom: "52px",
                 }}>
-                  Compare every plan in your county — matched to your doctors, your prescriptions, and your budget. Free, no account required.
+                  Compare every plan in your county — matched to your doctors, prescriptions, and budget. Free. No account. No pressure.
                 </p>
 
-                {/* ZIP input */}
-                <div style={{ maxWidth: "440px", marginBottom: "28px" }}>
-                  <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
+                {/* ZIP CTA */}
+                <div style={{ maxWidth: "448px" }}>
+                  <div style={{ display: "flex", gap: "8px" }}>
                     <input
                       id="zip-hero"
                       ref={zipInputRef}
@@ -307,11 +406,11 @@ export default function Home() {
                       className="zip-in"
                       style={{
                         flex: 1, fontFamily: F.sans,
-                        padding: "17px 22px", fontSize: "17px", fontWeight: 500,
+                        padding: "18px 22px", fontSize: "17px", fontWeight: 500,
                         color: T.ink, backgroundColor: "#fff",
                         border: `1.5px solid ${inputError ? T.err : T.rule}`,
                         borderRadius: "10px", outline: "none",
-                        boxShadow: "0 1px 4px rgba(11,27,36,0.06)",
+                        boxShadow: "0 1px 6px rgba(11,27,36,0.07)",
                         transition: "border-color 0.15s, box-shadow 0.15s",
                         boxSizing: "border-box",
                       }}
@@ -321,7 +420,7 @@ export default function Home() {
                       onClick={handleSearch}
                       className="btn-p"
                       style={{
-                        fontFamily: F.sans, padding: "17px 26px",
+                        fontFamily: F.sans, padding: "18px 28px",
                         backgroundColor: T.dark, color: "#fff",
                         fontWeight: 600, fontSize: "15px",
                         borderRadius: "10px", border: "none",
@@ -335,17 +434,20 @@ export default function Home() {
                     </button>
                   </div>
 
+                  {/* Error */}
                   <p
                     id="zip-err"
                     role="alert" aria-live="assertive" aria-atomic="true"
                     style={{
                       fontFamily: F.sans, fontSize: "13px", color: T.err,
-                      minHeight: "18px", display: "flex", alignItems: "center", gap: "5px",
+                      minHeight: "20px", marginTop: "8px",
+                      display: "flex", alignItems: "center", gap: "5px",
                     }}
                   >
                     {inputError && <><span aria-hidden="true">⚠</span>{inputError}</>}
                   </p>
 
+                  {/* County selector */}
                   {zipValidation.result.status === "needs_county_selection" && zipValidation.result.counties && (
                     <CountySelector
                       zip={zip}
@@ -357,40 +459,76 @@ export default function Home() {
                     />
                   )}
 
-                  <p style={{ fontFamily: F.sans, fontSize: "13px", color: T.sub, marginTop: "14px" }}>
+                  {/* Trust microcopy */}
+                  <p style={{
+                    fontFamily: F.sans, fontSize: "13px",
+                    color: T.sub, marginTop: "14px",
+                  }}>
                     Always free · No account required · No sales calls unless you ask
                   </p>
                 </div>
 
-                {/* Inline 3-step process */}
+                {/* Process reassurance row */}
                 <div
-                  aria-label="How it works in three steps"
+                  aria-label="How it works: three steps"
                   style={{
-                    display: "flex", alignItems: "center", gap: "0",
-                    paddingTop: "24px", borderTop: `1px solid ${T.rule}`,
+                    display: "flex", alignItems: "center",
+                    gap: "0", marginTop: "40px",
+                    paddingTop: "32px", borderTop: `1px solid ${T.rule}`,
                   }}
                 >
-                  {[
-                    { n: "1", label: "Enter ZIP" },
-                    { n: "2", label: "Add doctors & Rx" },
-                    { n: "3", label: "Compare plans" },
-                  ].map((s, i) => (
+                  {([
+                    { n: "1", label: "Enter your ZIP",             note: "Unlocks your county's plans" },
+                    { n: "2", label: "Compare plans",              note: "Every carrier, nothing filtered" },
+                    { n: "3", label: "Check doctors & Rx",         note: "Verified before you commit" },
+                  ] as const).map((s, i) => (
                     <div key={s.n} style={{ display: "flex", alignItems: "center" }}>
                       {i > 0 && (
-                        <span aria-hidden="true" style={{ color: T.rule, margin: "0 14px", fontSize: "14px" }}>→</span>
+                        <div aria-hidden="true" style={{
+                          width: "24px", height: "1px",
+                          backgroundColor: T.rule, margin: "0 16px",
+                          flexShrink: 0,
+                        }} />
                       )}
-                      <span style={{ fontFamily: F.sans, fontSize: "13px", color: T.sub }}>
-                        <span style={{ fontWeight: 600, color: T.teal, marginRight: "6px" }}>{s.n}.</span>
-                        {s.label}
-                      </span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        {/* Numbered badge */}
+                        <div style={{
+                          width: "24px", height: "24px", borderRadius: "50%",
+                          backgroundColor: "rgba(35,122,146,0.1)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          flexShrink: 0,
+                        }}>
+                          <span style={{
+                            fontFamily: F.sans, fontSize: "11px",
+                            fontWeight: 700, color: T.teal,
+                          }}>
+                            {s.n}
+                          </span>
+                        </div>
+                        <div>
+                          <div style={{
+                            fontFamily: F.sans, fontSize: "12px",
+                            fontWeight: 600, color: T.ink,
+                            letterSpacing: "-0.005em",
+                          }}>
+                            {s.label}
+                          </div>
+                          <div style={{
+                            fontFamily: F.sans, fontSize: "11px",
+                            color: T.sub, marginTop: "1px",
+                          }}>
+                            {s.note}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Right — illustration */}
+              {/* ── Right — premium service panel ── */}
               <div className="illus" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <PlanIllustration />
+                <HeroPanel />
               </div>
             </div>
           </div>
