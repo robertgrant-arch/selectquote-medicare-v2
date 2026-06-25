@@ -1,15 +1,15 @@
 /**
- * Medicare Advantage Homepage — Art direction v3.
+ * Medicare Advantage Homepage — IA restructure v4.
  *
  * ZIP validation / workflow / modal / routing: UNCHANGED.
- * Only the visual layer has changed.
  *
- * Art direction:
- *   – White / warm off-white (#FAF9F5) palette, deep slate-teal accent
- *   – Premium editorial composition, left-aligned hierarchy
- *   – More whitespace, fewer boxes, fewer borders, subtle depth
- *   – Inline SVG hero illustration (no stock imagery)
- *   – Emotional tone: reassuring, expert, clear, regulated, human, premium
+ * Section order:
+ *   §1  Hero         — headline, subhead, ZIP CTA, trust line, inline 3-step
+ *   §2  Trust strip  — licensed status, CMS data, carriers, no-cost
+ *   §3  Why us       — 3 benefit blocks, asymmetric, no icon cards
+ *   §4  Coverage     — doctor + drug + quality verification, premium layout
+ *   §5  Credibility  — 500k stat, independence, market coverage, unified
+ *   §6  CTA          — single strong dark closing section
  */
 
 import { useState, useEffect, useRef } from "react";
@@ -22,16 +22,16 @@ import Header from "@/components/Header";
 
 // ─── Tokens ──────────────────────────────────────────────────────────────────
 const T = {
-  ink:   "#0B1B24",   // Display headings
-  dark:  "#1C3A48",   // Deep slate-teal — buttons, strong text
-  teal:  "#237A92",   // Primary interactive accent
-  tealL: "#2E96B0",   // Hover
-  body:  "#3E5560",   // Body copy
-  sub:   "#7A9BA6",   // Supporting / muted
-  rule:  "#E2EAED",   // Hairlines — use sparingly
-  warm:  "#FAF9F5",   // Warm off-white sections
-  night: "#0A1820",   // Dark CTA section
-  ftr:   "#060E14",   // Footer
+  ink:   "#0B1B24",
+  dark:  "#1C3A48",
+  teal:  "#237A92",
+  tealL: "#2E96B0",
+  body:  "#3E5560",
+  sub:   "#7A9BA6",
+  rule:  "#E2EAED",
+  warm:  "#FAF9F5",
+  night: "#0A1820",
+  ftr:   "#060E14",
   err:   "#C0392B",
 } as const;
 
@@ -41,34 +41,51 @@ const F = {
 } as const;
 
 // ─── Page data ────────────────────────────────────────────────────────────────
-const PRINCIPLES = [
+const BENEFITS = [
   {
-    num: "01",
-    title: "Every plan in your county — nothing filtered.",
-    body: "We compare all Medicare Advantage options across every carrier active in your area. No plans are hidden. No carrier pays for preferred placement.",
+    label: "Independence",
+    title: "Every plan in your county. Not a curated selection.",
+    body: "As independent advisors, we compare every Medicare Advantage plan active in your area — across every carrier. No plan is filtered out. No carrier pays for preferred placement.",
   },
   {
-    num: "02",
-    title: "Your true annual cost, calculated before you commit.",
-    body: "Add your prescriptions and we calculate your real annual drug cost for every plan: deductible, tier copays, and coverage gap — before you see any result.",
+    label: "Precision",
+    title: "What you'll actually pay, calculated before you commit.",
+    body: "We calculate your true annual drug cost for every plan: deductible, tier copays, and coverage gap included. The same math CMS uses — before you see a single result.",
   },
   {
-    num: "03",
-    title: "Your doctors confirmed in-network first.",
-    body: "We cross-check provider directories so you never choose a plan and lose your care team. In-network status is verified before a single result appears.",
+    label: "Control",
+    title: "Compare on your terms, at your own pace.",
+    body: "You never have to speak with anyone to use this. Licensed advisors are available if you want them. If you'd rather decide independently, everything you need is here.",
   },
 ] as const;
 
-const STEPS = [
-  { n: "1", label: "Enter your ZIP code",   note: "Instantly unlocks every plan in your county" },
-  { n: "2", label: "Add doctors & Rx",      note: "Optional — personalizes costs and coverage" },
-  { n: "3", label: "Compare, then decide",  note: "At your own pace, no pressure, no calls required" },
+const COVERAGE_CHECKS = [
+  {
+    label: "Provider directory",
+    title: "Your doctors",
+    body: "We cross-check every plan's provider directory before results appear. You'll know which plans keep your existing care team in-network — before you choose.",
+    proof: "4,200+ providers checked in most counties",
+  },
+  {
+    label: "Formulary check",
+    title: "Your prescriptions",
+    body: "Enter your medications and we calculate your estimated annual drug cost for every plan — including the deductible, tier copays, and the coverage gap.",
+    proof: "Tier 1–4 with deductible and gap modelled",
+  },
+  {
+    label: "Star ratings",
+    title: "Plan quality",
+    body: "Every plan shows its official CMS star rating alongside premiums and out-of-pocket costs. You see the full picture — not just the monthly premium.",
+    proof: "CMS 1–5 star ratings on every result",
+  },
 ] as const;
 
-// ─── SVG Hero Illustration ────────────────────────────────────────────────────
-// Depicts three plan documents fanned and stacked — the centre card highlighted,
-// representing "your best match surfaced from the full field."
-// Pure geometry: no clip-art, no stock, no icons.
+const CARRIERS = [
+  "UnitedHealthcare", "Humana", "Aetna", "Cigna",
+  "WellCare", "Blue Cross", "Devoted Health", "Clover Health",
+] as const;
+
+// ─── SVG Illustration ─────────────────────────────────────────────────────────
 function PlanIllustration() {
   return (
     <svg
@@ -76,88 +93,50 @@ function PlanIllustration() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      role="img"
-      style={{ width: "100%", maxWidth: "420px", height: "auto", display: "block" }}
+      style={{ width: "100%", maxWidth: "400px", height: "auto", display: "block" }}
     >
-      {/* Ambient wash */}
-      <ellipse cx="240" cy="280" rx="200" ry="210" fill="#EBF3F6" fillOpacity="0.55" />
-
-      {/* Card 3 — rearmost, rotated right */}
+      <ellipse cx="240" cy="280" rx="200" ry="210" fill="#EBF3F6" fillOpacity="0.5" />
       <g transform="rotate(10 240 300)">
         <rect x="115" y="110" width="210" height="280" rx="14" fill="#D6E8EE" />
       </g>
-
-      {/* Card 2 — middle, rotated left */}
       <g transform="rotate(-7 240 300)">
         <rect x="120" y="115" width="210" height="280" rx="14" fill="#C8DDE6" />
       </g>
-
-      {/* Card 1 — front, upright, white with shadow suggestion */}
-      <rect x="110" y="95" width="228" height="296" rx="16"
-        fill="white"
+      <rect x="110" y="95" width="228" height="296" rx="16" fill="white"
         style={{ filter: "drop-shadow(0 8px 32px rgba(11,27,36,0.09)) drop-shadow(0 2px 6px rgba(11,27,36,0.05))" }}
       />
-
-      {/* Card header accent bar */}
-      <rect x="110" y="95" width="228" height="5" rx="2.5" fill="#237A92" fillOpacity="0.7" />
-
-      {/* Carrier row label */}
+      <rect x="110" y="95" width="228" height="5" rx="2.5" fill="#237A92" fillOpacity="0.65" />
       <rect x="134" y="122" width="52" height="6" rx="3" fill="#237A92" fillOpacity="0.18" />
       <rect x="194" y="122" width="80" height="6" rx="3" fill="#0B1B24" fillOpacity="0.09" />
-
-      {/* Divider */}
       <line x1="134" y1="145" x2="314" y2="145" stroke={T.rule} strokeWidth="1" />
-
-      {/* Plan row A */}
       <rect x="134" y="162" width="32" height="32" rx="8" fill="#EAF3F6" />
       <rect x="178" y="168" width="78" height="5" rx="2.5" fill="#0B1B24" fillOpacity="0.11" />
       <rect x="178" y="179" width="52" height="4" rx="2" fill="#0B1B24" fillOpacity="0.07" />
       <rect x="284" y="165" width="30" height="10" rx="3" fill="#0B1B24" fillOpacity="0.08" />
-
-      {/* Plan row B — highlighted as "recommended" */}
       <rect x="124" y="207" width="248" height="50" rx="10" fill="#237A92" fillOpacity="0.08" />
       <rect x="138" y="217" width="32" height="32" rx="8" fill="#237A92" fillOpacity="0.22" />
       <rect x="182" y="223" width="78" height="5" rx="2.5" fill="#0B1B24" fillOpacity="0.22" />
       <rect x="182" y="234" width="52" height="4" rx="2" fill="#237A92" fillOpacity="0.4" />
       <rect x="288" y="220" width="30" height="10" rx="3" fill="#237A92" fillOpacity="0.55" />
-
-      {/* Plan row C */}
       <rect x="134" y="272" width="32" height="32" rx="8" fill="#EAF3F6" />
       <rect x="178" y="278" width="78" height="5" rx="2.5" fill="#0B1B24" fillOpacity="0.11" />
       <rect x="178" y="289" width="52" height="4" rx="2" fill="#0B1B24" fillOpacity="0.07" />
       <rect x="284" y="275" width="30" height="10" rx="3" fill="#0B1B24" fillOpacity="0.08" />
-
-      {/* Footer caption strip */}
       <rect x="110" y="366" width="228" height="25" rx="0" fill="#F3F7F9" />
-      <rect x="110" y="366" width="228" height="25" rx="0"
-        style={{ clipPath: "inset(0 0 0 0 round 0 0 16px 16px)" }}
-        fill="#F3F7F9"
-      />
       <rect x="134" y="375" width="96" height="4" rx="2" fill="#0B1B24" fillOpacity="0.1" />
-
-      {/* Check badge — "best match" indicator */}
       <circle cx="340" cy="120" r="26" fill="#237A92" />
       <path d="M330 120 L337.5 127.5 L352 113" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-
-      {/* CMS data source badge — lower right */}
-      <rect x="258" y="420" width="88" height="26" rx="6" fill="white"
-        style={{ filter: "drop-shadow(0 2px 8px rgba(11,27,36,0.1))" }}
-      />
-      <rect x="268" y="430" width="44" height="4" rx="2" fill="#237A92" fillOpacity="0.5" />
-      <rect x="268" y="438" width="30" height="3" rx="1.5" fill="#0B1B24" fillOpacity="0.15" />
     </svg>
   );
 }
 
-// ─── Scroll-reveal ────────────────────────────────────────────────────────────
+// ─── Reveal ───────────────────────────────────────────────────────────────────
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      el.dataset.v = "1"; return;
-    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { el.dataset.v = "1"; return; }
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) { el.dataset.v = "1"; obs.unobserve(el); } },
       { threshold: 0.07, rootMargin: "0px 0px -40px 0px" }
@@ -178,12 +157,11 @@ export default function Home() {
   const [pendingZip, setPendingZip] = useState("");
   const [, navigate] = useLocation();
 
-  const r1 = useReveal();
-  const r2 = useReveal();
-  const r3 = useReveal();
-  const r4 = useReveal();
+  const rBenefits  = useReveal();
+  const rCoverage  = useReveal();
+  const rCredibility = useReveal();
+  const rCta       = useReveal();
 
-  // ── ZIP handlers ─────────────────────────────────────────────────────────
   const handleSearch = async () => {
     const trimmed = zip.trim();
     const result = await zipValidation.validate(trimmed);
@@ -205,11 +183,18 @@ export default function Home() {
     try {
       if (data.verifyResult) sessionStorage.setItem("mbi_eligibility", JSON.stringify(data.verifyResult));
       sessionStorage.setItem("workflow_data", JSON.stringify(data));
-    } catch { /* sessionStorage unavailable */ }
+    } catch {}
     const p = new URLSearchParams({ zip: pendingZip });
     if (data.verifyResult) p.set("verified", "1");
     if (data.doctors.length > 0 || data.drugs.length > 0) p.set("personalized", "1");
     navigate(`/plans?${p.toString()}`);
+  };
+
+  // ── Shared style fragments ────────────────────────────────────────────────
+  const overline: React.CSSProperties = {
+    fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
+    letterSpacing: "0.1em", textTransform: "uppercase" as const,
+    color: T.teal, marginBottom: "20px",
   };
 
   return (
@@ -226,36 +211,30 @@ export default function Home() {
 
       <style>{`
         #hm .hm-skip:focus { top: 0 !important; }
-
-        /* Reveal */
-        #hm .rv { opacity: 0; transform: translateY(18px);
-          transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+        #hm .rv {
+          opacity: 0; transform: translateY(18px);
+          transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1);
+        }
         #hm .rv[data-v="1"] { opacity: 1; transform: none; }
         @media (prefers-reduced-motion: reduce) {
           #hm .rv { opacity: 1 !important; transform: none !important; transition: none !important; }
         }
-
-        /* Focus rings */
-        #hm .zip-in:focus   { border-color: ${T.teal} !important; box-shadow: 0 0 0 3px rgba(35,122,146,0.14) !important; outline: none; }
-        #hm .zip-dk:focus   { border-color: rgba(255,255,255,0.45) !important; box-shadow: 0 0 0 3px rgba(255,255,255,0.07) !important; outline: none; }
-
-        /* Buttons */
-        #hm .btn-p  { transition: background-color 0.14s; }
-        #hm .btn-p:hover  { background-color: #122736 !important; }
-        #hm .link-a { transition: color 0.12s; }
-        #hm .link-a:hover { color: ${T.tealL} !important; }
-        #hm .flink  { transition: color 0.14s; }
-        #hm .flink:hover  { color: rgba(255,255,255,0.75) !important; }
-        #hm .plink  { transition: color 0.12s; }
-        #hm .plink:hover  { color: rgba(235,245,248,0.85) !important; }
-
-        /* Responsive */
+        #hm .zip-in:focus  { border-color: ${T.teal} !important; box-shadow: 0 0 0 3px rgba(35,122,146,0.14) !important; outline: none; }
+        #hm .zip-dk:focus  { border-color: rgba(255,255,255,0.4) !important; box-shadow: 0 0 0 3px rgba(255,255,255,0.07) !important; outline: none; }
+        #hm .btn-p         { transition: background-color 0.14s; }
+        #hm .btn-p:hover   { background-color: #112333 !important; }
+        #hm .btn-t:hover   { background-color: ${T.tealL} !important; }
+        #hm .lnk:hover     { color: ${T.tealL} !important; }
+        #hm .flnk:hover    { color: rgba(255,255,255,0.72) !important; }
+        #hm .plnk:hover    { color: rgba(235,245,248,0.8) !important; }
         @media (max-width: 1023px) {
           #hm .hero-g    { grid-template-columns: 1fr !important; }
           #hm .illus     { display: none !important; }
-          #hm .princ-g   { grid-template-columns: 1fr !important; gap: 48px !important; }
-          #hm .steps-g   { grid-template-columns: 1fr !important; gap: 40px !important; }
-          #hm .trust-g   { grid-template-columns: 1fr !important; gap: 64px !important; }
+          #hm .ben-g     { grid-template-columns: 1fr !important; gap: 0 !important; }
+          #hm .ben-g > * { border-left: none !important; padding-left: 0 !important; padding-top: 36px !important; border-top: 1px solid ${T.rule} !important; }
+          #hm .ben-g > *:first-child { padding-top: 0 !important; border-top: none !important; }
+          #hm .cov-g     { grid-template-columns: 1fr !important; gap: 48px !important; }
+          #hm .cred-g    { grid-template-columns: 1fr !important; gap: 56px !important; }
           #hm .footer-g  { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 639px) {
@@ -285,23 +264,16 @@ export default function Home() {
               className="hero-g"
               style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "80px", alignItems: "center" }}
             >
-              {/* Left */}
+              {/* Left — content */}
               <div>
-                <p style={{
-                  fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
-                  letterSpacing: "0.1em", textTransform: "uppercase",
-                  color: T.teal, marginBottom: "40px",
-                }}>
-                  Independent advisors · Licensed in all 50 states
-                </p>
+                <p style={overline}>Independent advisors · Licensed in all 50 states</p>
 
                 <h1 style={{
                   fontFamily: F.serif,
                   fontSize: "clamp(48px, 6.5vw, 88px)",
                   fontWeight: 400, lineHeight: 1.04,
                   letterSpacing: "-0.025em",
-                  color: T.ink,
-                  marginBottom: "28px",
+                  color: T.ink, marginBottom: "24px",
                 }}>
                   Medicare<br />
                   Advantage,<br />
@@ -311,13 +283,13 @@ export default function Home() {
                 <p style={{
                   fontFamily: F.sans, fontSize: "18px",
                   lineHeight: 1.78, color: T.body,
-                  maxWidth: "40ch", marginBottom: "56px",
+                  maxWidth: "40ch", marginBottom: "48px",
                 }}>
-                  We compare every plan in your county — matched to your doctors, your prescriptions, and your budget. Free. No account. No pressure.
+                  Compare every plan in your county — matched to your doctors, your prescriptions, and your budget. Free, no account required.
                 </p>
 
-                {/* ZIP CTA */}
-                <div style={{ maxWidth: "440px" }}>
+                {/* ZIP input */}
+                <div style={{ maxWidth: "440px", marginBottom: "28px" }}>
                   <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
                     <input
                       id="zip-hero"
@@ -385,34 +357,61 @@ export default function Home() {
                     />
                   )}
 
-                  <p style={{ fontFamily: F.sans, fontSize: "13px", color: T.sub, marginTop: "16px" }}>
+                  <p style={{ fontFamily: F.sans, fontSize: "13px", color: T.sub, marginTop: "14px" }}>
                     Always free · No account required · No sales calls unless you ask
                   </p>
+                </div>
+
+                {/* Inline 3-step process */}
+                <div
+                  aria-label="How it works in three steps"
+                  style={{
+                    display: "flex", alignItems: "center", gap: "0",
+                    paddingTop: "24px", borderTop: `1px solid ${T.rule}`,
+                  }}
+                >
+                  {[
+                    { n: "1", label: "Enter ZIP" },
+                    { n: "2", label: "Add doctors & Rx" },
+                    { n: "3", label: "Compare plans" },
+                  ].map((s, i) => (
+                    <div key={s.n} style={{ display: "flex", alignItems: "center" }}>
+                      {i > 0 && (
+                        <span aria-hidden="true" style={{ color: T.rule, margin: "0 14px", fontSize: "14px" }}>→</span>
+                      )}
+                      <span style={{ fontFamily: F.sans, fontSize: "13px", color: T.sub }}>
+                        <span style={{ fontWeight: 600, color: T.teal, marginRight: "6px" }}>{s.n}.</span>
+                        {s.label}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               {/* Right — illustration */}
-              <div
-                className="illus"
-                style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-              >
+              <div className="illus" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <PlanIllustration />
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── §2 TRUST BAR ──────────────────────────────────────────────── */}
+        {/* ── §2 TRUST STRIP ────────────────────────────────────────────── */}
         <div
           aria-label="Service credentials"
           style={{ backgroundColor: T.warm, borderTop: `1px solid ${T.rule}` }}
         >
-          <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "22px 40px" }}>
-            <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0", rowGap: "10px" }}>
+          <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
+            {/* Credential pillars */}
+            <div style={{
+              display: "flex", alignItems: "center",
+              flexWrap: "wrap", gap: "0", rowGap: "10px",
+              padding: "18px 0",
+            }}>
               {[
                 "Licensed agents in all 50 states",
-                "Paid by carriers — never by you",
-                "Plan data from CMS.gov",
+                "Plan data directly from CMS.gov",
+                "No cost to you — ever",
                 "Doctors & Rx verified before results",
               ].map((item, i) => (
                 <div key={item} style={{ display: "flex", alignItems: "center" }}>
@@ -428,73 +427,87 @@ export default function Home() {
                 </div>
               ))}
             </div>
+            {/* Carriers */}
+            <div style={{
+              display: "flex", alignItems: "center", flexWrap: "wrap",
+              gap: "0", rowGap: "8px",
+              padding: "14px 0",
+              borderTop: `1px solid ${T.rule}`,
+            }}>
+              <span style={{
+                fontFamily: F.sans, fontSize: "11px", fontWeight: 600,
+                letterSpacing: "0.08em", textTransform: "uppercase",
+                color: T.sub, marginRight: "18px", whiteSpace: "nowrap",
+              }}>
+                Plans from
+              </span>
+              {CARRIERS.map((name, i) => (
+                <span key={name} style={{ display: "flex", alignItems: "center" }}>
+                  {i > 0 && <span aria-hidden="true" style={{ color: T.rule, margin: "0 14px" }}>·</span>}
+                  <span style={{ fontFamily: F.sans, fontSize: "13px", fontWeight: 500, color: T.sub }}>{name}</span>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* ── §3 THREE PRINCIPLES ───────────────────────────────────────── */}
+        {/* ── §3 WHY PEOPLE USE US ──────────────────────────────────────── */}
         <section
-          id="principles"
-          aria-labelledby="princ-h"
-          style={{ backgroundColor: "#fff", padding: "168px 0 160px" }}
+          id="why-us"
+          aria-labelledby="why-h"
+          style={{ backgroundColor: "#fff", padding: "160px 0" }}
         >
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
-
             <div style={{ marginBottom: "80px" }}>
-              <p style={{
-                fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                color: T.teal, marginBottom: "20px",
-              }}>
-                Our approach
-              </p>
+              <p style={overline}>Why people use us</p>
               <h2
-                id="princ-h"
+                id="why-h"
                 style={{
                   fontFamily: F.serif,
                   fontSize: "clamp(28px, 3.8vw, 48px)",
                   fontWeight: 400, lineHeight: 1.1,
                   letterSpacing: "-0.02em",
-                  color: T.ink, maxWidth: "660px",
+                  color: T.ink, maxWidth: "640px",
                 }}
               >
-                Built for a consequential decision —
+                Built for an important decision —
                 <em style={{ fontStyle: "italic", color: T.teal }}>{" "}not for speed.</em>
               </h2>
             </div>
 
             <div
-              ref={r1}
-              className="rv princ-g"
-              style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "72px" }}
+              ref={rBenefits}
+              className="rv ben-g"
+              style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0" }}
             >
-              {PRINCIPLES.map(p => (
-                <div key={p.num}>
-                  <div style={{
-                    fontFamily: F.serif, fontSize: "11px",
-                    color: T.sub, letterSpacing: "0.06em",
-                    marginBottom: "28px",
+              {BENEFITS.map((b, i) => (
+                <div
+                  key={b.label}
+                  style={{
+                    paddingLeft: i > 0 ? "56px" : "0",
+                    paddingRight: i < 2 ? "56px" : "0",
+                    borderLeft: i > 0 ? `1px solid ${T.rule}` : "none",
+                  }}
+                >
+                  <p style={{
+                    fontFamily: F.sans, fontSize: "11px", fontWeight: 600,
+                    letterSpacing: "0.09em", textTransform: "uppercase",
+                    color: T.teal, marginBottom: "20px",
                   }}>
-                    {p.num}
-                  </div>
-                  <div style={{
-                    width: "28px", height: "2px",
-                    backgroundColor: T.teal, marginBottom: "24px",
-                    borderRadius: "1px",
-                  }} />
+                    {b.label}
+                  </p>
+                  <div style={{ width: "24px", height: "2px", backgroundColor: T.teal, marginBottom: "22px", borderRadius: "1px" }} />
                   <h3 style={{
                     fontFamily: F.serif,
-                    fontSize: "clamp(20px, 1.8vw, 23px)",
-                    fontWeight: 400, lineHeight: 1.25,
+                    fontSize: "clamp(19px, 1.7vw, 22px)",
+                    fontWeight: 400, lineHeight: 1.28,
                     letterSpacing: "-0.015em",
                     color: T.ink, marginBottom: "16px",
                   }}>
-                    {p.title}
+                    {b.title}
                   </h3>
-                  <p style={{
-                    fontFamily: F.sans, fontSize: "15px",
-                    lineHeight: 1.8, color: T.body,
-                  }}>
-                    {p.body}
+                  <p style={{ fontFamily: F.sans, fontSize: "15px", lineHeight: 1.8, color: T.body }}>
+                    {b.body}
                   </p>
                 </div>
               ))}
@@ -502,64 +515,96 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── §4 HOW IT WORKS ───────────────────────────────────────────── */}
+        {/* ── §4 DOCTOR & DRUG COVERAGE ─────────────────────────────────── */}
         <section
-          id="how"
-          aria-labelledby="how-h"
-          style={{ backgroundColor: T.warm, padding: "128px 0" }}
+          id="coverage"
+          aria-labelledby="cov-h"
+          style={{ backgroundColor: T.warm, padding: "160px 0" }}
         >
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
-            <div style={{
-              display: "grid", gridTemplateColumns: "1fr 2fr",
-              gap: "80px", alignItems: "start",
-            }}>
-              <div>
-                <p style={{
-                  fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
-                  letterSpacing: "0.1em", textTransform: "uppercase",
-                  color: T.teal, marginBottom: "20px",
-                }}>
-                  How it works
-                </p>
+            <div
+              className="cov-g"
+              style={{ display: "grid", gridTemplateColumns: "2fr 3fr", gap: "100px", alignItems: "start" }}
+            >
+              {/* Left — editorial anchor */}
+              <div style={{ position: "sticky", top: "48px" }}>
+                <p style={overline}>Coverage verification</p>
                 <h2
-                  id="how-h"
+                  id="cov-h"
                   style={{
                     fontFamily: F.serif,
                     fontSize: "clamp(26px, 3vw, 38px)",
                     fontWeight: 400, lineHeight: 1.18,
                     letterSpacing: "-0.015em",
-                    color: T.ink,
+                    color: T.ink, marginBottom: "20px",
                   }}
                 >
-                  Three steps.<br />No account.<br />No pressure.
+                  The two things people overlook — and that we check first.
                 </h2>
+                <p style={{
+                  fontFamily: F.sans, fontSize: "16px",
+                  lineHeight: 1.78, color: T.body, marginBottom: "32px",
+                }}>
+                  Switching Medicare plans and losing your doctor, or discovering your prescription costs tripled — these are the most common and most avoidable Medicare mistakes. We verify both before you see a single result.
+                </p>
+                <button
+                  type="button"
+                  className="lnk"
+                  onClick={() => navigate(`/plans?zip=${zip || "64106"}`)}
+                  style={{
+                    fontFamily: F.sans, fontSize: "14px", fontWeight: 600,
+                    color: T.dark, background: "none", border: "none",
+                    padding: "0", cursor: "pointer",
+                    display: "inline-flex", alignItems: "center", gap: "6px",
+                    textDecoration: "underline",
+                    textDecorationColor: T.rule,
+                    textUnderlineOffset: "3px",
+                    transition: "color 0.12s",
+                  }}
+                >
+                  Compare plans with doctors & Rx
+                  <ChevronRight size={13} aria-hidden="true" />
+                </button>
               </div>
-              <div ref={r2} className="rv steps-g" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0" }}>
-                {STEPS.map((s, i) => (
+
+              {/* Right — 3 verification items */}
+              <div ref={rCoverage} className="rv">
+                {COVERAGE_CHECKS.map((c, i) => (
                   <div
-                    key={s.n}
+                    key={c.label}
                     style={{
-                      paddingLeft: i > 0 ? "40px" : "0",
-                      paddingRight: i < 2 ? "40px" : "0",
-                      borderLeft: i > 0 ? `1px solid ${T.rule}` : "none",
+                      display: "grid",
+                      gridTemplateColumns: "160px 1fr",
+                      gap: "32px",
+                      paddingTop: i > 0 ? "44px" : "0",
+                      paddingBottom: i < 2 ? "44px" : "0",
+                      borderBottom: i < 2 ? `1px solid ${T.rule}` : "none",
                     }}
                   >
-                    <div style={{
-                      fontFamily: F.serif,
-                      fontSize: "52px", fontWeight: 400,
-                      lineHeight: 1, letterSpacing: "-0.02em",
-                      color: T.rule, marginBottom: "20px",
-                    }}>
-                      {s.n}
+                    <div style={{ paddingTop: "3px" }}>
+                      <p style={{
+                        fontFamily: F.sans, fontSize: "11px", fontWeight: 600,
+                        letterSpacing: "0.08em", textTransform: "uppercase",
+                        color: T.sub, marginBottom: "8px",
+                      }}>
+                        {c.label}
+                      </p>
+                      <p style={{
+                        fontFamily: F.serif,
+                        fontSize: "22px", fontWeight: 400,
+                        letterSpacing: "-0.01em", lineHeight: 1.2,
+                        color: T.teal,
+                      }}>
+                        {c.title}
+                      </p>
                     </div>
-                    <div style={{
-                      fontFamily: F.sans, fontSize: "16px", fontWeight: 600,
-                      color: T.ink, marginBottom: "8px", letterSpacing: "-0.01em",
-                    }}>
-                      {s.label}
-                    </div>
-                    <div style={{ fontFamily: F.sans, fontSize: "14px", color: T.sub, lineHeight: 1.65 }}>
-                      {s.note}
+                    <div>
+                      <p style={{ fontFamily: F.sans, fontSize: "15px", lineHeight: 1.78, color: T.body, marginBottom: "10px" }}>
+                        {c.body}
+                      </p>
+                      <p style={{ fontFamily: F.sans, fontSize: "12px", color: T.sub }}>
+                        {c.proof}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -568,52 +613,24 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── §5 INDEPENDENCE / TRUST ───────────────────────────────────── */}
+        {/* ── §5 CREDIBILITY ────────────────────────────────────────────── */}
         <section
-          id="trust"
-          aria-labelledby="trust-h"
-          style={{ backgroundColor: "#fff", padding: "168px 0" }}
+          id="credibility"
+          aria-labelledby="cred-h"
+          style={{ backgroundColor: "#fff", padding: "160px 0" }}
         >
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
             <div
-              ref={r3}
-              className="rv trust-g"
-              style={{ display: "grid", gridTemplateColumns: "5fr 7fr", gap: "112px", alignItems: "center" }}
+              ref={rCredibility}
+              className="rv cred-g"
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "100px", alignItems: "center" }}
             >
-              <div>
-                <p style={{
-                  fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
-                  letterSpacing: "0.1em", textTransform: "uppercase",
-                  color: T.teal, marginBottom: "24px",
-                }}>
-                  Independence
-                </p>
-                <p style={{
-                  fontFamily: F.sans, fontSize: "18px",
-                  lineHeight: 1.8, color: T.body, marginBottom: "40px",
-                }}>
-                  No carrier pays for referrals. No plan is hidden from your results. Every comparison is built on data published directly by CMS.gov — the same source Medicare itself uses.
-                </p>
-                <p style={{
-                  fontFamily: F.sans, fontSize: "14px",
-                  color: T.sub, lineHeight: 1.72, marginBottom: "28px",
-                }}>
-                  24+ plans per county · every active carrier · no preferred placement
-                </p>
-                <p style={{
-                  fontFamily: F.sans, fontSize: "12px",
-                  color: T.sub, lineHeight: 1.65,
-                  paddingTop: "24px", borderTop: `1px solid ${T.rule}`,
-                }}>
-                  All plan data from CMS.gov public records, updated annually. Not affiliated with or endorsed by any insurance carrier.
-                </p>
-              </div>
-
+              {/* Left — proof stat */}
               <div aria-label="Since 2010, we've helped more than 500,000 seniors find better Medicare coverage.">
+                <p style={overline}>Track record</p>
                 <p style={{
-                  fontFamily: F.serif,
-                  fontSize: "clamp(17px, 2vw, 24px)",
-                  color: T.sub, lineHeight: 1.25, marginBottom: "10px",
+                  fontFamily: F.serif, fontSize: "clamp(16px, 1.8vw, 21px)",
+                  color: T.sub, lineHeight: 1.3, marginBottom: "10px",
                 }}>
                   Since 2010, we've helped more than
                 </p>
@@ -621,8 +638,8 @@ export default function Home() {
                   aria-hidden="true"
                   style={{
                     fontFamily: F.serif,
-                    fontSize: "clamp(64px, 9.5vw, 116px)",
-                    fontWeight: 400, lineHeight: 0.86,
+                    fontSize: "clamp(60px, 9vw, 112px)",
+                    fontWeight: 400, lineHeight: 0.88,
                     letterSpacing: "-0.04em",
                     color: T.ink, margin: "0 0 10px",
                   }}
@@ -630,51 +647,61 @@ export default function Home() {
                   500,000
                 </p>
                 <p style={{
-                  fontFamily: F.serif,
-                  fontSize: "clamp(17px, 2vw, 24px)",
-                  color: T.sub, lineHeight: 1.25, marginBottom: "40px",
+                  fontFamily: F.serif, fontSize: "clamp(16px, 1.8vw, 21px)",
+                  color: T.sub, lineHeight: 1.3,
                 }}>
-                  seniors find better coverage.
+                  seniors find better Medicare coverage.
                 </p>
-                <button
-                  type="button"
-                  className="btn-p"
-                  onClick={() => { zipInputRef.current?.focus(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                  style={{
-                    fontFamily: F.sans, fontSize: "14px", fontWeight: 600,
-                    color: "#fff", backgroundColor: T.dark,
-                    padding: "14px 24px", borderRadius: "8px", border: "none",
-                    cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px",
-                    letterSpacing: "0.01em",
-                  }}
-                >
-                  Find plans in your county
-                  <ArrowRight size={14} aria-hidden="true" />
-                </button>
+              </div>
+
+              {/* Right — independence + proof points */}
+              <div>
+                <p style={overline}>Our commitment</p>
+                <p style={{
+                  fontFamily: F.sans, fontSize: "18px",
+                  lineHeight: 1.8, color: T.body, marginBottom: "40px",
+                }}>
+                  No carrier pays for referrals. No plan is hidden from your results. Every comparison is built on data published by CMS.gov — the same source Medicare itself uses.
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                  {[
+                    "24+ plans per county from every active carrier",
+                    "No plan hidden, no carrier given preferred placement",
+                    "CMS.gov public data, updated annually",
+                  ].map(item => (
+                    <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
+                      <span aria-hidden="true" style={{
+                        display: "inline-block", width: "6px", height: "6px",
+                        backgroundColor: T.teal, borderRadius: "50%",
+                        flexShrink: 0, marginTop: "8px",
+                      }} />
+                      <p style={{ fontFamily: F.sans, fontSize: "15px", color: T.body, lineHeight: 1.65, margin: 0 }}>
+                        {item}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <p style={{
+                  fontFamily: F.sans, fontSize: "12px", color: T.sub,
+                  lineHeight: 1.65, marginTop: "32px",
+                  paddingTop: "24px", borderTop: `1px solid ${T.rule}`,
+                }}>
+                  Not affiliated with or endorsed by any insurance carrier or the federal Medicare program.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── §6 DARK CTA ───────────────────────────────────────────────── */}
+        {/* ── §6 FINAL CTA ──────────────────────────────────────────────── */}
         <section
           id="start"
           aria-labelledby="cta-h"
-          style={{ backgroundColor: T.night, padding: "168px 0" }}
+          style={{ backgroundColor: T.night, padding: "160px 0" }}
         >
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
-            <div
-              ref={r4}
-              className="rv"
-              style={{ maxWidth: "660px" }}
-            >
-              <p style={{
-                fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
-                letterSpacing: "0.1em", textTransform: "uppercase",
-                color: T.teal, marginBottom: "24px",
-              }}>
-                Free · No account · No obligation
-              </p>
+            <div ref={rCta} className="rv" style={{ maxWidth: "660px" }}>
+              <p style={{ ...overline, color: T.teal }}>Free · No account · No obligation</p>
               <h2
                 id="cta-h"
                 style={{
@@ -716,7 +743,7 @@ export default function Home() {
                 />
                 <button
                   type="button"
-                  className="btn-p"
+                  className="btn-p btn-t"
                   onClick={handleSearch}
                   style={{
                     fontFamily: F.sans, padding: "16px 24px",
@@ -725,7 +752,7 @@ export default function Home() {
                     borderRadius: "10px", border: "none",
                     cursor: "pointer", flexShrink: 0,
                     display: "flex", alignItems: "center", gap: "7px",
-                    whiteSpace: "nowrap",
+                    whiteSpace: "nowrap", transition: "background-color 0.14s",
                   }}
                 >
                   See Plans
@@ -742,8 +769,8 @@ export default function Home() {
                   Or call{" "}
                   <a
                     href="tel:1-800-555-0100"
-                    className="plink"
-                    style={{ color: "rgba(235,245,248,0.52)", fontWeight: 500, textDecoration: "none" }}
+                    className="plnk"
+                    style={{ color: "rgba(235,245,248,0.5)", fontWeight: 500, textDecoration: "none", transition: "color 0.12s" }}
                   >
                     1-800-555-0100
                   </a>
@@ -757,10 +784,7 @@ export default function Home() {
       </main>
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <footer
-        aria-label="Site footer"
-        style={{ backgroundColor: T.ftr, fontFamily: F.sans, padding: "80px 0 52px" }}
-      >
+      <footer aria-label="Site footer" style={{ backgroundColor: T.ftr, fontFamily: F.sans, padding: "80px 0 52px" }}>
         <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
           <div
             className="footer-g"
@@ -768,18 +792,13 @@ export default function Home() {
           >
             <div>
               <div style={{ marginBottom: "20px" }}>
-                <div style={{ fontFamily: F.serif, fontSize: "20px", fontWeight: 400, color: "#fff", letterSpacing: "-0.01em", lineHeight: 1 }}>
-                  MedicarePlan
-                </div>
-                <div style={{ fontFamily: F.sans, fontSize: "10px", color: "rgba(255,255,255,0.28)", letterSpacing: "0.09em", textTransform: "uppercase", marginTop: "4px" }}>
-                  Finder
-                </div>
+                <div style={{ fontFamily: F.serif, fontSize: "20px", fontWeight: 400, color: "#fff", letterSpacing: "-0.01em", lineHeight: 1 }}>MedicarePlan</div>
+                <div style={{ fontFamily: F.sans, fontSize: "10px", color: "rgba(255,255,255,0.26)", letterSpacing: "0.09em", textTransform: "uppercase", marginTop: "4px" }}>Finder</div>
               </div>
-              <p style={{ fontSize: "13px", lineHeight: 1.75, color: "rgba(255,255,255,0.35)", maxWidth: "26ch" }}>
+              <p style={{ fontSize: "13px", lineHeight: 1.75, color: "rgba(255,255,255,0.33)", maxWidth: "26ch" }}>
                 Helping Americans find better Medicare Advantage plans since 2010. Licensed in all 50 states.
               </p>
             </div>
-
             {[
               { title: "Plans", links: [
                 { label: "Medicare Advantage", href: "/medicare-advantage/hmo-plans" },
@@ -801,13 +820,13 @@ export default function Home() {
               ]},
             ].map(col => (
               <nav key={col.title} aria-label={`${col.title} links`}>
-                <div style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.22)", marginBottom: "18px" }}>
+                <div style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.2)", marginBottom: "18px" }}>
                   {col.title}
                 </div>
                 <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
                   {col.links.map(link => (
                     <li key={link.label}>
-                      <Link href={link.href} className="flink" style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>
+                      <Link href={link.href} className="flnk" style={{ fontSize: "13px", color: "rgba(255,255,255,0.33)", textDecoration: "none", transition: "color 0.14s" }}>
                         {link.label}
                       </Link>
                     </li>
@@ -820,12 +839,11 @@ export default function Home() {
           <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "24px", marginBottom: "20px" }}>
             <a
               href="https://d2xsxph8kpxj0f.cloudfront.net/310519663319810046/5TY7JcF275WMujMHZWWJT8/episode-alert-api-integration-guide_6a93d69a.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+              target="_blank" rel="noopener noreferrer"
               style={{
                 display: "inline-flex", alignItems: "center", gap: "7px",
                 padding: "7px 13px", borderRadius: "5px",
-                fontSize: "12px", color: "rgba(255,255,255,0.28)",
+                fontSize: "12px", color: "rgba(255,255,255,0.26)",
                 backgroundColor: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.07)",
                 textDecoration: "none",
@@ -840,7 +858,7 @@ export default function Home() {
             </a>
           </div>
 
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "20px", fontSize: "12px", color: "rgba(255,255,255,0.18)", lineHeight: 1.72 }}>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "20px", fontSize: "12px", color: "rgba(255,255,255,0.17)", lineHeight: 1.72 }}>
             <p style={{ marginBottom: "4px" }}>
               Not affiliated with or endorsed by the U.S. government or the federal Medicare program. This is a demonstration application. Plan data sourced from CMS public datasets.
             </p>
