@@ -1,15 +1,15 @@
 /**
- * Medicare Advantage Homepage — Premium redesign v2.
+ * Medicare Advantage Homepage — Art direction v3.
  *
  * ZIP validation / workflow / modal / routing: UNCHANGED.
- * Only the visual layer has been replaced.
+ * Only the visual layer has changed.
  *
- * Design principles:
- *   – Editorial hierarchy: type does the work, not decoration
- *   – Restraint over embellishment: white space is the luxury signal
- *   – No equal-weight card grids, no icon rows, no loud gradients
- *   – Senior-legible (≥17px body) while still feeling high-end
- *   – Accessibility: aria roles, skip link, reduced-motion, focus rings
+ * Art direction:
+ *   – White / warm off-white (#FAF9F5) palette, deep slate-teal accent
+ *   – Premium editorial composition, left-aligned hierarchy
+ *   – More whitespace, fewer boxes, fewer borders, subtle depth
+ *   – Inline SVG hero illustration (no stock imagery)
+ *   – Emotional tone: reassuring, expert, clear, regulated, human, premium
  */
 
 import { useState, useEffect, useRef } from "react";
@@ -22,18 +22,17 @@ import Header from "@/components/Header";
 
 // ─── Tokens ──────────────────────────────────────────────────────────────────
 const T = {
-  ink:    "#080F14",   // Display headings — near-black with blue cast
-  deep:   "#152D3A",   // Primary dark — buttons, anchors
-  mid:    "#1E6278",   // Teal — interactive, section accents
-  teal:   "#2A7D96",   // Hover / lighter teal
-  body:   "#3A5060",   // Body copy
-  sub:    "#698898",   // Muted / supporting text
-  rule:   "#DDE7EB",   // Hairline dividers
-  tint:   "#F3F6F7",   // Alternate section bg
-  warm:   "#F8F6F2",   // Warm off-white
-  night:  "#09141A",   // Dark section bg
-  ftr:    "#050D12",   // Footer bg
-  err:    "#C0392B",
+  ink:   "#0B1B24",   // Display headings
+  dark:  "#1C3A48",   // Deep slate-teal — buttons, strong text
+  teal:  "#237A92",   // Primary interactive accent
+  tealL: "#2E96B0",   // Hover
+  body:  "#3E5560",   // Body copy
+  sub:   "#7A9BA6",   // Supporting / muted
+  rule:  "#E2EAED",   // Hairlines — use sparingly
+  warm:  "#FAF9F5",   // Warm off-white sections
+  night: "#0A1820",   // Dark CTA section
+  ftr:   "#060E14",   // Footer
+  err:   "#C0392B",
 } as const;
 
 const F = {
@@ -45,31 +44,110 @@ const F = {
 const PRINCIPLES = [
   {
     num: "01",
-    title: "Every plan, nothing filtered.",
-    body: "We're independent advisors. No carrier pays for placement and no plan is hidden. You see every Medicare Advantage option active in your county — ranked by what matters to you.",
+    title: "Every plan in your county — nothing filtered.",
+    body: "We compare all Medicare Advantage options across every carrier active in your area. No plans are hidden. No carrier pays for preferred placement.",
   },
   {
     num: "02",
-    title: "Your true cost, calculated upfront.",
-    body: "Add your prescriptions and we calculate real annual drug cost for every plan: deductible, tier copays, and coverage gap. Not estimates — the same math CMS uses.",
+    title: "Your true annual cost, calculated before you commit.",
+    body: "Add your prescriptions and we calculate your real annual drug cost for every plan: deductible, tier copays, and coverage gap — before you see any result.",
   },
   {
     num: "03",
-    title: "Your doctors verified before you see results.",
-    body: "We cross-check provider directories so you never choose a plan only to lose your care team. In-network status is confirmed before a single result appears.",
+    title: "Your doctors confirmed in-network first.",
+    body: "We cross-check provider directories so you never choose a plan and lose your care team. In-network status is verified before a single result appears.",
   },
 ] as const;
 
 const STEPS = [
-  { step: "1", label: "Enter your ZIP", note: "Unlocks every plan in your county" },
-  { step: "2", label: "Add doctors & Rx", note: "Optional — personalizes your results" },
-  { step: "3", label: "Compare & decide", note: "At your own pace, no pressure" },
+  { n: "1", label: "Enter your ZIP code",   note: "Instantly unlocks every plan in your county" },
+  { n: "2", label: "Add doctors & Rx",      note: "Optional — personalizes costs and coverage" },
+  { n: "3", label: "Compare, then decide",  note: "At your own pace, no pressure, no calls required" },
 ] as const;
 
-const CARRIERS = [
-  "UnitedHealthcare", "Humana", "Aetna", "Cigna",
-  "WellCare", "Blue Cross", "Devoted Health", "Clover Health",
-] as const;
+// ─── SVG Hero Illustration ────────────────────────────────────────────────────
+// Depicts three plan documents fanned and stacked — the centre card highlighted,
+// representing "your best match surfaced from the full field."
+// Pure geometry: no clip-art, no stock, no icons.
+function PlanIllustration() {
+  return (
+    <svg
+      viewBox="0 0 480 520"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      role="img"
+      style={{ width: "100%", maxWidth: "420px", height: "auto", display: "block" }}
+    >
+      {/* Ambient wash */}
+      <ellipse cx="240" cy="280" rx="200" ry="210" fill="#EBF3F6" fillOpacity="0.55" />
+
+      {/* Card 3 — rearmost, rotated right */}
+      <g transform="rotate(10 240 300)">
+        <rect x="115" y="110" width="210" height="280" rx="14" fill="#D6E8EE" />
+      </g>
+
+      {/* Card 2 — middle, rotated left */}
+      <g transform="rotate(-7 240 300)">
+        <rect x="120" y="115" width="210" height="280" rx="14" fill="#C8DDE6" />
+      </g>
+
+      {/* Card 1 — front, upright, white with shadow suggestion */}
+      <rect x="110" y="95" width="228" height="296" rx="16"
+        fill="white"
+        style={{ filter: "drop-shadow(0 8px 32px rgba(11,27,36,0.09)) drop-shadow(0 2px 6px rgba(11,27,36,0.05))" }}
+      />
+
+      {/* Card header accent bar */}
+      <rect x="110" y="95" width="228" height="5" rx="2.5" fill="#237A92" fillOpacity="0.7" />
+
+      {/* Carrier row label */}
+      <rect x="134" y="122" width="52" height="6" rx="3" fill="#237A92" fillOpacity="0.18" />
+      <rect x="194" y="122" width="80" height="6" rx="3" fill="#0B1B24" fillOpacity="0.09" />
+
+      {/* Divider */}
+      <line x1="134" y1="145" x2="314" y2="145" stroke={T.rule} strokeWidth="1" />
+
+      {/* Plan row A */}
+      <rect x="134" y="162" width="32" height="32" rx="8" fill="#EAF3F6" />
+      <rect x="178" y="168" width="78" height="5" rx="2.5" fill="#0B1B24" fillOpacity="0.11" />
+      <rect x="178" y="179" width="52" height="4" rx="2" fill="#0B1B24" fillOpacity="0.07" />
+      <rect x="284" y="165" width="30" height="10" rx="3" fill="#0B1B24" fillOpacity="0.08" />
+
+      {/* Plan row B — highlighted as "recommended" */}
+      <rect x="124" y="207" width="248" height="50" rx="10" fill="#237A92" fillOpacity="0.08" />
+      <rect x="138" y="217" width="32" height="32" rx="8" fill="#237A92" fillOpacity="0.22" />
+      <rect x="182" y="223" width="78" height="5" rx="2.5" fill="#0B1B24" fillOpacity="0.22" />
+      <rect x="182" y="234" width="52" height="4" rx="2" fill="#237A92" fillOpacity="0.4" />
+      <rect x="288" y="220" width="30" height="10" rx="3" fill="#237A92" fillOpacity="0.55" />
+
+      {/* Plan row C */}
+      <rect x="134" y="272" width="32" height="32" rx="8" fill="#EAF3F6" />
+      <rect x="178" y="278" width="78" height="5" rx="2.5" fill="#0B1B24" fillOpacity="0.11" />
+      <rect x="178" y="289" width="52" height="4" rx="2" fill="#0B1B24" fillOpacity="0.07" />
+      <rect x="284" y="275" width="30" height="10" rx="3" fill="#0B1B24" fillOpacity="0.08" />
+
+      {/* Footer caption strip */}
+      <rect x="110" y="366" width="228" height="25" rx="0" fill="#F3F7F9" />
+      <rect x="110" y="366" width="228" height="25" rx="0"
+        style={{ clipPath: "inset(0 0 0 0 round 0 0 16px 16px)" }}
+        fill="#F3F7F9"
+      />
+      <rect x="134" y="375" width="96" height="4" rx="2" fill="#0B1B24" fillOpacity="0.1" />
+
+      {/* Check badge — "best match" indicator */}
+      <circle cx="340" cy="120" r="26" fill="#237A92" />
+      <path d="M330 120 L337.5 127.5 L352 113" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+
+      {/* CMS data source badge — lower right */}
+      <rect x="258" y="420" width="88" height="26" rx="6" fill="white"
+        style={{ filter: "drop-shadow(0 2px 8px rgba(11,27,36,0.1))" }}
+      />
+      <rect x="268" y="430" width="44" height="4" rx="2" fill="#237A92" fillOpacity="0.5" />
+      <rect x="268" y="438" width="30" height="3" rx="1.5" fill="#0B1B24" fillOpacity="0.15" />
+    </svg>
+  );
+}
 
 // ─── Scroll-reveal ────────────────────────────────────────────────────────────
 function useReveal() {
@@ -77,11 +155,12 @@ function useReveal() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) { el.dataset.visible = "true"; return; }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.dataset.v = "1"; return;
+    }
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { el.dataset.visible = "true"; obs.unobserve(el); } },
-      { threshold: 0.07, rootMargin: "0px 0px -48px 0px" }
+      ([e]) => { if (e.isIntersecting) { el.dataset.v = "1"; obs.unobserve(el); } },
+      { threshold: 0.07, rootMargin: "0px 0px -40px 0px" }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -99,12 +178,12 @@ export default function Home() {
   const [pendingZip, setPendingZip] = useState("");
   const [, navigate] = useLocation();
 
-  const principlesRef = useReveal();
-  const stepsRef      = useReveal();
-  const trustRef      = useReveal();
-  const ctaRef        = useReveal();
+  const r1 = useReveal();
+  const r2 = useReveal();
+  const r3 = useReveal();
+  const r4 = useReveal();
 
-  // ── ZIP handlers — identical to previous version ──────────────────────────
+  // ── ZIP handlers ─────────────────────────────────────────────────────────
   const handleSearch = async () => {
     const trimmed = zip.trim();
     const result = await zipValidation.validate(trimmed);
@@ -120,29 +199,25 @@ export default function Home() {
   const handleKeyDown = (e: React.KeyboardEvent) => { if (e.key === "Enter") handleSearch(); };
   const handleMBISkip = () => { setShowMBIModal(false); navigate(`/plans?zip=${pendingZip}`); };
   const handleWorkflowComplete = (data: {
-    hasMA: boolean;
-    verifyResult: MBIVerifyResult | null;
-    doctors: any[];
-    drugs: any[];
+    hasMA: boolean; verifyResult: MBIVerifyResult | null; doctors: any[]; drugs: any[];
   }) => {
     setShowMBIModal(false);
     try {
       if (data.verifyResult) sessionStorage.setItem("mbi_eligibility", JSON.stringify(data.verifyResult));
       sessionStorage.setItem("workflow_data", JSON.stringify(data));
     } catch { /* sessionStorage unavailable */ }
-    const params = new URLSearchParams({ zip: pendingZip });
-    if (data.verifyResult) params.set("verified", "1");
-    if (data.doctors.length > 0 || data.drugs.length > 0) params.set("personalized", "1");
-    navigate(`/plans?${params.toString()}`);
+    const p = new URLSearchParams({ zip: pendingZip });
+    if (data.verifyResult) p.set("verified", "1");
+    if (data.doctors.length > 0 || data.drugs.length > 0) p.set("personalized", "1");
+    navigate(`/plans?${p.toString()}`);
   };
 
   return (
     <div id="hm" style={{ minHeight: "100vh", backgroundColor: "#fff", fontFamily: F.sans, color: T.body }}>
 
-      {/* Skip link */}
       <a href="#main" className="hm-skip" style={{
         position: "absolute", top: "-100%", left: "16px", zIndex: 9999,
-        backgroundColor: T.deep, color: "#fff", fontFamily: F.sans,
+        backgroundColor: T.dark, color: "#fff", fontFamily: F.sans,
         fontSize: "13px", fontWeight: 600, padding: "10px 20px",
         borderRadius: "0 0 8px 8px", textDecoration: "none",
       }}>
@@ -150,57 +225,41 @@ export default function Home() {
       </a>
 
       <style>{`
-        /* Skip link */
         #hm .hm-skip:focus { top: 0 !important; }
 
-        /* Reveal animation */
-        #hm .rv {
-          opacity: 0;
-          transform: translateY(22px);
-          transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1);
-        }
-        #hm .rv[data-visible="true"] { opacity: 1; transform: none; }
+        /* Reveal */
+        #hm .rv { opacity: 0; transform: translateY(18px);
+          transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+        #hm .rv[data-v="1"] { opacity: 1; transform: none; }
         @media (prefers-reduced-motion: reduce) {
           #hm .rv { opacity: 1 !important; transform: none !important; transition: none !important; }
         }
 
-        /* ZIP input focus */
-        #hm .zip-field:focus {
-          border-color: ${T.mid} !important;
-          box-shadow: 0 0 0 3px rgba(30,98,120,0.13) !important;
-          outline: none;
-        }
-        #hm .zip-field-dark:focus {
-          border-color: rgba(255,255,255,0.5) !important;
-          box-shadow: 0 0 0 3px rgba(255,255,255,0.08) !important;
-          outline: none;
-        }
+        /* Focus rings */
+        #hm .zip-in:focus   { border-color: ${T.teal} !important; box-shadow: 0 0 0 3px rgba(35,122,146,0.14) !important; outline: none; }
+        #hm .zip-dk:focus   { border-color: rgba(255,255,255,0.45) !important; box-shadow: 0 0 0 3px rgba(255,255,255,0.07) !important; outline: none; }
 
         /* Buttons */
-        #hm .btn-primary { transition: background-color 0.14s, transform 0.1s; }
-        #hm .btn-primary:hover { background-color: #0F2230 !important; }
-        #hm .btn-primary:active { transform: scale(0.98); }
-        #hm .btn-ghost { transition: color 0.12s, border-color 0.12s; }
-        #hm .btn-ghost:hover { color: ${T.teal} !important; border-color: ${T.teal} !important; }
-        #hm .text-link { transition: color 0.12s; }
-        #hm .text-link:hover { color: ${T.teal} !important; }
-        #hm .footer-link { transition: color 0.14s; }
-        #hm .footer-link:hover { color: rgba(255,255,255,0.85) !important; }
-        #hm .phone-link { transition: color 0.12s; }
-        #hm .phone-link:hover { color: rgba(243,246,247,0.85) !important; }
+        #hm .btn-p  { transition: background-color 0.14s; }
+        #hm .btn-p:hover  { background-color: #122736 !important; }
+        #hm .link-a { transition: color 0.12s; }
+        #hm .link-a:hover { color: ${T.tealL} !important; }
+        #hm .flink  { transition: color 0.14s; }
+        #hm .flink:hover  { color: rgba(255,255,255,0.75) !important; }
+        #hm .plink  { transition: color 0.12s; }
+        #hm .plink:hover  { color: rgba(235,245,248,0.85) !important; }
 
         /* Responsive */
         @media (max-width: 1023px) {
-          #hm .hero-grid  { grid-template-columns: 1fr !important; }
-          #hm .hero-right { display: none !important; }
-          #hm .steps-row  { grid-template-columns: 1fr !important; }
-          #hm .principles-list > * + * { border-top: 1px solid ${T.rule}; border-left: none !important; }
-          #hm .footer-grid { grid-template-columns: 1fr 1fr !important; }
+          #hm .hero-g    { grid-template-columns: 1fr !important; }
+          #hm .illus     { display: none !important; }
+          #hm .princ-g   { grid-template-columns: 1fr !important; gap: 48px !important; }
+          #hm .steps-g   { grid-template-columns: 1fr !important; gap: 40px !important; }
+          #hm .trust-g   { grid-template-columns: 1fr !important; gap: 64px !important; }
+          #hm .footer-g  { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 639px) {
-          #hm .footer-grid { grid-template-columns: 1fr !important; }
-          #hm .cred-strip  { flex-direction: column !important; gap: 10px !important; }
-          #hm .cred-divider { display: none !important; }
+          #hm .footer-g  { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
@@ -212,53 +271,54 @@ export default function Home() {
 
       <main id="main">
 
-        {/* ── §1 HERO ──────────────────────────────────────────────────────── */}
+        {/* ── §1 HERO ───────────────────────────────────────────────────── */}
         <section
           aria-label="Find your Medicare Advantage plan"
           style={{
             minHeight: "calc(100vh - 72px)",
             display: "flex", alignItems: "center",
             backgroundColor: "#fff",
-            borderBottom: `1px solid ${T.rule}`,
           }}
         >
-          <div style={{ width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "0 40px" }}>
-            <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: "100px", alignItems: "center" }}>
-
-              {/* Left — headline + CTA */}
-              <div style={{ maxWidth: "580px" }}>
+          <div style={{ width: "100%", maxWidth: "1160px", margin: "0 auto", padding: "80px 40px" }}>
+            <div
+              className="hero-g"
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "80px", alignItems: "center" }}
+            >
+              {/* Left */}
+              <div>
                 <p style={{
                   fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
                   letterSpacing: "0.1em", textTransform: "uppercase",
-                  color: T.mid, marginBottom: "36px",
+                  color: T.teal, marginBottom: "40px",
                 }}>
-                  Independent · Licensed in all 50 states · No cost to you
+                  Independent advisors · Licensed in all 50 states
                 </p>
 
                 <h1 style={{
                   fontFamily: F.serif,
-                  fontSize: "clamp(52px, 7.5vw, 104px)",
-                  fontWeight: 400, lineHeight: 1.02,
+                  fontSize: "clamp(48px, 6.5vw, 88px)",
+                  fontWeight: 400, lineHeight: 1.04,
                   letterSpacing: "-0.025em",
                   color: T.ink,
                   marginBottom: "28px",
                 }}>
                   Medicare<br />
                   Advantage,<br />
-                  <em style={{ color: T.mid, fontStyle: "italic" }}>made clear.</em>
+                  <em style={{ color: T.teal, fontStyle: "italic" }}>on your terms.</em>
                 </h1>
 
                 <p style={{
-                  fontFamily: F.sans, fontSize: "18px", fontWeight: 400,
-                  lineHeight: 1.75, color: T.body,
-                  maxWidth: "42ch", marginBottom: "52px",
+                  fontFamily: F.sans, fontSize: "18px",
+                  lineHeight: 1.78, color: T.body,
+                  maxWidth: "40ch", marginBottom: "56px",
                 }}>
-                  Compare every plan in your county — matched to your doctors, prescriptions, and budget. Free. No account needed.
+                  We compare every plan in your county — matched to your doctors, your prescriptions, and your budget. Free. No account. No pressure.
                 </p>
 
-                {/* ZIP input */}
-                <div style={{ maxWidth: "460px" }}>
-                  <div style={{ display: "flex", gap: "8px" }}>
+                {/* ZIP CTA */}
+                <div style={{ maxWidth: "440px" }}>
+                  <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
                     <input
                       id="zip-hero"
                       ref={zipInputRef}
@@ -267,19 +327,19 @@ export default function Home() {
                       maxLength={5}
                       placeholder="Enter your ZIP code"
                       value={zip}
-                      onChange={(e) => { setZip(e.target.value.replace(/\D/g, "")); setInputError(""); }}
+                      onChange={e => { setZip(e.target.value.replace(/\D/g, "")); setInputError(""); }}
                       onKeyDown={handleKeyDown}
                       aria-label="ZIP code"
-                      aria-describedby="zip-err-hero"
+                      aria-describedby="zip-err"
                       aria-invalid={!!inputError}
-                      className="zip-field"
+                      className="zip-in"
                       style={{
                         flex: 1, fontFamily: F.sans,
                         padding: "17px 22px", fontSize: "17px", fontWeight: 500,
                         color: T.ink, backgroundColor: "#fff",
                         border: `1.5px solid ${inputError ? T.err : T.rule}`,
-                        borderRadius: "8px", outline: "none",
-                        boxShadow: "0 1px 4px rgba(8,15,20,0.06)",
+                        borderRadius: "10px", outline: "none",
+                        boxShadow: "0 1px 4px rgba(11,27,36,0.06)",
                         transition: "border-color 0.15s, box-shadow 0.15s",
                         boxSizing: "border-box",
                       }}
@@ -287,30 +347,27 @@ export default function Home() {
                     <button
                       type="button"
                       onClick={handleSearch}
-                      className="btn-primary"
+                      className="btn-p"
                       style={{
-                        fontFamily: F.sans, padding: "17px 28px",
-                        backgroundColor: T.deep, color: "#fff",
+                        fontFamily: F.sans, padding: "17px 26px",
+                        backgroundColor: T.dark, color: "#fff",
                         fontWeight: 600, fontSize: "15px",
-                        borderRadius: "8px", border: "none",
+                        borderRadius: "10px", border: "none",
                         cursor: "pointer", flexShrink: 0,
                         display: "flex", alignItems: "center", gap: "8px",
                         letterSpacing: "0.01em", whiteSpace: "nowrap",
                       }}
                     >
                       See my plans
-                      <ChevronRight size={15} aria-hidden="true" />
+                      <ChevronRight size={14} aria-hidden="true" />
                     </button>
                   </div>
 
                   <p
-                    id="zip-err-hero"
-                    role="alert"
-                    aria-live="assertive"
-                    aria-atomic="true"
+                    id="zip-err"
+                    role="alert" aria-live="assertive" aria-atomic="true"
                     style={{
-                      fontFamily: F.sans, fontSize: "13px",
-                      color: T.err, marginTop: "8px",
+                      fontFamily: F.sans, fontSize: "13px", color: T.err,
                       minHeight: "18px", display: "flex", alignItems: "center", gap: "5px",
                     }}
                   >
@@ -321,97 +378,49 @@ export default function Home() {
                     <CountySelector
                       zip={zip}
                       counties={zipValidation.result.counties}
-                      onSelect={(county) => {
+                      onSelect={county => {
                         const r = zipValidation.selectCounty(county);
                         if (r.status === "valid") { setInputError(""); setPendingZip(zip.trim()); setShowMBIModal(true); }
                       }}
                     />
                   )}
 
-                  <p style={{ fontFamily: F.sans, fontSize: "13px", color: T.sub, marginTop: "18px" }}>
-                    Always free · No account required · No sales calls unless you want them
+                  <p style={{ fontFamily: F.sans, fontSize: "13px", color: T.sub, marginTop: "16px" }}>
+                    Always free · No account required · No sales calls unless you ask
                   </p>
                 </div>
               </div>
 
-              {/* Right — editorial stat block */}
+              {/* Right — illustration */}
               <div
-                className="hero-right"
-                aria-hidden="true"
-                style={{ paddingLeft: "40px", borderLeft: `1px solid ${T.rule}` }}
+                className="illus"
+                style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
               >
-                {[
-                  { figure: "24+",    unit: "plans",    note: "available in most counties" },
-                  { figure: "$0",     unit: "/month",   note: "plans in most counties" },
-                  { figure: "500k+",  unit: "seniors",  note: "helped since 2010" },
-                ].map((s, i) => (
-                  <div
-                    key={s.figure}
-                    style={{
-                      paddingTop: i === 0 ? "0" : "32px",
-                      paddingBottom: i < 2 ? "32px" : "0",
-                      borderBottom: i < 2 ? `1px solid ${T.rule}` : "none",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "baseline", gap: "6px", marginBottom: "4px" }}>
-                      <span style={{
-                        fontFamily: F.serif,
-                        fontSize: "56px", fontWeight: 400, lineHeight: 1,
-                        letterSpacing: "-0.03em", color: T.ink,
-                      }}>
-                        {s.figure}
-                      </span>
-                      <span style={{
-                        fontFamily: F.sans, fontSize: "14px",
-                        fontWeight: 500, color: T.mid,
-                        letterSpacing: "-0.01em",
-                      }}>
-                        {s.unit}
-                      </span>
-                    </div>
-                    <p style={{ fontFamily: F.sans, fontSize: "13px", color: T.sub, margin: 0 }}>{s.note}</p>
-                  </div>
-                ))}
+                <PlanIllustration />
               </div>
-
             </div>
           </div>
         </section>
 
-        {/* ── §2 CREDIBILITY STRIP ─────────────────────────────────────────── */}
+        {/* ── §2 TRUST BAR ──────────────────────────────────────────────── */}
         <div
           aria-label="Service credentials"
-          style={{
-            backgroundColor: T.warm,
-            borderBottom: `1px solid ${T.rule}`,
-          }}
+          style={{ backgroundColor: T.warm, borderTop: `1px solid ${T.rule}` }}
         >
-          <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 40px" }}>
-            {/* Trust pillars */}
-            <div
-              className="cred-strip"
-              style={{
-                display: "flex", alignItems: "center",
-                padding: "20px 0", gap: "0",
-              }}
-            >
+          <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "22px 40px" }}>
+            <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0", rowGap: "10px" }}>
               {[
                 "Licensed agents in all 50 states",
-                "We're paid by carriers — never by you",
-                "All plan data sourced from CMS.gov",
-                "Doctors & prescriptions verified before results",
+                "Paid by carriers — never by you",
+                "Plan data from CMS.gov",
+                "Doctors & Rx verified before results",
               ].map((item, i) => (
                 <div key={item} style={{ display: "flex", alignItems: "center" }}>
                   {i > 0 && (
-                    <span
-                      className="cred-divider"
-                      aria-hidden="true"
-                      style={{
-                        width: "1px", height: "14px",
-                        backgroundColor: T.rule,
-                        margin: "0 24px", flexShrink: 0,
-                      }}
-                    />
+                    <span aria-hidden="true" style={{
+                      display: "inline-block", width: "1px", height: "12px",
+                      backgroundColor: T.rule, margin: "0 22px", flexShrink: 0,
+                    }} />
                   )}
                   <span style={{ fontFamily: F.sans, fontSize: "13px", color: T.body, whiteSpace: "nowrap" }}>
                     {item}
@@ -419,85 +428,63 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            {/* Carrier row */}
-            <div
-              style={{
-                display: "flex", alignItems: "center",
-                padding: "14px 0", gap: "0",
-                borderTop: `1px solid ${T.rule}`,
-              }}
-            >
-              <span style={{ fontFamily: F.sans, fontSize: "11px", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", color: T.sub, marginRight: "20px", whiteSpace: "nowrap" }}>
-                Plans from
-              </span>
-              {CARRIERS.map((name, i) => (
-                <span key={name} style={{ display: "flex", alignItems: "center" }}>
-                  {i > 0 && (
-                    <span aria-hidden="true" style={{ color: T.rule, margin: "0 14px", fontSize: "12px" }}>·</span>
-                  )}
-                  <span style={{ fontFamily: F.sans, fontSize: "12px", fontWeight: 500, color: T.sub }}>{name}</span>
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 
-        {/* ── §3 THREE PRINCIPLES ──────────────────────────────────────────── */}
+        {/* ── §3 THREE PRINCIPLES ───────────────────────────────────────── */}
         <section
           id="principles"
-          aria-labelledby="principles-heading"
-          style={{ backgroundColor: "#fff", padding: "160px 0" }}
+          aria-labelledby="princ-h"
+          style={{ backgroundColor: "#fff", padding: "168px 0 160px" }}
         >
-          <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 40px" }}>
-            <div style={{ marginBottom: "72px" }}>
+          <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
+
+            <div style={{ marginBottom: "80px" }}>
               <p style={{
                 fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
                 letterSpacing: "0.1em", textTransform: "uppercase",
-                color: T.mid, marginBottom: "18px",
+                color: T.teal, marginBottom: "20px",
               }}>
-                Why people use us
+                Our approach
               </p>
               <h2
-                id="principles-heading"
+                id="princ-h"
                 style={{
                   fontFamily: F.serif,
-                  fontSize: "clamp(30px, 4vw, 52px)",
+                  fontSize: "clamp(28px, 3.8vw, 48px)",
                   fontWeight: 400, lineHeight: 1.1,
                   letterSpacing: "-0.02em",
-                  color: T.ink, maxWidth: "680px",
+                  color: T.ink, maxWidth: "660px",
                 }}
               >
-                Built for an important decision —{" "}
-                <em style={{ fontStyle: "italic", color: T.mid }}>not for people in a hurry.</em>
+                Built for a consequential decision —
+                <em style={{ fontStyle: "italic", color: T.teal }}>{" "}not for speed.</em>
               </h2>
             </div>
 
             <div
-              ref={principlesRef}
-              className="rv principles-list"
-              style={{ display: "flex", alignItems: "stretch" }}
+              ref={r1}
+              className="rv princ-g"
+              style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "72px" }}
             >
-              {PRINCIPLES.map((p, i) => (
-                <div
-                  key={p.num}
-                  style={{
-                    flex: 1,
-                    paddingRight: i < 2 ? "56px" : "0",
-                    paddingLeft: i > 0 ? "56px" : "0",
-                    borderLeft: i > 0 ? `1px solid ${T.rule}` : "none",
-                  }}
-                >
+              {PRINCIPLES.map(p => (
+                <div key={p.num}>
                   <div style={{
-                    fontFamily: F.serif, fontSize: "13px",
-                    color: T.rule, letterSpacing: "0.02em",
-                    marginBottom: "24px",
+                    fontFamily: F.serif, fontSize: "11px",
+                    color: T.sub, letterSpacing: "0.06em",
+                    marginBottom: "28px",
                   }}>
                     {p.num}
                   </div>
+                  <div style={{
+                    width: "28px", height: "2px",
+                    backgroundColor: T.teal, marginBottom: "24px",
+                    borderRadius: "1px",
+                  }} />
                   <h3 style={{
                     fontFamily: F.serif,
-                    fontSize: "clamp(20px, 2vw, 24px)",
-                    fontWeight: 400, lineHeight: 1.22,
+                    fontSize: "clamp(20px, 1.8vw, 23px)",
+                    fontWeight: 400, lineHeight: 1.25,
                     letterSpacing: "-0.015em",
                     color: T.ink, marginBottom: "16px",
                   }}>
@@ -505,7 +492,7 @@ export default function Home() {
                   </h3>
                   <p style={{
                     fontFamily: F.sans, fontSize: "15px",
-                    lineHeight: 1.78, color: T.body,
+                    lineHeight: 1.8, color: T.body,
                   }}>
                     {p.body}
                   </p>
@@ -515,124 +502,118 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── §4 HOW IT WORKS ──────────────────────────────────────────────── */}
+        {/* ── §4 HOW IT WORKS ───────────────────────────────────────────── */}
         <section
           id="how"
-          aria-labelledby="how-heading"
-          style={{
-            backgroundColor: T.tint,
-            padding: "120px 0",
-            borderTop: `1px solid ${T.rule}`,
-            borderBottom: `1px solid ${T.rule}`,
-          }}
+          aria-labelledby="how-h"
+          style={{ backgroundColor: T.warm, padding: "128px 0" }}
         >
-          <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 40px" }}>
-            <p style={{
-              fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
-              letterSpacing: "0.1em", textTransform: "uppercase",
-              color: T.mid, marginBottom: "18px",
+          <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
+            <div style={{
+              display: "grid", gridTemplateColumns: "1fr 2fr",
+              gap: "80px", alignItems: "start",
             }}>
-              How it works
-            </p>
-            <h2
-              id="how-heading"
-              style={{
-                fontFamily: F.serif,
-                fontSize: "clamp(28px, 3.5vw, 44px)",
-                fontWeight: 400, lineHeight: 1.15,
-                letterSpacing: "-0.015em",
-                color: T.ink, marginBottom: "64px",
-                maxWidth: "480px",
-              }}
-            >
-              Three steps. No account. No pressure.
-            </h2>
-
-            <div
-              ref={stepsRef}
-              className="rv steps-row"
-              style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0" }}
-            >
-              {STEPS.map((s, i) => (
-                <div
-                  key={s.step}
-                  style={{
-                    padding: i > 0 ? "0 0 0 48px" : "0 48px 0 0",
-                    borderLeft: i > 0 ? `1px solid ${T.rule}` : "none",
-                  }}
-                >
-                  <div style={{
-                    fontFamily: F.serif,
-                    fontSize: "48px", fontWeight: 400,
-                    lineHeight: 1, letterSpacing: "-0.02em",
-                    color: T.rule, marginBottom: "20px",
-                  }}>
-                    {s.step}
-                  </div>
-                  <div style={{
-                    fontFamily: F.sans, fontSize: "17px", fontWeight: 600,
-                    color: T.ink, marginBottom: "8px",
-                    letterSpacing: "-0.01em",
-                  }}>
-                    {s.label}
-                  </div>
-                  <div style={{ fontFamily: F.sans, fontSize: "14px", color: T.sub, lineHeight: 1.6 }}>
-                    {s.note}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── §5 TRUST — THE BIG STATEMENT ────────────────────────────────── */}
-        <section
-          id="trust"
-          aria-labelledby="trust-heading"
-          style={{ backgroundColor: "#fff", padding: "160px 0" }}
-        >
-          <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 40px" }}>
-            <div
-              ref={trustRef}
-              className="rv"
-              style={{
-                display: "grid", gridTemplateColumns: "5fr 7fr",
-                gap: "100px", alignItems: "center",
-              }}
-            >
-              {/* Left — prose */}
               <div>
                 <p style={{
                   fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
                   letterSpacing: "0.1em", textTransform: "uppercase",
-                  color: T.mid, marginBottom: "24px",
+                  color: T.teal, marginBottom: "20px",
                 }}>
-                  Our commitment
+                  How it works
+                </p>
+                <h2
+                  id="how-h"
+                  style={{
+                    fontFamily: F.serif,
+                    fontSize: "clamp(26px, 3vw, 38px)",
+                    fontWeight: 400, lineHeight: 1.18,
+                    letterSpacing: "-0.015em",
+                    color: T.ink,
+                  }}
+                >
+                  Three steps.<br />No account.<br />No pressure.
+                </h2>
+              </div>
+              <div ref={r2} className="rv steps-g" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0" }}>
+                {STEPS.map((s, i) => (
+                  <div
+                    key={s.n}
+                    style={{
+                      paddingLeft: i > 0 ? "40px" : "0",
+                      paddingRight: i < 2 ? "40px" : "0",
+                      borderLeft: i > 0 ? `1px solid ${T.rule}` : "none",
+                    }}
+                  >
+                    <div style={{
+                      fontFamily: F.serif,
+                      fontSize: "52px", fontWeight: 400,
+                      lineHeight: 1, letterSpacing: "-0.02em",
+                      color: T.rule, marginBottom: "20px",
+                    }}>
+                      {s.n}
+                    </div>
+                    <div style={{
+                      fontFamily: F.sans, fontSize: "16px", fontWeight: 600,
+                      color: T.ink, marginBottom: "8px", letterSpacing: "-0.01em",
+                    }}>
+                      {s.label}
+                    </div>
+                    <div style={{ fontFamily: F.sans, fontSize: "14px", color: T.sub, lineHeight: 1.65 }}>
+                      {s.note}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── §5 INDEPENDENCE / TRUST ───────────────────────────────────── */}
+        <section
+          id="trust"
+          aria-labelledby="trust-h"
+          style={{ backgroundColor: "#fff", padding: "168px 0" }}
+        >
+          <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
+            <div
+              ref={r3}
+              className="rv trust-g"
+              style={{ display: "grid", gridTemplateColumns: "5fr 7fr", gap: "112px", alignItems: "center" }}
+            >
+              <div>
+                <p style={{
+                  fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
+                  letterSpacing: "0.1em", textTransform: "uppercase",
+                  color: T.teal, marginBottom: "24px",
+                }}>
+                  Independence
                 </p>
                 <p style={{
                   fontFamily: F.sans, fontSize: "18px",
-                  lineHeight: 1.78, color: T.body, marginBottom: "36px",
+                  lineHeight: 1.8, color: T.body, marginBottom: "40px",
                 }}>
-                  We are independent advisors. No carrier pays for referrals, and no plan is hidden from your results. Every comparison is built on plan data published directly by CMS.gov — the same source Medicare itself uses.
+                  No carrier pays for referrals. No plan is hidden from your results. Every comparison is built on data published directly by CMS.gov — the same source Medicare itself uses.
                 </p>
-                <div style={{ borderTop: `1px solid ${T.rule}`, paddingTop: "28px" }}>
-                  <p style={{ fontFamily: F.sans, fontSize: "14px", color: T.sub, lineHeight: 1.7, marginBottom: "16px" }}>
-                    Comparing 24+ plans per county · every active carrier · no preferred placement
-                  </p>
-                  <p style={{ fontFamily: F.sans, fontSize: "12px", color: T.sub, lineHeight: 1.65 }}>
-                    All plan data from CMS.gov public records, updated annually. Not affiliated with or endorsed by any insurance carrier.
-                  </p>
-                </div>
+                <p style={{
+                  fontFamily: F.sans, fontSize: "14px",
+                  color: T.sub, lineHeight: 1.72, marginBottom: "28px",
+                }}>
+                  24+ plans per county · every active carrier · no preferred placement
+                </p>
+                <p style={{
+                  fontFamily: F.sans, fontSize: "12px",
+                  color: T.sub, lineHeight: 1.65,
+                  paddingTop: "24px", borderTop: `1px solid ${T.rule}`,
+                }}>
+                  All plan data from CMS.gov public records, updated annually. Not affiliated with or endorsed by any insurance carrier.
+                </p>
               </div>
 
-              {/* Right — display stat */}
-              <div
-                aria-label="Since 2010, we've helped more than 500,000 seniors find better Medicare coverage."
-                style={{ borderLeft: `1px solid ${T.rule}`, paddingLeft: "72px" }}
-              >
+              <div aria-label="Since 2010, we've helped more than 500,000 seniors find better Medicare coverage.">
                 <p style={{
-                  fontFamily: F.serif, fontSize: "clamp(16px, 2vw, 22px)",
-                  color: T.sub, lineHeight: 1.3, marginBottom: "12px",
+                  fontFamily: F.serif,
+                  fontSize: "clamp(17px, 2vw, 24px)",
+                  color: T.sub, lineHeight: 1.25, marginBottom: "10px",
                 }}>
                   Since 2010, we've helped more than
                 </p>
@@ -640,28 +621,29 @@ export default function Home() {
                   aria-hidden="true"
                   style={{
                     fontFamily: F.serif,
-                    fontSize: "clamp(56px, 8vw, 104px)",
-                    fontWeight: 400, lineHeight: 0.88,
-                    letterSpacing: "-0.035em",
-                    color: T.ink, margin: "0 0 12px",
+                    fontSize: "clamp(64px, 9.5vw, 116px)",
+                    fontWeight: 400, lineHeight: 0.86,
+                    letterSpacing: "-0.04em",
+                    color: T.ink, margin: "0 0 10px",
                   }}
                 >
                   500,000
                 </p>
                 <p style={{
-                  fontFamily: F.serif, fontSize: "clamp(16px, 2vw, 22px)",
-                  color: T.sub, lineHeight: 1.3, marginBottom: "32px",
+                  fontFamily: F.serif,
+                  fontSize: "clamp(17px, 2vw, 24px)",
+                  color: T.sub, lineHeight: 1.25, marginBottom: "40px",
                 }}>
-                  seniors find better Medicare coverage.
+                  seniors find better coverage.
                 </p>
                 <button
                   type="button"
-                  className="btn-primary"
+                  className="btn-p"
                   onClick={() => { zipInputRef.current?.focus(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                   style={{
                     fontFamily: F.sans, fontSize: "14px", fontWeight: 600,
-                    color: "#fff", backgroundColor: T.deep,
-                    padding: "14px 24px", borderRadius: "7px", border: "none",
+                    color: "#fff", backgroundColor: T.dark,
+                    padding: "14px 24px", borderRadius: "8px", border: "none",
                     cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px",
                     letterSpacing: "0.01em",
                   }}
@@ -674,73 +656,73 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── §6 DARK CTA ──────────────────────────────────────────────────── */}
+        {/* ── §6 DARK CTA ───────────────────────────────────────────────── */}
         <section
           id="start"
-          aria-labelledby="cta-heading"
-          style={{ backgroundColor: T.night, padding: "160px 0" }}
+          aria-labelledby="cta-h"
+          style={{ backgroundColor: T.night, padding: "168px 0" }}
         >
-          <div
-            ref={ctaRef}
-            className="rv"
-            style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 40px" }}
-          >
-            <div style={{ maxWidth: "640px" }}>
+          <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
+            <div
+              ref={r4}
+              className="rv"
+              style={{ maxWidth: "660px" }}
+            >
               <p style={{
                 fontFamily: F.sans, fontSize: "12px", fontWeight: 600,
                 letterSpacing: "0.1em", textTransform: "uppercase",
-                color: T.mid, marginBottom: "24px",
+                color: T.teal, marginBottom: "24px",
               }}>
-                Free comparison service
+                Free · No account · No obligation
               </p>
               <h2
-                id="cta-heading"
+                id="cta-h"
                 style={{
                   fontFamily: F.serif,
-                  fontSize: "clamp(32px, 5vw, 60px)",
+                  fontSize: "clamp(30px, 4.8vw, 60px)",
                   fontWeight: 400, lineHeight: 1.1,
                   letterSpacing: "-0.02em",
                   color: "#fff", marginBottom: "20px",
                 }}
               >
-                The plan you choose today determines who can treat you next year.
+                The plan you choose today shapes who can care for you next year.
               </h2>
               <p style={{
                 fontFamily: F.sans, fontSize: "17px",
-                color: "rgba(243,246,247,0.55)",
-                lineHeight: 1.75, marginBottom: "48px", maxWidth: "44ch",
+                color: "rgba(235,245,248,0.5)",
+                lineHeight: 1.8, marginBottom: "52px", maxWidth: "46ch",
               }}>
-                Start with your ZIP code. We'll show you every plan available in your county — with your doctors checked and your prescriptions priced.
+                Start with your ZIP code. We surface every plan available in your county — with your doctors confirmed and your prescriptions costed.
               </p>
-              <div style={{ display: "flex", gap: "8px", maxWidth: "420px", marginBottom: "20px" }}>
+              <div style={{ display: "flex", gap: "8px", maxWidth: "420px", marginBottom: "22px" }}>
                 <input
                   type="text"
                   inputMode="numeric"
                   maxLength={5}
                   placeholder="Enter ZIP code"
                   value={zip}
-                  onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))}
+                  onChange={e => setZip(e.target.value.replace(/\D/g, ""))}
                   onKeyDown={handleKeyDown}
                   aria-label="ZIP code for plan comparison"
-                  className="zip-field-dark"
+                  className="zip-dk"
                   style={{
                     flex: 1, fontFamily: F.sans,
                     padding: "16px 20px", fontSize: "16px", fontWeight: 500,
                     color: T.ink, backgroundColor: "#fff",
                     border: "1.5px solid transparent",
-                    borderRadius: "8px", outline: "none",
+                    borderRadius: "10px", outline: "none",
                     transition: "border-color 0.15s, box-shadow 0.15s",
                   }}
                 />
                 <button
                   type="button"
-                  className="btn-primary"
+                  className="btn-p"
                   onClick={handleSearch}
                   style={{
                     fontFamily: F.sans, padding: "16px 24px",
-                    backgroundColor: T.mid, color: "#fff",
+                    backgroundColor: T.teal, color: "#fff",
                     fontWeight: 600, fontSize: "14px",
-                    borderRadius: "8px", border: "none",
+                    borderRadius: "10px", border: "none",
                     cursor: "pointer", flexShrink: 0,
                     display: "flex", alignItems: "center", gap: "7px",
                     whiteSpace: "nowrap",
@@ -752,7 +734,7 @@ export default function Home() {
               </div>
               <p style={{
                 fontFamily: F.sans, fontSize: "13px",
-                color: "rgba(243,246,247,0.32)",
+                color: "rgba(235,245,248,0.3)",
                 display: "flex", alignItems: "center", gap: "8px",
               }}>
                 <Phone size={12} aria-hidden="true" />
@@ -760,12 +742,12 @@ export default function Home() {
                   Or call{" "}
                   <a
                     href="tel:1-800-555-0100"
-                    className="phone-link"
-                    style={{ color: "rgba(243,246,247,0.55)", fontWeight: 500, textDecoration: "none" }}
+                    className="plink"
+                    style={{ color: "rgba(235,245,248,0.52)", fontWeight: 500, textDecoration: "none" }}
                   >
                     1-800-555-0100
                   </a>
-                  {" "}to speak with a licensed advisor
+                  {" "}— a licensed advisor, no script, no pressure
                 </span>
               </p>
             </div>
@@ -774,32 +756,30 @@ export default function Home() {
 
       </main>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
+      {/* ── FOOTER ────────────────────────────────────────────────────────── */}
       <footer
         aria-label="Site footer"
-        style={{ backgroundColor: T.ftr, fontFamily: F.sans, padding: "72px 0 48px" }}
+        style={{ backgroundColor: T.ftr, fontFamily: F.sans, padding: "80px 0 52px" }}
       >
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 40px" }}>
+        <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
           <div
-            className="footer-grid"
-            style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr", gap: "48px", marginBottom: "56px" }}
+            className="footer-g"
+            style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 1fr", gap: "48px", marginBottom: "60px" }}
           >
-            {/* Brand */}
             <div>
               <div style={{ marginBottom: "20px" }}>
-                <div style={{ fontFamily: F.serif, fontSize: "20px", fontWeight: 400, color: "#fff", letterSpacing: "-0.01em", lineHeight: 1.1 }}>
+                <div style={{ fontFamily: F.serif, fontSize: "20px", fontWeight: 400, color: "#fff", letterSpacing: "-0.01em", lineHeight: 1 }}>
                   MedicarePlan
                 </div>
-                <div style={{ fontFamily: F.sans, fontSize: "10px", color: "rgba(255,255,255,0.3)", letterSpacing: "0.08em", textTransform: "uppercase", marginTop: "3px" }}>
+                <div style={{ fontFamily: F.sans, fontSize: "10px", color: "rgba(255,255,255,0.28)", letterSpacing: "0.09em", textTransform: "uppercase", marginTop: "4px" }}>
                   Finder
                 </div>
               </div>
-              <p style={{ fontSize: "13px", lineHeight: 1.72, color: "rgba(255,255,255,0.38)", maxWidth: "26ch" }}>
-                Helping Americans find the right Medicare Advantage plan since 2010.
+              <p style={{ fontSize: "13px", lineHeight: 1.75, color: "rgba(255,255,255,0.35)", maxWidth: "26ch" }}>
+                Helping Americans find better Medicare Advantage plans since 2010. Licensed in all 50 states.
               </p>
             </div>
 
-            {/* Link columns */}
             {[
               { title: "Plans", links: [
                 { label: "Medicare Advantage", href: "/medicare-advantage/hmo-plans" },
@@ -816,22 +796,18 @@ export default function Home() {
               { title: "Company", links: [
                 { label: "About Us", href: "/about" },
                 { label: "Licensed Agents", href: "/agents" },
-                { label: "Contact Us", href: "/contact" },
+                { label: "Contact", href: "/contact" },
                 { label: "Privacy Policy", href: "/privacy" },
               ]},
-            ].map((col) => (
+            ].map(col => (
               <nav key={col.title} aria-label={`${col.title} links`}>
-                <div style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", marginBottom: "16px" }}>
+                <div style={{ fontSize: "10px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.22)", marginBottom: "18px" }}>
                   {col.title}
                 </div>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "11px" }}>
-                  {col.links.map((link) => (
+                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {col.links.map(link => (
                     <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="footer-link"
-                        style={{ fontSize: "13px", color: "rgba(255,255,255,0.38)", textDecoration: "none" }}
-                      >
+                      <Link href={link.href} className="flink" style={{ fontSize: "13px", color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>
                         {link.label}
                       </Link>
                     </li>
@@ -841,8 +817,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Technical resource */}
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "24px", marginBottom: "24px" }}>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "24px", marginBottom: "20px" }}>
             <a
               href="https://d2xsxph8kpxj0f.cloudfront.net/310519663319810046/5TY7JcF275WMujMHZWWJT8/episode-alert-api-integration-guide_6a93d69a.pdf"
               target="_blank"
@@ -850,21 +825,24 @@ export default function Home() {
               style={{
                 display: "inline-flex", alignItems: "center", gap: "7px",
                 padding: "7px 13px", borderRadius: "5px",
-                fontSize: "12px", color: "rgba(255,255,255,0.3)",
+                fontSize: "12px", color: "rgba(255,255,255,0.28)",
                 backgroundColor: "rgba(255,255,255,0.04)",
                 border: "1px solid rgba(255,255,255,0.07)",
                 textDecoration: "none",
               }}
             >
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Episode Alert API Integration Guide (PDF)
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Episode Alert API Integration Guide
             </a>
           </div>
 
-          {/* Legal */}
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "20px", fontSize: "12px", color: "rgba(255,255,255,0.2)", lineHeight: 1.7 }}>
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "20px", fontSize: "12px", color: "rgba(255,255,255,0.18)", lineHeight: 1.72 }}>
             <p style={{ marginBottom: "4px" }}>
-              We are not affiliated with or endorsed by the U.S. government or the federal Medicare program. This is a demonstration application. Plan data is sourced from CMS public datasets.
+              Not affiliated with or endorsed by the U.S. government or the federal Medicare program. This is a demonstration application. Plan data sourced from CMS public datasets.
             </p>
             <p>© 2026 MedicarePlan Finder. All rights reserved.</p>
           </div>
