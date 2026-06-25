@@ -548,59 +548,86 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── §2 TRUST STRIP ────────────────────────────────────────────── */}
-        <div
-          aria-label="Service credentials"
-          style={{ backgroundColor: T.warm, borderTop: `1px solid ${T.rule}` }}
-        >
-          <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
-            {/* Credential pillars */}
-            <div style={{
-              display: "flex", alignItems: "center",
-              flexWrap: "wrap", gap: "0", rowGap: "10px",
-              padding: "18px 0",
-            }}>
-              {[
-                "Licensed agents in all 50 states",
-                "Plan data directly from CMS.gov",
-                "No cost to you — ever",
-                "Doctors & Rx verified before results",
-              ].map((item, i) => (
-                <div key={item} style={{ display: "flex", alignItems: "center" }}>
-                  {i > 0 && (
-                    <span aria-hidden="true" style={{
-                      display: "inline-block", width: "1px", height: "12px",
-                      backgroundColor: T.rule, margin: "0 22px", flexShrink: 0,
-                    }} />
-                  )}
-                  <span style={{ fontFamily: F.sans, fontSize: "13px", color: T.body, whiteSpace: "nowrap" }}>
-                    {item}
-                  </span>
-                </div>
-              ))}
-            </div>
-            {/* Carriers */}
-            <div style={{
-              display: "flex", alignItems: "center", flexWrap: "wrap",
-              gap: "0", rowGap: "8px",
-              padding: "14px 0",
-              borderTop: `1px solid ${T.rule}`,
-            }}>
-              <span style={{
-                fontFamily: F.sans, fontSize: "12px", fontWeight: 500,
-                letterSpacing: "0.01em",
-                color: T.sub, marginRight: "18px", whiteSpace: "nowrap",
+        {/* ── §2 TRUST STRIP + CARRIER ROW ──────────────────────────────── */}
+        <div aria-label="Service credentials and plan carriers" style={{ borderTop: `1px solid ${T.rule}` }}>
+
+          {/* Row A — four credential claims */}
+          <div style={{ backgroundColor: T.warm }}>
+            <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
+              <div style={{
+                display: "flex", alignItems: "center",
+                flexWrap: "wrap", gap: "0", rowGap: "12px",
+                padding: "20px 0",
               }}>
-                Plans from
-              </span>
-              {CARRIERS.map((name, i) => (
-                <span key={name} style={{ display: "flex", alignItems: "center" }}>
-                  {i > 0 && <span aria-hidden="true" style={{ color: T.rule, margin: "0 14px" }}>·</span>}
-                  <span style={{ fontFamily: F.sans, fontSize: "13px", fontWeight: 500, color: T.sub }}>{name}</span>
-                </span>
-              ))}
+                {([
+                  { claim: "Licensed independent agents", detail: "All 50 states" },
+                  { claim: "Plan data from CMS.gov",       detail: "Official public records" },
+                  { claim: "Free — no cost to you",         detail: "Carriers pay us, not you" },
+                  { claim: "Doctors & Rx verified",         detail: "Before results appear" },
+                ] as const).map((item, i) => (
+                  <div key={item.claim} style={{ display: "flex", alignItems: "center" }}>
+                    {i > 0 && (
+                      <span aria-hidden="true" style={{
+                        display: "inline-block", width: "1px", height: "28px",
+                        backgroundColor: T.rule, margin: "0 28px", flexShrink: 0,
+                      }} />
+                    )}
+                    <div>
+                      <div style={{
+                        fontFamily: F.sans, fontSize: "13px", fontWeight: 500,
+                        color: T.ink, lineHeight: 1.3, whiteSpace: "nowrap",
+                      }}>
+                        {item.claim}
+                      </div>
+                      <div style={{
+                        fontFamily: F.sans, fontSize: "11px",
+                        color: T.sub, marginTop: "2px", whiteSpace: "nowrap",
+                      }}>
+                        {item.detail}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+
+          {/* Row B — carrier names, given room to breathe */}
+          <div style={{ backgroundColor: "#fff", borderTop: `1px solid ${T.rule}` }}>
+            <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
+              <div style={{
+                display: "flex", alignItems: "baseline",
+                flexWrap: "wrap", gap: "0", rowGap: "10px",
+                padding: "22px 0",
+              }}>
+                <span style={{
+                  fontFamily: F.sans, fontSize: "12px", fontWeight: 500,
+                  color: T.sub, marginRight: "24px", whiteSpace: "nowrap",
+                  paddingTop: "2px",
+                }}>
+                  Plans from
+                </span>
+                {CARRIERS.map((name, i) => (
+                  <span key={name} style={{ display: "flex", alignItems: "center" }}>
+                    {i > 0 && (
+                      <span aria-hidden="true" style={{
+                        display: "inline-block", width: "3px", height: "3px",
+                        borderRadius: "50%", backgroundColor: T.rule,
+                        margin: "0 16px", flexShrink: 0,
+                      }} />
+                    )}
+                    <span style={{
+                      fontFamily: F.sans, fontSize: "14px", fontWeight: 500,
+                      color: T.body, whiteSpace: "nowrap",
+                    }}>
+                      {name}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
         </div>
 
         {/* ── §3 WHY PEOPLE USE US ──────────────────────────────────────── */}
@@ -763,27 +790,22 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── §5 CREDIBILITY ────────────────────────────────────────────── */}
+        {/* ── §5 PROOF ──────────────────────────────────────────────────── */}
         <section
           id="credibility"
           aria-labelledby="cred-h"
+          aria-label="Since 2010 we've helped more than 500,000 seniors find better Medicare coverage."
           style={{ backgroundColor: "#fff", padding: "160px 0" }}
         >
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
             <div
               ref={rCredibility}
               className="rv cred-g"
-              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "100px", alignItems: "center" }}
+              style={{ display: "grid", gridTemplateColumns: "5fr 7fr", gap: "100px", alignItems: "start" }}
             >
-              {/* Left — proof stat */}
-              <div aria-label="Since 2010, we've helped more than 500,000 seniors find better Medicare coverage.">
-                <p style={overline}>Track record</p>
-                <p style={{
-                  fontFamily: F.serif, fontSize: "clamp(16px, 1.7vw, 20px)",
-                  fontWeight: 400, color: T.sub, lineHeight: 1.4, marginBottom: "8px",
-                }}>
-                  Since 2010, we've helped more than
-                </p>
+              {/* Left — anchor stat */}
+              <div>
+                <p style={overline}>Since 2010</p>
                 <p
                   aria-hidden="true"
                   style={{
@@ -791,50 +813,73 @@ export default function Home() {
                     fontSize: "clamp(52px, 7.5vw, 96px)",
                     fontWeight: 600, lineHeight: 0.92,
                     letterSpacing: "-0.03em",
-                    color: T.ink, margin: "0 0 8px",
+                    color: T.ink, margin: "0 0 16px",
                   }}
                 >
                   500,000
                 </p>
                 <p style={{
-                  fontFamily: F.serif, fontSize: "clamp(16px, 1.7vw, 20px)",
-                  fontWeight: 400, color: T.sub, lineHeight: 1.4,
+                  fontFamily: F.serif, fontSize: "clamp(17px, 1.7vw, 22px)",
+                  fontWeight: 400, color: T.body, lineHeight: 1.5, margin: 0,
                 }}>
-                  seniors find better Medicare coverage.
+                  seniors helped find better Medicare Advantage coverage.
                 </p>
               </div>
 
-              {/* Right — independence + proof points */}
+              {/* Right — editorial narrative + proof data */}
               <div>
-                <p style={overline}>Our commitment</p>
                 <p style={{
                   fontFamily: F.sans, fontSize: "17px",
-                  lineHeight: 1.82, color: T.body, marginBottom: "36px",
+                  lineHeight: 1.82, color: T.body, margin: "0 0 48px",
                 }}>
-                  No carrier pays for referrals. No plan is hidden from your results. Every comparison is built on data published by CMS.gov — the same source Medicare itself uses.
+                  No carrier pays us for referrals. No plan is hidden or ranked for commercial reasons. Every comparison is built entirely on data published by CMS.gov — the same official source Medicare uses — with your doctors and prescriptions checked before results appear.
                 </p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-                  {[
-                    "24+ plans per county from every active carrier",
-                    "No plan hidden, no carrier given preferred placement",
-                    "CMS.gov public data, updated annually",
-                  ].map(item => (
-                    <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
-                      <span aria-hidden="true" style={{
-                        display: "inline-block", width: "5px", height: "5px",
-                        backgroundColor: T.teal, borderRadius: "50%",
-                        flexShrink: 0, marginTop: "9px",
-                      }} />
-                      <p style={{ fontFamily: F.sans, fontSize: "16px", color: T.body, lineHeight: 1.68, margin: 0 }}>
-                        {item}
+
+                {/* Three horizontal proof data points */}
+                <div style={{
+                  display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "0",
+                  borderTop: `1px solid ${T.rule}`,
+                  paddingTop: "32px",
+                }}>
+                  {([
+                    { stat: "24+",     label: "Plans per county",       note: "Every active carrier included" },
+                    { stat: "100%",    label: "Plans shown",             note: "No paid placement or exclusions" },
+                    { stat: "CMS.gov", label: "Official data source",    note: "Updated annually" },
+                  ] as const).map((item, i) => (
+                    <div
+                      key={item.label}
+                      style={{
+                        padding: "0 28px 0 0",
+                        borderLeft: i > 0 ? `1px solid ${T.rule}` : "none",
+                        paddingLeft: i > 0 ? "28px" : "0",
+                      }}
+                    >
+                      <p style={{
+                        fontFamily: F.serif,
+                        fontSize: "clamp(22px, 2.4vw, 30px)",
+                        fontWeight: 600, lineHeight: 1,
+                        letterSpacing: "-0.02em",
+                        color: T.teal, margin: "0 0 6px",
+                      }}>
+                        {item.stat}
+                      </p>
+                      <p style={{
+                        fontFamily: F.sans, fontSize: "13px", fontWeight: 500,
+                        color: T.ink, margin: "0 0 3px",
+                      }}>
+                        {item.label}
+                      </p>
+                      <p style={{ fontFamily: F.sans, fontSize: "12px", color: T.sub, margin: 0 }}>
+                        {item.note}
                       </p>
                     </div>
                   ))}
                 </div>
+
                 <p style={{
-                  fontFamily: F.sans, fontSize: "13px", color: T.sub,
-                  lineHeight: 1.65, marginTop: "32px",
-                  paddingTop: "24px", borderTop: `1px solid ${T.rule}`,
+                  fontFamily: F.sans, fontSize: "12px", color: T.sub,
+                  lineHeight: 1.65, marginTop: "28px",
                 }}>
                   Not affiliated with or endorsed by any insurance carrier or the federal Medicare program.
                 </p>
