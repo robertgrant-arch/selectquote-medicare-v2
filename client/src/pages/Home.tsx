@@ -161,9 +161,10 @@ export default function Home() {
   // ── Shared style fragments ────────────────────────────────────────────────
   // No uppercase — sentence case reads as regulated/professional, not startup.
   const overline: React.CSSProperties = {
-    fontFamily: F.sans, fontSize: "13px", fontWeight: 500,
-    letterSpacing: "0.01em",
-    color: T.teal, marginBottom: "18px",
+    fontFamily: F.sans, fontSize: "12px", fontWeight: 500,
+    letterSpacing: "0.04em",
+    color: T.sub, marginBottom: "20px",
+    textTransform: "uppercase" as const,
   };
 
   return (
@@ -248,10 +249,10 @@ export default function Home() {
                 {/* Headline */}
                 <h1 style={{
                   fontFamily: F.serif,
-                  fontSize: "clamp(42px, 5vw, 68px)",
-                  fontWeight: 600, lineHeight: 1.1,
-                  letterSpacing: "-0.02em",
-                  color: T.ink, marginBottom: "24px",
+                  fontSize: "clamp(52px, 6.5vw, 88px)",
+                  fontWeight: 600, lineHeight: 1.06,
+                  letterSpacing: "-0.025em",
+                  color: T.ink, marginBottom: "28px",
                 }}>
                   Medicare Advantage,<br />
                   <em style={{ color: T.teal, fontStyle: "italic", fontWeight: 500 }}>made clear.</em>
@@ -259,9 +260,9 @@ export default function Home() {
 
                 {/* Subhead */}
                 <p style={{
-                  fontFamily: F.sans, fontSize: "18px",
-                  lineHeight: 1.82, color: T.body,
-                  maxWidth: "44ch", marginBottom: "48px",
+                  fontFamily: F.sans, fontSize: "19px",
+                  lineHeight: 1.78, color: T.body,
+                  maxWidth: "40ch", marginBottom: "52px",
                 }}>
                   Compare every plan in your county — matched to your doctors, prescriptions, and budget. Free. No account. No pressure.
                 </p>
@@ -288,7 +289,7 @@ export default function Home() {
                         padding: "18px 22px", fontSize: "17px", fontWeight: 500,
                         color: T.ink, backgroundColor: "#fff",
                         border: `1.5px solid ${inputError ? T.err : T.rule}`,
-                        borderRadius: "10px", outline: "none",
+                        borderRadius: "6px", outline: "none",
                         boxShadow: "0 1px 6px rgba(11,27,36,0.07)",
                         transition: "border-color 0.15s, box-shadow 0.15s",
                         boxSizing: "border-box",
@@ -302,7 +303,7 @@ export default function Home() {
                         fontFamily: F.sans, padding: "18px 28px",
                         backgroundColor: T.dark, color: "#fff",
                         fontWeight: 600, fontSize: "15px",
-                        borderRadius: "10px", border: "none",
+                        borderRadius: "6px", border: "none",
                         cursor: "pointer", flexShrink: 0,
                         display: "flex", alignItems: "center", gap: "8px",
                         letterSpacing: "0.01em", whiteSpace: "nowrap",
@@ -398,36 +399,28 @@ export default function Home() {
             <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
               <div style={{
                 display: "flex", alignItems: "center",
-                flexWrap: "wrap", gap: "0", rowGap: "12px",
-                padding: "20px 0",
+                flexWrap: "wrap", gap: "0", rowGap: "10px",
+                padding: "16px 0",
               }}>
                 {([
-                  { claim: "Licensed independent agents", detail: "All 50 states" },
-                  { claim: "Plan data from CMS.gov",       detail: "Official public records" },
-                  { claim: "Free — no cost to you",         detail: "Carriers pay us, not you" },
-                  { claim: "Doctors & Rx verified",         detail: "Before results appear" },
-                ] as const).map((item, i) => (
-                  <div key={item.claim} style={{ display: "flex", alignItems: "center" }}>
+                  "Licensed independent agents",
+                  "Plan data from CMS.gov",
+                  "Free — no cost to you",
+                  "Doctors & Rx verified",
+                ] as const).map((claim, i) => (
+                  <div key={claim} style={{ display: "flex", alignItems: "center" }}>
                     {i > 0 && (
                       <span aria-hidden="true" style={{
-                        display: "inline-block", width: "1px", height: "28px",
+                        display: "inline-block", width: "1px", height: "14px",
                         backgroundColor: T.rule, margin: "0 28px", flexShrink: 0,
                       }} />
                     )}
-                    <div>
-                      <div style={{
-                        fontFamily: F.sans, fontSize: "13px", fontWeight: 500,
-                        color: T.ink, lineHeight: 1.3, whiteSpace: "nowrap",
-                      }}>
-                        {item.claim}
-                      </div>
-                      <div style={{
-                        fontFamily: F.sans, fontSize: "11px",
-                        color: T.sub, marginTop: "2px", whiteSpace: "nowrap",
-                      }}>
-                        {item.detail}
-                      </div>
-                    </div>
+                    <span style={{
+                      fontFamily: F.sans, fontSize: "13px", fontWeight: 500,
+                      color: T.body, whiteSpace: "nowrap",
+                    }}>
+                      {claim}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -476,10 +469,10 @@ export default function Home() {
         <section
           id="why-us"
           aria-labelledby="why-h"
-          style={{ backgroundColor: "#fff", padding: "160px 0" }}
+          style={{ backgroundColor: "#fff", padding: "180px 0" }}
         >
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
-            <div style={{ marginBottom: "80px" }}>
+            <div style={{ marginBottom: "88px" }}>
               <p style={overline}>Why people use us</p>
               <h2
                 id="why-h"
@@ -504,18 +497,12 @@ export default function Home() {
             >
               {/* Lead benefit */}
               <div style={{ paddingRight: "72px", borderRight: `1px solid ${T.rule}` }}>
-                <p style={{
-                  fontFamily: F.sans, fontSize: "12px", fontWeight: 500,
-                  letterSpacing: "0.01em", color: T.teal, marginBottom: "20px",
-                }}>
-                  {BENEFITS[0].label}
-                </p>
                 <h3 style={{
                   fontFamily: F.serif,
-                  fontSize: "clamp(22px, 2.4vw, 30px)",
-                  fontWeight: 500, lineHeight: 1.25,
+                  fontSize: "clamp(24px, 2.8vw, 36px)",
+                  fontWeight: 500, lineHeight: 1.22,
                   letterSpacing: "-0.015em",
-                  color: T.ink, marginBottom: "20px",
+                  color: T.ink, marginBottom: "22px",
                 }}>
                   {BENEFITS[0].title}
                 </h3>
@@ -535,12 +522,6 @@ export default function Home() {
                       borderBottom: i < 1 ? `1px solid ${T.rule}` : "none",
                     }}
                   >
-                    <p style={{
-                      fontFamily: F.sans, fontSize: "12px", fontWeight: 500,
-                      letterSpacing: "0.01em", color: T.teal, marginBottom: "14px",
-                    }}>
-                      {b.label}
-                    </p>
                     <h3 style={{
                       fontFamily: F.serif,
                       fontSize: "clamp(18px, 1.8vw, 22px)",
@@ -564,7 +545,7 @@ export default function Home() {
         <section
           id="coverage"
           aria-labelledby="cov-h"
-          style={{ backgroundColor: T.warm, padding: "160px 0" }}
+          style={{ backgroundColor: T.warm, padding: "180px 0" }}
         >
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
             <div
@@ -637,7 +618,7 @@ export default function Home() {
                         fontFamily: F.serif,
                         fontSize: "21px", fontWeight: 500,
                         letterSpacing: "-0.01em", lineHeight: 1.25,
-                        color: T.teal,
+                        color: T.ink,
                       }}>
                         {c.title}
                       </p>
@@ -662,42 +643,41 @@ export default function Home() {
           id="credibility"
           aria-labelledby="cred-h"
           aria-label="Since 2010 we've helped more than 500,000 seniors find better Medicare coverage."
-          style={{ backgroundColor: "#fff", padding: "160px 0" }}
+          style={{ backgroundColor: "#fff", padding: "200px 0" }}
         >
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
             <div
               ref={rCredibility}
               className="rv cred-g"
-              style={{ display: "grid", gridTemplateColumns: "5fr 7fr", gap: "100px", alignItems: "start" }}
+              style={{ display: "grid", gridTemplateColumns: "5fr 7fr", gap: "120px", alignItems: "center" }}
             >
               {/* Left — anchor stat */}
               <div>
-                <p style={overline}>Since 2010</p>
                 <p
                   aria-hidden="true"
                   style={{
                     fontFamily: F.serif,
-                    fontSize: "clamp(52px, 7.5vw, 96px)",
-                    fontWeight: 600, lineHeight: 0.92,
-                    letterSpacing: "-0.03em",
-                    color: T.ink, margin: "0 0 16px",
+                    fontSize: "clamp(72px, 11vw, 140px)",
+                    fontWeight: 600, lineHeight: 0.88,
+                    letterSpacing: "-0.04em",
+                    color: T.ink, margin: "0 0 24px",
                   }}
                 >
                   500,000
                 </p>
                 <p style={{
-                  fontFamily: F.serif, fontSize: "clamp(17px, 1.7vw, 22px)",
+                  fontFamily: F.serif, fontSize: "clamp(17px, 1.7vw, 21px)",
                   fontWeight: 400, color: T.body, lineHeight: 1.5, margin: 0,
                 }}>
-                  seniors helped find better Medicare Advantage coverage.
+                  seniors helped find better Medicare coverage since 2010.
                 </p>
               </div>
 
-              {/* Right — editorial narrative + proof data */}
+              {/* Right — editorial narrative */}
               <div>
                 <p style={{
-                  fontFamily: F.sans, fontSize: "17px",
-                  lineHeight: 1.82, color: T.body, margin: "0 0 48px",
+                  fontFamily: F.sans, fontSize: "18px",
+                  lineHeight: 1.82, color: T.body, margin: "0 0 0",
                 }}>
                   No carrier pays us for referrals. No plan is hidden or ranked for commercial reasons. Every comparison is built entirely on data published by CMS.gov — the same official source Medicare uses — with your doctors and prescriptions checked before results appear.
                 </p>
@@ -717,7 +697,7 @@ export default function Home() {
         <section
           id="start"
           aria-labelledby="cta-h"
-          style={{ backgroundColor: T.night, padding: "160px 0" }}
+          style={{ backgroundColor: T.night, padding: "180px 0" }}
         >
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
             <div ref={rCta} className="rv" style={{ maxWidth: "660px" }}>
@@ -726,10 +706,10 @@ export default function Home() {
                 id="cta-h"
                 style={{
                   fontFamily: F.serif,
-                  fontSize: "clamp(28px, 4vw, 52px)",
-                  fontWeight: 500, lineHeight: 1.15,
-                  letterSpacing: "-0.015em",
-                  color: "#fff", marginBottom: "20px",
+                  fontSize: "clamp(32px, 4.8vw, 64px)",
+                  fontWeight: 500, lineHeight: 1.1,
+                  letterSpacing: "-0.02em",
+                  color: "#fff", marginBottom: "24px",
                 }}
               >
                 The plan you choose today shapes who can care for you next year.
@@ -757,7 +737,7 @@ export default function Home() {
                     padding: "16px 20px", fontSize: "16px", fontWeight: 500,
                     color: T.ink, backgroundColor: "#fff",
                     border: "1.5px solid transparent",
-                    borderRadius: "10px", outline: "none",
+                    borderRadius: "6px", outline: "none",
                     transition: "border-color 0.15s, box-shadow 0.15s",
                   }}
                 />
@@ -769,7 +749,7 @@ export default function Home() {
                     fontFamily: F.sans, padding: "16px 24px",
                     backgroundColor: T.teal, color: "#fff",
                     fontWeight: 600, fontSize: "14px",
-                    borderRadius: "10px", border: "none",
+                    borderRadius: "6px", border: "none",
                     cursor: "pointer", flexShrink: 0,
                     display: "flex", alignItems: "center", gap: "7px",
                     whiteSpace: "nowrap", transition: "background-color 0.14s",
