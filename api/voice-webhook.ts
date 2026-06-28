@@ -99,7 +99,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // For non-function-call messages (status updates, etc), acknowledge
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('Voice webhook error:', err);
+    console.error('Voice webhook error:', (err as Error)?.message ?? 'unknown');
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

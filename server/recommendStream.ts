@@ -212,7 +212,7 @@ router.post("/recommend-stream", async (req, res) => {
             if (!doneSent) { sendSSE(res, "done", "{}"); doneSent = true; }
           }
         } catch (jsonErr) {
-          console.warn("[recommendStream] Malformed JSON line from AI stream, skipping:", raw, jsonErr);
+          console.warn("[recommendStream] Malformed JSON line from AI stream, skipping");
         }
       }
     }
@@ -223,7 +223,7 @@ router.post("/recommend-stream", async (req, res) => {
     }
     res.end();
   } catch (err) {
-    console.error("[recommend-stream] Error:", err);
+    console.error("[recommend-stream] Error:", (err as Error)?.message ?? "unknown");
     if (!res.destroyed) {
       sendSSE(res, "error", JSON.stringify({ message: (err as Error).message }));
       res.end();

@@ -19,6 +19,7 @@ import GuidedWorkflowModal, { type MBIVerifyResult } from "@/components/GuidedWo
 import { useZipValidation } from "@/features/zip-validation/lib/useZipValidation";
 import CountySelector from "@/features/zip-validation/components/CountySelector";
 import Header from "@/components/Header";
+import { useQuoteHandoff } from "@/contexts/QuoteHandoffContext";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const T = {
@@ -109,6 +110,7 @@ export default function Home() {
   const [zip, setZip]               = useState("");
   const [inputError, setInputError] = useState("");
   const zipValidation               = useZipValidation();
+  const quoteHandoff                = useQuoteHandoff();
   const zipInputRef                 = useRef<HTMLInputElement>(null);
   const [showMBIModal, setShowMBIModal] = useState(false);
   const [pendingZip, setPendingZip]     = useState("");
@@ -138,10 +140,8 @@ export default function Home() {
     hasMA: boolean; verifyResult: MBIVerifyResult | null; doctors: any[]; drugs: any[];
   }) => {
     setShowMBIModal(false);
-    try {
-      if (data.verifyResult) sessionStorage.setItem("mbi_eligibility", JSON.stringify(data.verifyResult));
-      sessionStorage.setItem("workflow_data", JSON.stringify(data));
-    } catch {}
+    // Store in-memory only — no sessionStorage, no PHI in browser storage.
+    quoteHandoff.set(data);
     const p = new URLSearchParams({ zip: pendingZip });
     if (data.verifyResult) p.set("verified", "1");
     if (data.doctors.length > 0 || data.drugs.length > 0) p.set("personalized", "1");

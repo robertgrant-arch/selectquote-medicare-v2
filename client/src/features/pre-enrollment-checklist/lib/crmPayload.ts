@@ -1,7 +1,10 @@
-// Design-violation fix: agent-handoff must call readCRMFromSession() exported here
-// instead of accessing sessionStorage keys directly.
+// In-memory store — doctor/drug names must never be written to browser storage.
+// All data lives in JS heap for the tab's lifetime only.
 
+/** @deprecated kept for backward compatibility; no longer used as a storage key */
 export const CRM_SESSION_KEY_PREFIX = 'pec_crm_';
+
+const crmStore = new Map<string, any>();
 
 export function buildCRMPayload(items: any[], risks: any[], ctx: any, handoffRoute: string, aiSummaryGenerated: boolean, sessionId: string) {
   const { completionPct, confirmedCount, flaggedCount } = (() => {
@@ -27,13 +30,14 @@ export function buildCRMPayload(items: any[], risks: any[], ctx: any, handoffRou
 
 export function serializeCRMPayload(payload: any): string { return JSON.stringify(payload, null, 2); }
 
+/** Store CRM payload in memory only — never written to any browser storage API. */
 export function saveCRMToSession(payload: any): void {
-  try { sessionStorage.setItem(`${CRM_SESSION_KEY_PREFIX}${payload.planId}`, serializeCRMPayload(payload)); } catch {}
+  crmStore.set(String(payload.planId), payload);
 }
 
-/** Explicit reader — the ONLY way other slices should access checklist CRM data */
+/** Explicit reader — the ONLY way other slices should access checklist CRM data. */
 export function readCRMFromSession(planId: string): any | null {
-  try { const raw = sessionStorage.getItem(`${CRM_SESSION_KEY_PREFIX}${planId}`); return raw ? JSON.parse(raw) : null; } catch { return null; }
+  return crmStore.get(String(planId)) ?? null;
 }
 
 export function buildAgentBriefing(payload: any): string {

@@ -270,7 +270,7 @@ export function registerCompareStreamRoute(app: Express) {
               if (!doneSent) { sendSSE(res, "done", ""); doneSent = true; }
             }
           } catch (jsonErr) {
-            console.warn("[compareStream] Malformed JSON line from AI stream, skipping:", dataStr, jsonErr);
+            console.warn("[compareStream] Malformed JSON line from AI stream, skipping");
           }
         }
       }

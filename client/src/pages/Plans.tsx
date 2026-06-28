@@ -40,6 +40,7 @@ import type { ScoringModel } from "@/lib/aiRecommendationEngine";
 import type { FilterState, MedicarePlan, RxDrug, Doctor, PlanDoctorNetworkStatus } from "@/lib/types";
 import type { MBIVerifyResult } from "@/components/MBIVerifyModal";
 import { useSessionState } from "@/hooks/useSessionState";
+import { useQuoteHandoff } from "@/contexts/QuoteHandoffContext";
 
 const DEFAULT_FILTERS: FilterState = {
   planType: [],
@@ -219,52 +220,29 @@ export default function Plans() {
   const [showCurrentPlanBanner, setShowCurrentPlanBanner] = useState(true);
   const [aiModel, setAiModel] = useState<ScoringModel>('B');
   const compareStore = useCompareStore();
+  const quoteHandoff = useQuoteHandoff();
   const [aiCompareOpen, setAICompareOpen] = useState(false);
   const [doctorNetworkMap, setDoctorNetworkMap] = useState<Record<string, PlanDoctorNetworkStatus>>({});
 
-  // Read MBI eligibility from sessionStorage
+  // Consume in-memory handoff from Home (replaces former sessionStorage reads).
+  // take() clears the payload atomically — it is never written to any storage API.
   useEffect(() => {
-    const verified = params.get("verified");
-    if (verified === "1") {
-      try {
-        const stored = sessionStorage.getItem("mbi_eligibility");
-        if (stored) {
-          const parsed = JSON.parse(stored) as MBIVerifyResult;
-          setEligibility(parsed);
-          sessionStorage.removeItem("mbi_eligibility");
-        }
-      } catch {
-        // ignore parse errors
-      }
+    const handoff = quoteHandoff.take();
+    if (!handoff) return;
+    if (handoff.verifyResult) {
+      setEligibility(handoff.verifyResult);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Read workflow data from sessionStorage
-  useEffect(() => {
-    const personalized = params.get("personalized");
-    if (personalized === "1") {
-      try {
-        const stored = sessionStorage.getItem("workflow_data");
-        if (stored) {
-          const data = JSON.parse(stored);
-          if (data.doctors && Array.isArray(data.doctors) && data.doctors.length > 0) {
-            setDoctors(data.doctors.map((doc: any) => ({
-              id: doc.id, name: doc.name, specialty: doc.specialty || '',
-              npi: doc.npi || doc.id, address: doc.address || ''
-            })));
-          }
-          if (data.drugs && Array.isArray(data.drugs) && data.drugs.length > 0) {
-            setRxDrugs(data.drugs.map((d: any) => ({
-              id: d.id || d.name, name: d.name, dosage: d.dosage || "",
-              frequency: d.frequency || "monthly", isGeneric: true
-            })));
-          }
-          sessionStorage.removeItem("workflow_data");
-        }
-      } catch {
-        // ignore parse errors
-      }
+    if (handoff.doctors && handoff.doctors.length > 0) {
+      setDoctors(handoff.doctors.map((doc: any) => ({
+        id: doc.id, name: doc.name, specialty: doc.specialty || '',
+        npi: doc.npi || doc.id, address: doc.address || '',
+      })));
+    }
+    if (handoff.drugs && handoff.drugs.length > 0) {
+      setRxDrugs(handoff.drugs.map((d: any) => ({
+        id: d.id || d.name, name: d.name, dosage: d.dosage || "",
+        frequency: d.frequency || "monthly", isGeneric: true,
+      })));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -30,7 +30,8 @@ import CarrierLogo from "@/components/CarrierLogo";
 import StarRating from "@/components/StarRating";
 import type { MedicarePlan } from "@/lib/types";
 
-// ── localStorage cache helpers ────────────────────────────────────────────────
+// ── sessionStorage cache helpers ─────────────────────────────────────────────
+// sessionStorage (tab-scoped) instead of localStorage — cleared on tab close.
 
 const CACHE_VERSION = "v2";
 
@@ -46,7 +47,7 @@ interface CachedResult {
 
 function loadCache(ids: string[]): CachedResult | null {
   try {
-    const raw = localStorage.getItem(getCacheKey(ids));
+    const raw = sessionStorage.getItem(getCacheKey(ids));
     if (!raw) return null;
     return JSON.parse(raw) as CachedResult;
   } catch {
@@ -56,7 +57,7 @@ function loadCache(ids: string[]): CachedResult | null {
 
 function saveCache(ids: string[], result: CachedResult): void {
   try {
-    localStorage.setItem(getCacheKey(ids), JSON.stringify(result));
+    sessionStorage.setItem(getCacheKey(ids), JSON.stringify(result));
   } catch {
     // ignore storage errors
   }
@@ -64,7 +65,7 @@ function saveCache(ids: string[], result: CachedResult): void {
 
 function clearCache(ids: string[]): void {
   try {
-    localStorage.removeItem(getCacheKey(ids));
+    sessionStorage.removeItem(getCacheKey(ids));
   } catch {
     // ignore
   }

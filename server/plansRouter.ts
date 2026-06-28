@@ -397,12 +397,11 @@ export function registerPlansRoute(app: Express): void {
             } else {
               drugs = [];
             }
-                        console.log('[Plans] drugsParam type:', typeof drugsParam, 'isArray:', Array.isArray(drugsParam), 'parsed drugs:', JSON.stringify(drugs));
             if (Array.isArray(drugs) && drugs.length > 0) {
               enrichedPlans = enrichPlansWithDrugCosts(plans, drugs);
             }
           } catch (parseErr) {
-            console.warn("[Plans] Failed to parse drugs param:", parseErr);
+            console.warn("[Plans] Failed to parse drugs param (count redacted)");
           }
         }
 

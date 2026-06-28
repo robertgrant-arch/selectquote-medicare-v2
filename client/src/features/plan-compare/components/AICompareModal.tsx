@@ -48,9 +48,9 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
   // Auto-start when modal opens with valid plans
   useEffect(() => {
     if (open && !blocked && phase === 'idle') {
-      // Check localStorage cache
+      // Check sessionStorage cache (tab-scoped; cleared on close)
       try {
-        const cached = localStorage.getItem(`ai-compare-${cacheKey}`);
+        const cached = sessionStorage.getItem(`ai-compare-${cacheKey}`);
         if (cached) { setText(cached); setPhase('done'); return; }
       } catch {}
       startStream();
@@ -69,14 +69,14 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
       onToken: (t) => setText(prev => prev + t),
       onDone: (full) => {
         setPhase('done');
-        try { localStorage.setItem(`ai-compare-${cacheKey}`, full); } catch {}
+        try { sessionStorage.setItem(`ai-compare-${cacheKey}`, full); } catch {}
       },
       onError: (msg) => { setPhase('error'); setErrorMsg(msg); },
     }, abortRef.current.signal);
   }, [plans, blocked, cacheKey]);
 
   const handleRetry = () => {
-    try { localStorage.removeItem(`ai-compare-${cacheKey}`); } catch {}
+    try { sessionStorage.removeItem(`ai-compare-${cacheKey}`); } catch {}
     setPhase('idle');
     startStream();
   };

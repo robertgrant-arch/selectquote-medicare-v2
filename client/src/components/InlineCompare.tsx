@@ -120,7 +120,9 @@ function CompareCell({
   );
 }
 
-// ── localStorage cache helpers ───────────────────────────────────────────────
+// ── sessionStorage cache helpers ─────────────────────────────────────────────
+// sessionStorage is tab-scoped and cleared on close; safer than localStorage
+// for AI narratives that may be informed by plan selection patterns.
 const CACHE_PREFIX = "medicare-compare-v1-";
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
@@ -138,11 +140,11 @@ function getCacheKey(currentPlanId: string, newPlanId: string): string {
 
 function readCache(key: string): CacheEntry | null {
   try {
-    const raw = localStorage.getItem(key);
+    const raw = sessionStorage.getItem(key);
     if (!raw) return null;
     const entry: CacheEntry = JSON.parse(raw);
     if (Date.now() - entry.savedAt > CACHE_TTL_MS) {
-      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
       return null;
     }
     return entry;
@@ -153,7 +155,7 @@ function readCache(key: string): CacheEntry | null {
 
 function writeCache(key: string, entry: CacheEntry): void {
   try {
-    localStorage.setItem(key, JSON.stringify(entry));
+    sessionStorage.setItem(key, JSON.stringify(entry));
   } catch {
     // ignore storage errors (private mode, quota exceeded)
   }

@@ -409,7 +409,7 @@ export const healthProfileRouter = router({
       try {
         aiNarrative = await buildAINarrative(profile, top3);
       } catch (err) {
-        console.warn("[healthProfile] AI narrative failed:", err);
+        console.warn("[healthProfile] AI narrative failed:", (err as Error)?.message ?? "unknown");
         aiNarrative = ""; // graceful degradation
       }
 
