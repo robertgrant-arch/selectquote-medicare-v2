@@ -6,6 +6,7 @@ import {
   text,
   timestamp,
   varchar,
+  index,
 } from "drizzle-orm/mysql-core";
 
 /**
@@ -121,3 +122,130 @@ export const cmsSyncLog = mysqlTable("cms_sync_log", {
 
 export type CmsSyncLog = typeof cmsSyncLog.$inferSelect;
 export type InsertCmsSyncLog = typeof cmsSyncLog.$inferInsert;
+
+// ─── Quote Session Persistence ───────────────────────────────────────────────
+// Encrypted-at-rest quote sessions enabling consumer resume flows.
+// All PHI/PII columns in child tables store AES-256-GCM ciphertext only.
+// The raw resume token is NEVER stored — only its SHA-256 hash.
+
+export const quoteSessions = mysqlTable("quote_sessions", {
+  id: varchar("id", { length: 36 }).primaryKey(),         // UUID v4
+  resumeTokenHash: varchar("resumeTokenHash", { length: 64 }).notNull(), // SHA-256 hex
+  encryptionKeyVersion: varchar("encryptionKeyVersion", { length: 32 }).notNull(),
+  status: mysqlEnum("status", ["active", "completed", "abandoned"]).default("active").notNull(),
+  consentStatus: mysqlEnum("consentStatus", ["pending", "granted", "revoked"]).default("pending").notNull(),
+  dataMinimizationStatus: mysqlEnum("dataMinimizationStatus", ["full", "minimized", "purged"]).default("full").notNull(),
+  /** Public ZIP code — not PHI */
+  zip: varchar("zip", { length: 10 }),
+  /** Public county name — not PHI */
+  county: varchar("county", { length: 128 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  lastAccessedAt: timestamp("lastAccessedAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+}, (t) => [
+  index("idx_quote_sessions_token_hash").on(t.resumeTokenHash),
+  index("idx_quote_sessions_expires").on(t.expiresAt),
+]);
+
+export type QuoteSession = typeof quoteSessions.$inferSelect;
+export type InsertQuoteSession = typeof quoteSessions.$inferInsert;
+
+// Contact info (PII) — all values are AES-256-GCM ciphertext blobs
+export const quoteSessionContact = mysqlTable("quote_session_contact", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 36 }).notNull(),
+  /** enc(firstName) */
+  firstName: text("firstName"),
+  /** enc(lastName) */
+  lastName: text("lastName"),
+  /** enc(dateOfBirth)  YYYY-MM-DD */
+  dateOfBirth: text("dateOfBirth"),
+  /** enc(email) */
+  email: text("email"),
+  /** enc(phone) */
+  phone: text("phone"),
+  /** HMAC-SHA-256 of plaintext email — for indexed lookup without decryption */
+  emailLookupHash: varchar("emailLookupHash", { length: 64 }),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (t) => [
+  index("idx_qsc_session").on(t.sessionId),
+  index("idx_qsc_email_hash").on(t.emailLookupHash),
+]);
+
+export type QuoteSessionContact = typeof quoteSessionContact.$inferSelect;
+export type InsertQuoteSessionContact = typeof quoteSessionContact.$inferInsert;
+
+// Medicare / eligibility identifiers (PHI)
+export const quoteSessionEligibility = mysqlTable("quote_session_eligibility", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 36 }).notNull(),
+  /** enc(MBI — Medicare Beneficiary Identifier) */
+  mbi: text("mbi"),
+  /** enc(JSON EligibilityResult from pVerify) */
+  eligibilityResultJson: text("eligibilityResultJson"),
+  /** enc(currentPlanName) */
+  currentPlanName: text("currentPlanName"),
+  /** enc(currentPlanCarrier) */
+  currentPlanCarrier: text("currentPlanCarrier"),
+  verifiedAt: timestamp("verifiedAt"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (t) => [
+  index("idx_qse_session").on(t.sessionId),
+]);
+
+export type QuoteSessionEligibility = typeof quoteSessionEligibility.$inferSelect;
+export type InsertQuoteSessionEligibility = typeof quoteSessionEligibility.$inferInsert;
+
+// Medications (PHI) — one row per drug entry
+export const quoteSessionMedications = mysqlTable("quote_session_medications", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 36 }).notNull(),
+  /** enc(drug name) */
+  drugName: text("drugName").notNull(),
+  /** enc(dosage string) */
+  dosage: text("dosage"),
+  frequency: varchar("frequency", { length: 32 }),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (t) => [
+  index("idx_qsm_session").on(t.sessionId),
+]);
+
+export type QuoteSessionMedication = typeof quoteSessionMedications.$inferSelect;
+export type InsertQuoteSessionMedication = typeof quoteSessionMedications.$inferInsert;
+
+// Providers / doctors (PHI — name + NPI combination is identifying)
+export const quoteSessionProviders = mysqlTable("quote_session_providers", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 36 }).notNull(),
+  /** enc(doctor name) */
+  doctorName: text("doctorName").notNull(),
+  /** enc(NPI) — NPI alone is public, but combined with session = PHI */
+  npi: text("npi"),
+  /** enc(specialty) */
+  specialty: text("specialty"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (t) => [
+  index("idx_qsp_session").on(t.sessionId),
+]);
+
+export type QuoteSessionProvider = typeof quoteSessionProviders.$inferSelect;
+export type InsertQuoteSessionProvider = typeof quoteSessionProviders.$inferInsert;
+
+// Immutable audit log — one append-only row per event
+export const quoteSessionAuditEvents = mysqlTable("quote_session_audit_events", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 36 }).notNull(),
+  /** Event type — never contains PHI */
+  eventType: varchar("eventType", { length: 64 }).notNull(),
+  /** Server-generated description — never contains PHI field values */
+  description: varchar("description", { length: 255 }),
+  /** IP address (hashed) */
+  ipHash: varchar("ipHash", { length: 64 }),
+  occurredAt: timestamp("occurredAt").defaultNow().notNull(),
+}, (t) => [
+  index("idx_qsae_session").on(t.sessionId),
+]);
+
+export type QuoteSessionAuditEvent = typeof quoteSessionAuditEvents.$inferSelect;
+export type InsertQuoteSessionAuditEvent = typeof quoteSessionAuditEvents.$inferInsert;

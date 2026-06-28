@@ -138,6 +138,9 @@
   "@types/node-cron": "^3.0.11",
   
     
+  "@types/uuid": "^10.0.0",
+  
+    
   "@vapi-ai/web": "^2.2.0",
   
     
@@ -235,6 +238,9 @@
   
     
   "tailwindcss-animate": "^1.0.7",
+  
+    
+  "uuid": "^14.0.1",
   
     
   "vaul": "^1.1.2",
