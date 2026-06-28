@@ -132,16 +132,16 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
     /* Backdrop */
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
+      style={{ backgroundColor: "rgba(11,27,36,0.5)", backdropFilter: "blur(3px)" }}
     >
       <div
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
-        style={{ border: "1px solid #E8F0FE" }}
+        className="relative bg-white rounded-xl w-full max-w-lg overflow-hidden"
+        style={{ boxShadow: "0 8px 40px rgba(11,27,36,0.16)", border: "1px solid #E2EAED" }}
       >
         {/* Header bar */}
         <div
           className="px-6 py-4 flex items-center justify-between"
-          style={{ background: "linear-gradient(135deg, #1B365D 0%, #243E6B 100%)" }}
+          style={{ backgroundColor: "#1C3A48" }}
         >
           <div className="flex items-center gap-3">
             <div
@@ -159,9 +159,12 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
           </div>
           <button
             onClick={onSkip}
-            className="text-white/60 hover:text-white transition-colors p-1 rounded"
+            className="flex items-center justify-center transition-colors"
+            style={{ width: 30, height: 30, borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.15)", border: "none", color: "white", cursor: "pointer" }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.25)")}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.15)")}
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
@@ -176,10 +179,10 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
               >
                 <CheckCircle2 size={28} style={{ color: "#16A34A" }} />
               </div>
-              <h3 className="text-lg font-bold mb-1" style={{ color: "#1B365D" }}>
+              <h3 className="text-lg font-bold mb-1" style={{ color: "#1C3A48" }}>
                 Coverage Verified!
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-[#7A9BA6]">
                 We found your current plan. Loading personalized results…
               </p>
             </div>
@@ -187,28 +190,28 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
             <>
               {/* Explanation */}
               <div
-                className="flex items-start gap-3 p-4 rounded-xl mb-5 text-sm"
-                style={{ backgroundColor: "#EFF6FF", color: "#1E40AF" }}
+                className="flex items-start gap-3 p-4 rounded-lg mb-5 text-sm"
+                style={{ backgroundColor: "#EEF5F7", color: "#1C3A48", border: "1px solid #C6DAE0" }}
               >
-                <Info size={16} className="mt-0.5 shrink-0" />
+                <Info size={16} className="mt-0.5 shrink-0" style={{ color: "#237A92" }} />
                 <div>
                   <strong>Optional but recommended:</strong> If you're currently on a Medicare
                   Advantage plan, entering your Medicare ID lets us highlight your current plan
                   in the results and show you exactly what you'd gain or save by switching.
-                  <span className="block mt-1 text-xs" style={{ color: "#3B82F6" }}>
+                  <span className="block mt-1 text-xs" style={{ color: "#7A9BA6" }}>
                     Your information is never stored or shared.
                   </span>
                 </div>
               </div>
 
               {/* Mode toggle */}
-              <div className="flex rounded-lg overflow-hidden border mb-4" style={{ borderColor: "#E5E7EB" }}>
+              <div className="flex rounded-lg overflow-hidden border mb-4" style={{ borderColor: "#E2EAED" }}>
                 <button
                   onClick={() => setMode("mbi")}
                   className="flex-1 py-2 text-sm font-semibold transition-all"
                   style={{
-                    backgroundColor: mode === "mbi" ? "#1B365D" : "white",
-                    color: mode === "mbi" ? "white" : "#555",
+                    backgroundColor: mode === "mbi" ? "#1C3A48" : "white",
+                    color: mode === "mbi" ? "white" : "#3E5560",
                   }}
                 >
                   Use Medicare ID
@@ -217,8 +220,8 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
                   onClick={() => setMode("name")}
                   className="flex-1 py-2 text-sm font-semibold transition-all"
                   style={{
-                    backgroundColor: mode === "name" ? "#1B365D" : "white",
-                    color: mode === "name" ? "white" : "#555",
+                    backgroundColor: mode === "name" ? "#1C3A48" : "white",
+                    color: mode === "name" ? "white" : "#3E5560",
                   }}
                 >
                   Use Name & DOB
@@ -229,7 +232,7 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
                 {/* MBI field (shown in mbi mode) */}
                 {mode === "mbi" && (
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">
+                    <label className="text-xs font-semibold block mb-1" style={{ color: "#3E5560" }}>
                       Medicare Beneficiary ID (MBI)
                     </label>
                     <input
@@ -239,11 +242,11 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
                       placeholder="e.g. 1EG4-TE5-MK72"
                       maxLength={20}
                       className="w-full px-3 py-2.5 border rounded-lg text-sm font-mono outline-none transition-all"
-                      style={{ borderColor: "#E5E7EB", color: "#1B365D" }}
-                      onFocus={(e) => (e.currentTarget.style.borderColor = "#1B365D")}
-                      onBlur={(e) => (e.currentTarget.style.borderColor = "#E5E7EB")}
+                      style={{ borderColor: "#E2EAED", color: "#1C3A48" }}
+                      onFocus={(e) => (e.currentTarget.style.borderColor = "#1C3A48")}
+                      onBlur={(e) => (e.currentTarget.style.borderColor = "#E2EAED")}
                     />
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-[#7A9BA6] mt-1">
                       Found on your red, white &amp; blue Medicare card
                     </p>
                   </div>
@@ -252,7 +255,7 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
                 {/* Name fields */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">
+                    <label className="text-xs font-semibold block mb-1" style={{ color: "#3E5560" }}>
                       First Name
                     </label>
                     <input
@@ -262,13 +265,13 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
                       placeholder="John"
                       maxLength={50}
                       className="w-full px-3 py-2.5 border rounded-lg text-sm outline-none transition-all"
-                      style={{ borderColor: "#E5E7EB" }}
-                      onFocus={(e) => (e.currentTarget.style.borderColor = "#1B365D")}
-                      onBlur={(e) => (e.currentTarget.style.borderColor = "#E5E7EB")}
+                      style={{ borderColor: "#E2EAED" }}
+                      onFocus={(e) => (e.currentTarget.style.borderColor = "#1C3A48")}
+                      onBlur={(e) => (e.currentTarget.style.borderColor = "#E2EAED")}
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 block mb-1">
+                    <label className="text-xs font-semibold block mb-1" style={{ color: "#3E5560" }}>
                       Last Name
                     </label>
                     <input
@@ -278,16 +281,16 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
                       placeholder="Smith"
                       maxLength={50}
                       className="w-full px-3 py-2.5 border rounded-lg text-sm outline-none transition-all"
-                      style={{ borderColor: "#E5E7EB" }}
-                      onFocus={(e) => (e.currentTarget.style.borderColor = "#1B365D")}
-                      onBlur={(e) => (e.currentTarget.style.borderColor = "#E5E7EB")}
+                      style={{ borderColor: "#E2EAED" }}
+                      onFocus={(e) => (e.currentTarget.style.borderColor = "#1C3A48")}
+                      onBlur={(e) => (e.currentTarget.style.borderColor = "#E2EAED")}
                     />
                   </div>
                 </div>
 
                 {/* DOB */}
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1">
+                  <label className="text-xs font-semibold block mb-1" style={{ color: "#3E5560" }}>
                     Date of Birth
                   </label>
                   <input
@@ -298,9 +301,9 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
                     inputMode="numeric"
                     maxLength={10}
                     className="w-full px-3 py-2.5 border rounded-lg text-sm outline-none transition-all"
-                    style={{ borderColor: "#E5E7EB" }}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = "#1B365D")}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = "#E5E7EB")}
+                    style={{ borderColor: "#E2EAED" }}
+                    onFocus={(e) => (e.currentTarget.style.borderColor = "#1C3A48")}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = "#E2EAED")}
                   />
                 </div>
               </div>
@@ -314,7 +317,7 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
               )}
 
               {/* Privacy badge */}
-              <div className="flex items-center gap-1.5 mt-3 text-xs text-gray-400">
+              <div className="flex items-center gap-1.5 mt-3 text-xs text-[#7A9BA6]">
                 <Lock size={11} />
                 256-bit SSL · HIPAA-compliant · Data never stored
               </div>
@@ -326,19 +329,19 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
         {!verified && (
           <div
             className="px-6 py-4 flex items-center gap-3"
-            style={{ backgroundColor: "#F8FAFC", borderTop: "1px solid #E8F0FE" }}
+            style={{ backgroundColor: "#FAF9F5", borderTop: "1px solid #E2EAED" }}
           >
             <button
               onClick={onSkip}
-              className="flex-1 py-2.5 text-sm font-semibold rounded-xl border-2 transition-all"
-              style={{ borderColor: "#E5E7EB", color: "#555555" }}
+              className="flex-1 py-2.5 text-sm font-semibold rounded-lg border-2 transition-all"
+              style={{ borderColor: "#E2EAED", color: "#3E5560" }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#1B365D";
-                (e.currentTarget as HTMLButtonElement).style.color = "#1B365D";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#1C3A48";
+                (e.currentTarget as HTMLButtonElement).style.color = "#1C3A48";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "#E5E7EB";
-                (e.currentTarget as HTMLButtonElement).style.color = "#555555";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#E2EAED";
+                (e.currentTarget as HTMLButtonElement).style.color = "#3E5560";
               }}
             >
               Skip — Show All Plans
@@ -346,9 +349,9 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
             <button
               onClick={handleVerify}
               disabled={isPending}
-              className="flex-1 py-2.5 text-sm font-bold rounded-xl flex items-center justify-center gap-2 transition-all"
+              className="flex-1 py-2.5 text-sm font-bold rounded-lg flex items-center justify-center gap-2 transition-all"
               style={{
-                backgroundColor: isPending ? "#9CA3AF" : "#C41E3A",
+                backgroundColor: isPending ? "#9CA3AF" : "#1C3A48",
                 color: "white",
               }}
             >

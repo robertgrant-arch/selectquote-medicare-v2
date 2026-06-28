@@ -34,7 +34,7 @@ export default function StarRating({ rating, size = 14, showLabel = true }: Star
     <div className="flex items-center gap-1">
       <div className="flex items-center gap-0.5">{stars}</div>
       {showLabel && (
-        <span className="text-xs font-semibold text-gray-600 ml-1">{rating.toFixed(1)}</span>
+        <span className="text-xs font-semibold ml-1" style={{ color: "#3E5560" }}>{rating.toFixed(1)}</span>
       )}
     </div>
   );

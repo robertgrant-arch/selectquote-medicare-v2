@@ -1,5 +1,5 @@
 // EnrollModal — Enrollment confirmation modal
-// Design: Bold Civic Design | Primary: #1B365D | CTA: #C41E3A
+// Design: Bold Civic Design | Primary: #1C3A48 | CTA: #1C3A48
 
 import { X, CheckCircle2, Phone, ExternalLink, Shield } from "lucide-react";
 import type { MedicarePlan } from "@/lib/types";
@@ -22,13 +22,13 @@ export default function EnrollModal({ open, onClose, plan }: EnrollModalProps) {
 
       {/* Modal */}
       <div
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md"
-        style={{ animation: "fadeInUp 0.25s ease" }}
+        className="relative bg-white rounded-xl w-full max-w-md"
+        style={{ boxShadow: "0 8px 40px rgba(11,27,36,0.16)", animation: "fadeInUp 0.25s ease" }}
       >
-        {/* Green header */}
+        {/* Header */}
         <div
-          className="rounded-t-2xl p-6 text-white text-center relative"
-          style={{ background: "linear-gradient(135deg, #004D2C, #1B365D)" }}
+          className="rounded-t-xl p-6 text-white text-center relative"
+          style={{ backgroundColor: "#1C3A48" }}
         >
           <button
             onClick={onClose}
@@ -41,7 +41,7 @@ export default function EnrollModal({ open, onClose, plan }: EnrollModalProps) {
           </div>
           <h2
             className="text-xl font-bold mb-1"
-            style={{ fontFamily: "'Inter', serif" }}
+            style={{ fontFamily: "'DM Sans', serif" }}
           >
             Ready to Enroll?
           </h2>
@@ -54,85 +54,86 @@ export default function EnrollModal({ open, onClose, plan }: EnrollModalProps) {
           {/* Plan summary */}
           <div
             className="rounded-xl p-4 border"
-            style={{ backgroundColor: "#F7F8FA", borderColor: "#E5E7EB" }}
+            style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}
           >
             <div className="flex items-center gap-3 mb-3">
               <CarrierLogo carrier={plan.carrier} size="sm" />
               <div>
-                <div className="text-xs text-gray-500 font-medium">{plan.carrier}</div>
-                <div className="text-sm font-bold text-gray-900" style={{ fontFamily: "'Inter', serif" }}>
+                <div className="text-xs text-[#7A9BA6] font-medium">{plan.carrier}</div>
+                <div className="text-sm font-bold text-[#0B1B24]" style={{ fontFamily: "'DM Sans', serif" }}>
                   {plan.planName}
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
               <div>
-                <div className="text-lg font-bold" style={{ color: "#1B365D", fontFamily: "'Inter', serif" }}>
+                <div className="text-lg font-bold" style={{ color: "#1C3A48", fontFamily: "'DM Sans', serif" }}>
                   {plan.premium === 0 ? "$0" : `$${plan.premium}`}
                 </div>
-                <div className="text-[10px] text-gray-500">/month</div>
+                <div className="text-[10px] text-[#7A9BA6]">/month</div>
               </div>
               <div>
-                <div className="text-lg font-bold text-gray-800" style={{ fontFamily: "'Inter', serif" }}>
+                <div className="text-lg font-bold text-[#0B1B24]" style={{ fontFamily: "'DM Sans', serif" }}>
                   ${plan.maxOutOfPocket.toLocaleString()}
                 </div>
-                <div className="text-[10px] text-gray-500">max OOP</div>
+                <div className="text-[10px] text-[#7A9BA6]">max OOP</div>
               </div>
               <div className="flex flex-col items-center">
                 <StarRating rating={plan.starRating.overall} size={12} showLabel={false} />
-                <div className="text-[10px] text-gray-500 mt-0.5">{plan.starRating.overall}★ rating</div>
+                <div className="text-[10px] text-[#7A9BA6] mt-0.5">{plan.starRating.overall}★ rating</div>
               </div>
             </div>
           </div>
 
           {/* Enrollment options */}
           <div className="space-y-3">
-            <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">
+            <div className="text-xs font-bold text-[#7A9BA6] uppercase tracking-wide">
               Enrollment Options
             </div>
 
             <button
               className="w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all text-left"
-              style={{ borderColor: "#C41E3A", backgroundColor: "#FFF3E0" }}
+              style={{ borderColor: "#1C3A48", backgroundColor: "#EEF5F7" }}
             >
               <div className="flex items-center gap-3">
                 <div
                   className="w-9 h-9 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: "#C41E3A" }}
+                  style={{ backgroundColor: "#1C3A48" }}
                 >
                   <ExternalLink size={16} className="text-white" />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-gray-900">Enroll Online</div>
-                  <div className="text-xs text-gray-500">Complete enrollment on the carrier's website</div>
+                  <div className="text-sm font-bold text-[#0B1B24]">Enroll Online</div>
+                  <div className="text-xs text-[#7A9BA6]">Complete enrollment on the carrier's website</div>
                 </div>
               </div>
               <span
                 className="text-xs font-bold px-3 py-1.5 rounded-lg text-white"
-                style={{ backgroundColor: "#C41E3A" }}
+                style={{ backgroundColor: "#1C3A48" }}
               >
                 Go Now
               </span>
             </button>
 
             <button
-              className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-green-300 hover:bg-[#E8F0FE]/30 transition-all text-left"
+              className="w-full flex items-center justify-between p-4 rounded-xl border transition-all text-left hover:border-[#237A92] hover:bg-[#EEF5F7]"
+              style={{ borderColor: "#E2EAED" }}
             >
               <div className="flex items-center gap-3">
                 <div
                   className="w-9 h-9 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: "#E8F0FE" }}
+                  style={{ backgroundColor: "#E8F2F5" }}
                 >
-                  <Phone size={16} style={{ color: "#1B365D" }} />
+                  <Phone size={16} style={{ color: "#1C3A48" }} />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-gray-900">Call to Enroll</div>
-                  <div className="text-xs text-gray-500">Speak with a licensed agent: 1-800-555-0100</div>
+                  <div className="text-sm font-bold text-[#0B1B24]">Call to Enroll</div>
+                  <div className="text-xs text-[#7A9BA6]">Speak with a licensed agent: 1-800-555-0100</div>
                 </div>
               </div>
               <span
                 className="text-xs font-bold px-3 py-1.5 rounded-lg"
-                style={{ color: "#1B365D", backgroundColor: "#E8F0FE" }}
+                style={{ color: "#1C3A48", backgroundColor: "#E8F2F5" }}
               >
                 Call Now
               </span>
@@ -142,10 +143,10 @@ export default function EnrollModal({ open, onClose, plan }: EnrollModalProps) {
           {/* Disclaimer */}
           <div
             className="rounded-xl p-3 flex items-start gap-2"
-            style={{ backgroundColor: "#F7F8FA" }}
+            style={{ backgroundColor: "#FAF9F5", border: "1px solid #E2EAED" }}
           >
-            <Shield size={13} className="text-gray-400 shrink-0 mt-0.5" />
-            <p className="text-xs text-gray-500 leading-relaxed">
+            <Shield size={13} className="text-[#7A9BA6] shrink-0 mt-0.5" />
+            <p className="text-xs text-[#7A9BA6] leading-relaxed">
               This is a mock demonstration. Enrollment links are for illustration only. Always
               verify plan details with the carrier before enrolling.
             </p>

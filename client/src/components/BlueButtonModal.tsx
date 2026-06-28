@@ -82,28 +82,36 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ backgroundColor: "rgba(11,27,36,0.5)", backdropFilter: "blur(3px)" }}
+    >
       <div
-        className="relative w-full max-w-lg mx-4 rounded-2xl shadow-2xl overflow-hidden"
-        style={{ backgroundColor: "#FFFFFF" }}
+        className="relative w-full max-w-lg mx-4 rounded-xl overflow-hidden"
+        style={{ backgroundColor: "#FFFFFF", boxShadow: "0 8px 40px rgba(11,27,36,0.16)" }}
       >
         {/* Header */}
         <div
           className="flex items-center justify-between px-6 py-4"
-          style={{ backgroundColor: "#1B365D" }}
+          style={{ backgroundColor: "#1C3A48" }}
         >
           <div className="flex items-center gap-3">
-            <Shield size={22} className="text-white" />
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
+              <Shield size={18} className="text-white" />
+            </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Connect Your Medicare Data</h2>
-              <p className="text-xs text-blue-200">Powered by CMS Blue Button 2.0</p>
+              <h2 className="text-base font-bold text-white" style={{ fontFamily: "'DM Sans', sans-serif" }}>Connect Your Medicare Data</h2>
+              <p className="text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>Powered by CMS Blue Button 2.0</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-full hover:bg-white/20 transition-all"
+            className="flex items-center justify-center transition-colors"
+            style={{ width: 30, height: 30, borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.15)", border: "none", color: "white", cursor: "pointer" }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.25)")}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.15)")}
           >
-            <X size={20} className="text-white" />
+            <X size={16} />
           </button>
         </div>
 
@@ -111,8 +119,8 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
         <div className="p-6">
           {step === "consent" && (
             <div className="space-y-4">
-              <div className="p-4 rounded-xl" style={{ backgroundColor: "#E8F0FE" }}>
-                <p className="text-sm text-gray-700 leading-relaxed">
+              <div className="p-4 rounded-lg" style={{ backgroundColor: "#EEF5F7", border: "1px solid #C6DAE0" }}>
+                <p className="text-sm leading-relaxed" style={{ color: "#3E5560" }}>
                   Securely connect to <strong>Medicare.gov</strong> to automatically import your
                   prescription drug list. This helps us find the best plan that covers your medications
                   at the lowest cost.
@@ -141,9 +149,9 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
               </div>
 
               {/* CMS Disclaimer */}
-              <div className="p-4 rounded-xl border border-gray-200" style={{ backgroundColor: "#F9FAFB" }}>
-                <div className="text-xs text-gray-600 space-y-2">
-                  <p className="font-bold text-gray-700">CMS Data Use Disclaimer</p>
+              <div className="p-4 rounded-lg" style={{ backgroundColor: "#FAF9F5", border: "1px solid #E2EAED" }}>
+                <div className="text-xs space-y-2" style={{ color: "#3E5560" }}>
+                  <p className="font-bold" style={{ color: "#1C3A48" }}>CMS Data Use Disclaimer</p>
                   <p>
                     This application uses the CMS Blue Button 2.0 API to access your Medicare data.
                     CMS does not endorse this application. The data retrieved is used solely to help
@@ -164,10 +172,11 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
                     type="checkbox"
                     checked={consentChecked}
                     onChange={(e) => setConsentChecked(e.target.checked)}
-                    className="mt-0.5 w-4 h-4 rounded border-gray-300"
-                    style={{ accentColor: "#1B365D" }}
+                    className="mt-0.5 w-4 h-4 rounded"
+                    style={{ borderColor: "#C6DAE0" }}
+                    style={{ accentColor: "#1C3A48" }}
                   />
-                  <span className="text-xs text-gray-700">
+                  <span className="text-xs" style={{ color: "#3E5560" }}>
                     I consent to share my Medicare claims data with SelectQuote for the purpose
                     of receiving personalized Medicare plan recommendations. I understand I can
                     revoke this consent at any time.
@@ -179,10 +188,11 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
                     type="checkbox"
                     checked={hipaaChecked}
                     onChange={(e) => setHipaaChecked(e.target.checked)}
-                    className="mt-0.5 w-4 h-4 rounded border-gray-300"
-                    style={{ accentColor: "#1B365D" }}
+                    className="mt-0.5 w-4 h-4 rounded"
+                    style={{ borderColor: "#C6DAE0" }}
+                    style={{ accentColor: "#1C3A48" }}
                   />
-                  <span className="text-xs text-gray-700">
+                  <span className="text-xs" style={{ color: "#3E5560" }}>
                     I acknowledge that I have read and understand the HIPAA Privacy Notice and CMS
                     Data Use Disclaimer above. I understand that my Protected Health Information
                     will be handled in accordance with applicable federal and state privacy laws.
@@ -194,8 +204,8 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
               <button
                 onClick={handleConnect}
                 disabled={!consentChecked || !hipaaChecked}
-                className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ backgroundColor: consentChecked && hipaaChecked ? "#0071BC" : "#94A3B8" }}
+                className="w-full py-3 rounded-lg text-sm font-bold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ backgroundColor: consentChecked && hipaaChecked ? "#1C3A48" : "#94A3B8" }}
               >
                 <img
                   src="https://bluebutton.cms.gov/assets/img/bb-logo-vector.svg"
@@ -208,7 +218,7 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
               </button>
 
               {/* Additional Legal Notices */}
-              <div className="text-[10px] text-gray-400 text-center space-y-1">
+              <div className="text-[10px] text-center space-y-1" style={{ color: "#7A9BA6" }}>
                 <p>
                   SelectQuote is a licensed insurance agency. This tool is provided as a service
                   to help you compare Medicare plan options.
@@ -227,14 +237,14 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
 
           {step === "connecting" && (
             <div className="text-center py-12 space-y-4">
-              <Loader2 size={48} className="mx-auto animate-spin" style={{ color: "#0071BC" }} />
+              <Loader2 size={48} className="mx-auto animate-spin" style={{ color: "#237A92" }} />
               <div>
-                <p className="text-lg font-bold text-gray-800">Connecting to Medicare.gov...</p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-lg font-bold text-[#0B1B24]">Connecting to Medicare.gov...</p>
+                <p className="text-sm text-[#7A9BA6] mt-1">
                   Please complete the login in the popup window
                 </p>
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[#7A9BA6]">
                 If no popup appeared, please check your browser's popup blocker settings.
               </p>
             </div>
@@ -244,30 +254,30 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
             <div className="space-y-4">
               <div className="text-center py-4">
                 <CheckCircle2 size={48} className="mx-auto" style={{ color: "#16A34A" }} />
-                <p className="text-lg font-bold text-gray-800 mt-3">
+                <p className="text-lg font-bold text-[#0B1B24] mt-3">
                   Medicare Data Retrieved Successfully
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-[#7A9BA6] mt-1">
                   Found {drugs.length} prescription drug{drugs.length !== 1 ? "s" : ""} on file
                 </p>
               </div>
 
               {drugs.length > 0 && (
-                <div className="max-h-48 overflow-y-auto rounded-xl border border-gray-200">
+                <div className="max-h-48 overflow-y-auto rounded-lg" style={{ border: "1px solid #E2EAED" }}>
                   <table className="w-full text-xs">
-                    <thead className="sticky top-0" style={{ backgroundColor: "#E8F0FE" }}>
+                    <thead className="sticky top-0" style={{ backgroundColor: "#EEF5F7" }}>
                       <tr>
-                        <th className="text-left p-2 font-bold text-gray-700">Drug Name</th>
-                        <th className="text-left p-2 font-bold text-gray-700">Dosage</th>
-                        <th className="text-left p-2 font-bold text-gray-700">Last Filled</th>
+                        <th className="text-left p-2 font-bold" style={{ color: "#1C3A48" }}>Drug Name</th>
+                        <th className="text-left p-2 font-bold" style={{ color: "#1C3A48" }}>Dosage</th>
+                        <th className="text-left p-2 font-bold" style={{ color: "#1C3A48" }}>Last Filled</th>
                       </tr>
                     </thead>
                     <tbody>
                       {drugs.map((drug, i) => (
-                        <tr key={i} className="border-t border-gray-100">
-                          <td className="p-2 font-semibold text-gray-800">{drug.name}</td>
-                          <td className="p-2 text-gray-500">{drug.dosage || "—"}</td>
-                          <td className="p-2 text-gray-500">{drug.lastFilled || "—"}</td>
+                        <tr key={i} style={{ borderTop: "1px solid #E2EAED" }}>
+                          <td className="p-2 font-semibold text-[#0B1B24]">{drug.name}</td>
+                          <td className="p-2 text-[#7A9BA6]">{drug.dosage || "—"}</td>
+                          <td className="p-2 text-[#7A9BA6]">{drug.lastFilled || "—"}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -278,7 +288,7 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
               <button
                 onClick={onClose}
                 className="w-full py-3 rounded-xl text-sm font-bold text-white"
-                style={{ backgroundColor: "#1B365D" }}
+                style={{ backgroundColor: "#1C3A48" }}
               >
                 Use These Drugs for Plan Comparison
               </button>
@@ -289,21 +299,21 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
             <div className="text-center py-8 space-y-4">
               <AlertTriangle size={48} className="mx-auto text-amber-500" />
               <div>
-                <p className="text-lg font-bold text-gray-800">Connection Issue</p>
-                <p className="text-sm text-gray-500 mt-1">{error}</p>
+                <p className="text-lg font-bold text-[#0B1B24]">Connection Issue</p>
+                <p className="text-sm text-[#7A9BA6] mt-1">{error}</p>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={handleReset}
                   className="flex-1 py-2.5 rounded-xl text-sm font-bold border"
-                  style={{ borderColor: "#1B365D", color: "#1B365D" }}
+                  style={{ borderColor: "#1C3A48", color: "#1C3A48" }}
                 >
                   Try Again
                 </button>
                 <button
                   onClick={onClose}
                   className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white"
-                  style={{ backgroundColor: "#1B365D" }}
+                  style={{ backgroundColor: "#1C3A48" }}
                 >
                   Close
                 </button>

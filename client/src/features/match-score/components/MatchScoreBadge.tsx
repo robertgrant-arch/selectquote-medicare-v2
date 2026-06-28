@@ -22,9 +22,9 @@ export default function MatchScoreBadge({ score, variant = 'full', onWhyClick }:
     return (
       <span aria-label={`Match Score ${n} out of 100 — ${tier.label}`} style={{ fontSize:'13px', fontWeight:700, color:tier.color }}>
         {n}
-        <span style={{ fontWeight:400, color:'#6B7280', marginLeft:'4px', fontSize:'11px' }}>— {tier.label}</span>
+        <span style={{ fontWeight:400, color:'#7A9BA6', marginLeft:'4px', fontSize:'11px' }}>— {tier.label}</span>
         {onWhyClick && (
-          <button onClick={onWhyClick} aria-label="Why this score?" style={{ marginLeft:'6px', background:'none', border:'none', cursor:'pointer', fontSize:'11px', fontWeight:600, color:'#1B365D', textDecoration:'underline', padding:0 }}>
+          <button onClick={onWhyClick} aria-label="Why this score?" style={{ marginLeft:'6px', background:'none', border:'none', cursor:'pointer', fontSize:'11px', fontWeight:600, color:'#237A92', textDecoration:'underline', padding:0 }}>
             Why?
           </button>
         )}
@@ -38,7 +38,7 @@ export default function MatchScoreBadge({ score, variant = 'full', onWhyClick }:
       <span style={{ fontSize:'9px', fontWeight:700, color:tier.color, marginTop:'3px', letterSpacing:'0.3px' }}>MATCH SCORE</span>
       <span style={{ fontSize:'10px', color:tier.color, opacity:0.9, marginTop:'3px', lineHeight:1.3 }}>{tier.label}</span>
       {onWhyClick && (
-        <button onClick={onWhyClick} aria-label="Explain this match score" style={{ marginTop:'6px', background:'none', border:'none', cursor:'pointer', fontSize:'10px', fontWeight:600, color:'#1B365D', textDecoration:'underline', padding:0 }}>
+        <button onClick={onWhyClick} aria-label="Explain this match score" style={{ marginTop:'6px', background:'none', border:'none', cursor:'pointer', fontSize:'10px', fontWeight:600, color:'#237A92', textDecoration:'underline', padding:0 }}>
           Why this score?
         </button>
       )}

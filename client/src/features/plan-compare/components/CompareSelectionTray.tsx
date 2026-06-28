@@ -17,33 +17,33 @@ export default function CompareSelectionTray({ onCompare }: Props) {
       role="region"
       aria-label="Plan comparison tray"
       data-testid="compare-tray"
-      style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:9985, backgroundColor:'#fff', borderTop:'2px solid #1B365D', boxShadow:'0 -4px 24px rgba(0,0,0,0.12)', padding:'12px 24px 16px' }}
+      style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:9985, backgroundColor:'#fff', borderTop:'2px solid #1C3A48', boxShadow:'0 -2px 0 rgba(11,27,36,0.06), 0 -8px 32px rgba(11,27,36,0.10)', padding:'12px 24px 16px' }}
     >
       <div style={{ maxWidth:'1280px', margin:'0 auto', display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' }}>
-        <span style={{ fontSize:'12px', fontWeight:700, color:'#1B365D', whiteSpace:'nowrap', flexShrink:0 }}>
+        <span style={{ fontSize:'12px', fontWeight:700, color:'#1C3A48', whiteSpace:'nowrap', flexShrink:0, fontFamily:"'DM Sans', sans-serif" }}>
           Comparing {count}/3
         </span>
 
         <div style={{ display:'flex', gap:'8px', flex:1, flexWrap:'wrap' }}>
           {selected.map(plan => (
-            <div key={plan.id} style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'5px 10px', borderRadius:'8px', backgroundColor:'#EFF6FF', border:'1px solid #BFDBFE' }}>
-              <span style={{ fontSize:'11px', fontWeight:600, color:'#1B365D', maxWidth:'160px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+            <div key={plan.id} style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'5px 10px', borderRadius:'8px', backgroundColor:'#EEF5F7', border:'1px solid #C6DAE0' }}>
+              <span style={{ fontSize:'11px', fontWeight:600, color:'#1C3A48', maxWidth:'160px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontFamily:"'DM Sans', sans-serif" }}>
                 {plan.carrier} · {plan.planName}
               </span>
-              <span style={{ fontSize:'10px', color:'#6B7280' }}>${plan.premium}/mo</span>
+              <span style={{ fontSize:'10px', color:'#7A9BA6', fontFamily:"'DM Sans', sans-serif" }}>${plan.premium}/mo</span>
               <button
                 onClick={() => remove(plan.id)}
                 aria-label={`Remove ${plan.planName} from comparison`}
-                style={{ background:'none', border:'none', cursor:'pointer', color:'#6B7280', padding:0, display:'flex', alignItems:'center' }}
+                style={{ background:'none', border:'none', cursor:'pointer', color:'#7A9BA6', padding:0, display:'flex', alignItems:'center' }}
               >
                 <X size={12} aria-hidden="true" />
               </button>
             </div>
           ))}
           {count < 3 && (
-            <div style={{ display:'flex', alignItems:'center', gap:'5px', padding:'5px 10px', borderRadius:'8px', border:'1px dashed #CBD5E1', color:'#9CA3AF' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'5px', padding:'5px 10px', borderRadius:'8px', border:'1px dashed #C6DAE0', color:'#7A9BA6' }}>
               <Plus size={11} aria-hidden="true" />
-              <span style={{ fontSize:'11px' }}>Add {count === 1 ? 'a 2nd' : 'a 3rd'} plan</span>
+              <span style={{ fontSize:'11px', fontFamily:"'DM Sans', sans-serif" }}>Add {count === 1 ? 'a 2nd' : 'a 3rd'} plan</span>
             </div>
           )}
         </div>
@@ -55,25 +55,28 @@ export default function CompareSelectionTray({ onCompare }: Props) {
           aria-label={compareButtonLabel(count)}
           aria-disabled={!canGo}
           style={{
-            padding:'10px 20px', borderRadius:'10px',
-            backgroundColor: canGo ? '#C41E3A' : '#E5E7EB',
-            color: canGo ? '#fff' : '#9CA3AF',
+            padding:'10px 20px', borderRadius:'8px',
+            backgroundColor: canGo ? '#1C3A48' : '#E2EAED',
+            color: canGo ? '#fff' : '#7A9BA6',
             border:'none', cursor: canGo ? 'pointer' : 'default',
             fontSize:'13px', fontWeight:700, flexShrink:0,
             display:'flex', alignItems:'center', gap:'6px',
+            fontFamily:"'DM Sans', sans-serif",
+            transition:'background-color 0.14s',
           }}
+          onMouseEnter={(e) => { if (canGo) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#112333'; }}
+          onMouseLeave={(e) => { if (canGo) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#1C3A48'; }}
         >
           <BarChart2 size={15} aria-hidden="true" />
           {compareButtonLabel(count)}
         </button>
       </div>
 
-      {/* Inline message when fewer than 2 plans selected */}
       {blocked && (
         <p
           role="status"
           aria-live="polite"
-          style={{ fontSize:'11px', color:'#B45309', textAlign:'center', margin:'8px 0 0', fontWeight:600 }}
+          style={{ fontSize:'11px', color:'#7A9BA6', textAlign:'center', margin:'8px 0 0', fontWeight:600, fontFamily:"'DM Sans', sans-serif" }}
         >
           {blocked}
         </p>

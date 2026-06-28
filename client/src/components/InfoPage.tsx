@@ -14,7 +14,7 @@ export interface InfoPageProps {
   title: string;
   /** One-sentence subtitle */
   subtitle: string;
-  /** Hero accent color (defaults to brand green) */
+  /** Hero accent color (defaults to brand dark) */
   accentColor?: string;
   /** Main body content rendered inside the content card */
   children: React.ReactNode;
@@ -25,28 +25,28 @@ export default function InfoPage({
   sectionHref,
   title,
   subtitle,
-  accentColor = "#1B365D",
+  accentColor = "#1C3A48",
   children,
 }: InfoPageProps) {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F7F8FA" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#FAF9F5" }}>
       <Header />
 
       {/* Hero */}
       <section
         className="py-12 text-white"
-        style={{ background: `linear-gradient(135deg, #004D2C 0%, ${accentColor} 60%, #00A651 100%)` }}
+        style={{ backgroundColor: accentColor }}
       >
         <div className="container">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-white/70 text-sm mb-4">
-            <Link href="/" className="hover:text-white transition-colors no-underline text-white/70">
+          <nav className="flex items-center gap-2 text-white/60 text-sm mb-4" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+            <Link href="/" className="hover:text-white transition-colors no-underline text-white/60">
               Home
             </Link>
             <ChevronRight size={13} />
             <Link
               href={sectionHref}
-              className="hover:text-white transition-colors no-underline text-white/70"
+              className="hover:text-white transition-colors no-underline text-white/60"
             >
               {section}
             </Link>
@@ -56,11 +56,11 @@ export default function InfoPage({
 
           <h1
             className="text-3xl lg:text-4xl font-bold mb-3"
-            style={{ fontFamily: "'Inter', serif" }}
+            style={{ fontFamily: "'Lora', serif" }}
           >
             {title}
           </h1>
-          <p className="text-white/85 text-lg max-w-2xl">{subtitle}</p>
+          <p className="text-white/75 text-lg max-w-2xl" style={{ fontFamily: "'DM Sans', sans-serif" }}>{subtitle}</p>
         </div>
       </section>
 
@@ -71,34 +71,37 @@ export default function InfoPage({
           <Link
             href={sectionHref}
             className="inline-flex items-center gap-1.5 text-sm font-medium mb-6 no-underline transition-colors"
-            style={{ color: accentColor }}
+            style={{ color: "#237A92", fontFamily: "'DM Sans', sans-serif" }}
           >
             <ArrowLeft size={14} />
             Back to {section}
           </Link>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+          <div
+            className="bg-white rounded-xl border p-8"
+            style={{ borderColor: "#E2EAED", boxShadow: "0 1px 4px rgba(11,27,36,0.06)" }}
+          >
             {children}
           </div>
 
           {/* CTA */}
           <div
-            className="mt-8 rounded-2xl p-8 text-white text-center"
-            style={{ background: `linear-gradient(135deg, #004D2C 0%, ${accentColor} 100%)` }}
+            className="mt-8 rounded-xl p-8 text-white text-center"
+            style={{ backgroundColor: "#1C3A48" }}
           >
             <h2
               className="text-2xl font-bold mb-2"
-              style={{ fontFamily: "'Inter', serif" }}
+              style={{ fontFamily: "'Lora', serif" }}
             >
               Ready to Compare Plans?
             </h2>
-            <p className="text-white/80 mb-5">
+            <p className="text-white/70 mb-5" style={{ fontFamily: "'DM Sans', sans-serif" }}>
               Enter your ZIP code to see all available plans in your area — free, with no obligation.
             </p>
             <Link
               href="/plans?zip=64106"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-bold no-underline transition-all"
-              style={{ backgroundColor: "#C41E3A", color: "white" }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-base font-semibold no-underline transition-all"
+              style={{ backgroundColor: "#237A92", color: "white", fontFamily: "'DM Sans', sans-serif" }}
             >
               See Plans Near You
               <ChevronRight size={16} />
@@ -108,7 +111,7 @@ export default function InfoPage({
       </div>
 
       {/* Minimal footer */}
-      <footer className="bg-gray-900 text-gray-500 py-6 text-center text-xs">
+      <footer style={{ backgroundColor: "#0B1B24" }} className="text-gray-500 py-6 text-center text-xs">
         <p>
           We are not affiliated with or endorsed by the U.S. government or the federal Medicare
           program. This is a mock demonstration application for educational purposes only.

@@ -5,7 +5,7 @@ import { CheckCircle2, AlertCircle, ArrowRight, Info, Star } from "lucide-react"
 
 const SECTION = "Resources";
 const SECTION_HREF = "/resources";
-const ACCENT = "#0369A1";
+const ACCENT = "#1C3A48";
 
 // ── Medicare 101 ─────────────────────────────────────────────────────────────
 export function Medicare101() {
@@ -34,40 +34,32 @@ export function Medicare101() {
         {[
           {
             part: "Part A — Hospital Insurance",
-            color: "border-blue-300 bg-blue-50",
             badge: "Part A",
-            badgeColor: "bg-blue-600",
             covers: ["Inpatient hospital stays", "Skilled nursing facility care (after qualifying hospital stay)", "Hospice care", "Some home health care"],
             cost: "Most people pay $0 premium (if you or spouse worked 40+ quarters). Deductible: $1,676 per benefit period in 2025.",
           },
           {
             part: "Part B — Medical Insurance",
-            color: "border-green-300 bg-green-50",
             badge: "Part B",
-            badgeColor: "bg-green-600",
             covers: ["Doctor visits and outpatient care", "Preventive services (screenings, vaccines)", "Durable medical equipment", "Mental health services", "Some home health care"],
             cost: "Standard premium: $185/month in 2025 (higher for high earners via IRMAA). Annual deductible: $257.",
           },
           {
             part: "Part C — Medicare Advantage",
-            color: "border-orange-300 bg-orange-50",
             badge: "Part C",
-            badgeColor: "bg-orange-600",
             covers: ["All Part A and Part B benefits", "Usually Part D drug coverage", "Often dental, vision, hearing, fitness", "Managed by private insurers"],
             cost: "Premium varies by plan (many are $0). Must still pay Part B premium. Annual out-of-pocket maximum applies.",
           },
           {
             part: "Part D — Prescription Drug Coverage",
-            color: "border-purple-300 bg-purple-50",
             badge: "Part D",
-            badgeColor: "bg-purple-600",
             covers: ["Prescription drugs covered by the plan's formulary", "Insulin capped at $35/month", "Vaccines at $0", "Annual OOP cap of $2,000 in 2025"],
             cost: "Average premium ~$46/month in 2025. Standard deductible up to $590. OOP cap: $2,000.",
           },
         ].map((item) => (
-          <div key={item.part} className={`rounded-xl p-4 border ${item.color}`}>
+          <div key={item.part} className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
             <div className="flex items-center gap-2 mb-2">
-              <span className={`text-white text-xs font-bold px-2 py-0.5 rounded-full ${item.badgeColor}`}>{item.badge}</span>
+              <span className="text-white text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#1C3A48" }}>{item.badge}</span>
               <div className="font-bold text-gray-800 text-sm">{item.part}</div>
             </div>
             <div className="grid sm:grid-cols-2 gap-3">
@@ -97,7 +89,7 @@ export function Medicare101() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr style={{ backgroundColor: "#E0F2FE" }}>
+            <tr style={{ backgroundColor: "#EEF5F7" }}>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Eligibility Group</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Requirements</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Part A Premium</th>
@@ -126,9 +118,9 @@ export function Medicare101() {
         Original Medicare vs. Medicare Advantage
       </h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-          <h3 className="font-bold text-blue-800 text-sm mb-2">Original Medicare (Parts A + B)</h3>
-          <ul className="space-y-1.5 text-xs text-blue-900">
+        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
+          <h3 className="font-bold text-sm mb-2" style={{ color: "#1C3A48" }}>Original Medicare (Parts A + B)</h3>
+          <ul className="space-y-1.5">
             {[
               "Administered directly by the federal government",
               "See any Medicare-accepting doctor nationwide",
@@ -138,16 +130,16 @@ export function Medicare101() {
               "Add standalone Part D for drug coverage",
               "Add Medigap to fill cost-sharing gaps",
             ].map((item) => (
-              <li key={item} className="flex items-start gap-1.5">
-                <span className="mt-1.5 w-1 h-1 rounded-full bg-blue-600 shrink-0" />
+              <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
+                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#7A9BA6" }} />
                 {item}
               </li>
             ))}
           </ul>
         </div>
-        <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
-          <h3 className="font-bold text-orange-800 text-sm mb-2">Medicare Advantage (Part C)</h3>
-          <ul className="space-y-1.5 text-xs text-orange-900">
+        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
+          <h3 className="font-bold text-sm mb-2" style={{ color: "#1C3A48" }}>Medicare Advantage (Part C)</h3>
+          <ul className="space-y-1.5">
             {[
               "Managed by private insurers approved by Medicare",
               "Usually requires using a provider network",
@@ -157,8 +149,8 @@ export function Medicare101() {
               "Often $0 premium (must still pay Part B premium)",
               "Care coordination through PCP (HMO) or direct access (PPO)",
             ].map((item) => (
-              <li key={item} className="flex items-start gap-1.5">
-                <span className="mt-1.5 w-1 h-1 rounded-full bg-orange-600 shrink-0" />
+              <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
+                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#237A92" }} />
                 {item}
               </li>
             ))}
@@ -172,7 +164,7 @@ export function Medicare101() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr style={{ backgroundColor: "#E0F2FE" }}>
+            <tr style={{ backgroundColor: "#EEF5F7" }}>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Cost Item</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center">2025 Amount</th>
             </tr>
@@ -202,7 +194,7 @@ export function Medicare101() {
         <Link href="/resources/enrollment-periods" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white" style={{ backgroundColor: ACCENT }}>
           Enrollment Periods Guide <ArrowRight size={14} />
         </Link>
-        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1B365D", borderColor: "#1B365D" }}>
+        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1C3A48", borderColor: "#1C3A48" }}>
           Compare Medicare Advantage Plans
         </Link>
       </div>
@@ -233,51 +225,39 @@ export function EnrollmentPeriods() {
             when: "7 months: 3 months before your 65th birthday month, your birthday month, and 3 months after",
             what: "Enroll in Part A, Part B, Part C (Medicare Advantage), and/or Part D for the first time",
             note: "Enrolling in the first 3 months ensures coverage starts on your 65th birthday. Enrolling in months 4–7 delays coverage by 1–3 months.",
-            color: "border-green-300",
-            bg: "bg-green-50",
           },
           {
             name: "General Enrollment Period (GEP)",
             when: "January 1 – March 31 each year",
             what: "Enroll in Part A and/or Part B if you missed your IEP",
             note: "Coverage begins July 1. You may face a late enrollment penalty for Part B (10% per 12-month period missed). Part D late penalty also applies.",
-            color: "border-blue-300",
-            bg: "bg-blue-50",
           },
           {
             name: "Annual Enrollment Period (AEP) / Open Enrollment",
             when: "October 15 – December 7 each year",
             what: "Join, switch, or drop a Medicare Advantage or Part D plan. Changes take effect January 1.",
             note: "This is the most important annual window. Review your plan's Annual Notice of Change (ANOC) each fall to see if costs or coverage changed.",
-            color: "border-orange-300",
-            bg: "bg-orange-50",
           },
           {
             name: "Medicare Advantage Open Enrollment Period (MA OEP)",
             when: "January 1 – March 31 each year",
             what: "If enrolled in a Medicare Advantage plan, switch to a different MA plan or return to Original Medicare (and add Part D). One change allowed.",
             note: "You cannot use MA OEP to switch from Original Medicare to Medicare Advantage. That requires AEP.",
-            color: "border-purple-300",
-            bg: "bg-purple-50",
           },
           {
             name: "Special Enrollment Period (SEP)",
             when: "Triggered by qualifying life events; varies by event",
             what: "Enroll in or change Medicare coverage outside standard enrollment periods",
             note: "Common triggers: losing employer coverage, moving out of plan service area, qualifying for Extra Help, plan losing Medicare contract, or returning from incarceration.",
-            color: "border-teal-300",
-            bg: "bg-teal-50",
           },
           {
             name: "5-Star Enrollment Period",
             when: "December 8 – November 30 (one switch per year)",
             what: "Switch to a Medicare Advantage or Part D plan with a 5-star CMS quality rating",
             note: "This SEP allows one plan switch per year to a 5-star rated plan, regardless of other enrollment periods.",
-            color: "border-yellow-300",
-            bg: "bg-yellow-50",
           },
         ].map((item) => (
-          <div key={item.name} className={`rounded-xl p-4 border-l-4 ${item.color} ${item.bg}`}>
+          <div key={item.name} className="rounded-xl p-4 border-l-4" style={{ backgroundColor: "#EEF5F7", borderLeftColor: "#1C3A48", borderTopColor: "#C6DAE0", borderRightColor: "#C6DAE0", borderBottomColor: "#C6DAE0" }}>
             <div className="font-bold text-gray-800 text-sm mb-1">{item.name}</div>
             <div className="text-xs font-semibold text-gray-600 mb-1">When: {item.when}</div>
             <div className="text-sm text-gray-700 mb-2"><strong>What you can do:</strong> {item.what}</div>
@@ -294,7 +274,7 @@ export function EnrollmentPeriods() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr style={{ backgroundColor: "#E0F2FE" }}>
+            <tr style={{ backgroundColor: "#EEF5F7" }}>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Part</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Penalty</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Duration</th>
@@ -311,7 +291,7 @@ export function EnrollmentPeriods() {
                 <td className="p-3 font-bold text-gray-800">{row.part}</td>
                 <td className="p-3 text-red-700 text-xs">{row.penalty}</td>
                 <td className="p-3 text-gray-600 text-xs">{row.duration}</td>
-                <td className="p-3 text-[#1B365D] text-xs">{row.avoid}</td>
+                <td className="p-3 text-[#1C3A48] text-xs">{row.avoid}</td>
               </tr>
             ))}
           </tbody>
@@ -369,13 +349,13 @@ export function StarRatingsGuide() {
       </h2>
       <div className="space-y-2 mb-6">
         {[
-          { stars: 5, label: "Excellent", color: "bg-[#E8F0FE] border-green-300 text-green-800", desc: "Top-performing plan. Exceptional quality of care, member experience, and administrative performance." },
-          { stars: 4, label: "Above Average", color: "bg-teal-50 border-teal-200 text-teal-800", desc: "Above-average quality. Strong performance across most measures. A good choice for most beneficiaries." },
-          { stars: 3, label: "Average", color: "bg-yellow-50 border-yellow-200 text-yellow-800", desc: "Average quality. Meets basic standards but has room for improvement in some areas." },
-          { stars: 2, label: "Below Average", color: "bg-orange-50 border-orange-200 text-orange-800", desc: "Below-average quality. CMS may impose corrective action plans on these plans." },
-          { stars: 1, label: "Poor", color: "bg-red-50 border-red-200 text-red-800", desc: "Poor quality. CMS may terminate contracts with plans that remain at 1 star for multiple years." },
+          { stars: 5, label: "Excellent", desc: "Top-performing plan. Exceptional quality of care, member experience, and administrative performance." },
+          { stars: 4, label: "Above Average", desc: "Above-average quality. Strong performance across most measures. A good choice for most beneficiaries." },
+          { stars: 3, label: "Average", desc: "Average quality. Meets basic standards but has room for improvement in some areas." },
+          { stars: 2, label: "Below Average", desc: "Below-average quality. CMS may impose corrective action plans on these plans." },
+          { stars: 1, label: "Poor", desc: "Poor quality. CMS may terminate contracts with plans that remain at 1 star for multiple years." },
         ].map((item) => (
-          <div key={item.stars} className={`rounded-xl p-3 border flex items-start gap-3 ${item.color}`}>
+          <div key={item.stars} className="rounded-xl p-3 border flex items-start gap-3" style={{ backgroundColor: item.stars >= 4 ? "#EEF5F7" : item.stars === 3 ? "#FAF9F5" : "#FAF9F5", borderColor: "#E2EAED", color: "#3E5560" }}>
             <div className="flex shrink-0">
               {Array.from({ length: item.stars }).map((_, i) => (
                 <Star key={i} size={14} fill="currentColor" />
@@ -430,7 +410,7 @@ export function StarRatingsGuide() {
           <div key={item.domain} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
             <div className="flex items-start justify-between gap-2 mb-1">
               <div className="font-semibold text-gray-800 text-sm">{item.domain}</div>
-              <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full shrink-0">{item.weight}</span>
+              <span className="text-xs px-2 py-0.5 rounded-full shrink-0" style={{ backgroundColor: "#E8F2F5", color: "#1C3A48" }}>{item.weight}</span>
             </div>
             <div className="text-gray-600 text-xs leading-relaxed">{item.measures}</div>
           </div>
@@ -450,13 +430,13 @@ export function StarRatingsGuide() {
           "Plans with 5 stars may offer richer benefits due to quality bonus payments from CMS",
         ].map((item) => (
           <li key={item} className="flex items-start gap-2">
-            <CheckCircle2 size={14} className="text-blue-600 shrink-0 mt-0.5" />
+            <CheckCircle2 size={14} className="shrink-0 mt-0.5" style={{ color: "#237A92" }} />
             {item}
           </li>
         ))}
       </ul>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800 mb-6">
+      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0", color: "#3E5560" }}>
         <div className="flex items-start gap-2">
           <Info size={15} className="shrink-0 mt-0.5" />
           <div>
@@ -542,7 +522,7 @@ export function FAQ() {
         ))}
       </div>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800 mb-6">
+      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0", color: "#3E5560" }}>
         <div className="flex items-start gap-2">
           <Info size={15} className="shrink-0 mt-0.5" />
           <div>
@@ -557,7 +537,7 @@ export function FAQ() {
         <Link href="/resources/medicare-101" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white" style={{ backgroundColor: ACCENT }}>
           Medicare 101 Guide <ArrowRight size={14} />
         </Link>
-        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1B365D", borderColor: "#1B365D" }}>
+        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1C3A48", borderColor: "#1C3A48" }}>
           Compare Plans in Your Area
         </Link>
       </div>

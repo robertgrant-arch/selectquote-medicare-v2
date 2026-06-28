@@ -3,7 +3,7 @@ import InfoPage from "@/components/InfoPage";
 import { Link } from "wouter";
 import { CheckCircle2, ArrowRight, Phone, Mail, MapPin, Shield, Users, Award, Clock } from "lucide-react";
 
-const ACCENT = "#1B365D";
+const ACCENT = "#1C3A48";
 
 // ── About Us ─────────────────────────────────────────────────────────────────
 export function AboutUs() {
@@ -37,7 +37,7 @@ export function AboutUs() {
           { icon: Clock, title: "Year-Round Support", desc: "Our licensed agents are available year-round — not just during Open Enrollment. We're here when you need to make changes or have questions." },
         ].map((item) => (
           <div key={item.title} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: "#E8F0FE" }}>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: "#EEF5F7" }}>
               <item.icon size={18} style={{ color: ACCENT }} />
             </div>
             <div className="font-bold text-gray-800 text-sm mb-1">{item.title}</div>
@@ -56,7 +56,7 @@ export function AboutUs() {
           { value: "200+", label: "Licensed Agents" },
           { value: "500K+", label: "Beneficiaries Helped" },
         ].map((stat) => (
-          <div key={stat.label} className="text-center bg-green-50 rounded-xl p-4 border border-green-100">
+          <div key={stat.label} className="text-center rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
             <div className="text-2xl font-bold mb-1" style={{ color: ACCENT, fontFamily: "'Inter', serif" }}>{stat.value}</div>
             <div className="text-xs text-gray-600 font-medium">{stat.label}</div>
           </div>
@@ -143,7 +143,7 @@ export function LicensedAgents() {
       <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
         Speak with an Agent Today
       </h2>
-      <div className="bg-green-50 border border-green-100 rounded-xl p-5 mb-6">
+      <div className="rounded-xl p-5 mb-6 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="flex items-start gap-3">
             <Phone size={18} style={{ color: ACCENT }} className="shrink-0 mt-0.5" />
@@ -189,7 +189,7 @@ export function ContactUs() {
           { icon: MapPin, title: "Main Office", primary: "1234 Main Street, Suite 500", secondary: "Kansas City, MO 64106\nLicensed in all 50 states", href: "#" },
         ].map((item) => (
           <div key={item.title} className="bg-gray-50 rounded-xl p-5 border border-gray-100 text-center">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: "#E8F0FE" }}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: "#EEF5F7" }}>
               <item.icon size={20} style={{ color: ACCENT }} />
             </div>
             <div className="font-bold text-gray-800 text-sm mb-1">{item.title}</div>
@@ -221,7 +221,7 @@ export function ContactUs() {
         ))}
       </ol>
 
-      <div className="bg-green-50 border border-green-100 rounded-xl p-4 text-sm text-green-800 mb-6">
+      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0", color: "#3E5560" }}>
         <strong>Our service is 100% free.</strong> We are paid by insurance carriers when you
         enroll in a plan. You will never be charged for speaking with an agent, comparing plans,
         or enrolling. There is no obligation to enroll after speaking with us.
@@ -245,7 +245,7 @@ export function PrivacyPolicy() {
     <InfoPage section="Company" sectionHref="/#" title="Privacy Policy" accentColor={ACCENT}
       subtitle="Last updated: January 1, 2025. This policy explains how MedicarePlan Finder collects, uses, and protects your personal information.">
 
-      <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-800 mb-6">
+      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED", color: "#3E5560" }}>
         <strong>Disclaimer:</strong> This is a demonstration application. This privacy policy is
         provided for illustrative purposes only and does not constitute a legally binding document.
       </div>
@@ -372,7 +372,7 @@ export function DualEligible() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr style={{ backgroundColor: "#E8F0FE" }}>
+            <tr style={{ backgroundColor: "#EEF5F7" }}>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Category</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Income Limit (2025)</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">What Medicaid Pays</th>
@@ -389,7 +389,7 @@ export function DualEligible() {
               <tr key={row.cat} className="border border-gray-200 hover:bg-gray-50">
                 <td className="p-3 font-medium text-gray-800 text-xs">{row.cat}</td>
                 <td className="p-3 text-gray-600 text-xs">{row.income}</td>
-                <td className="p-3 text-[#1B365D] text-xs">{row.pays}</td>
+                <td className="p-3 text-[#1C3A48] text-xs">{row.pays}</td>
               </tr>
             ))}
           </tbody>
@@ -405,7 +405,7 @@ export function DualEligible() {
         additional services not available in standard Medicare Advantage plans.
       </p>
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
-        <div className="bg-green-50 border border-green-100 rounded-xl p-4">
+        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
           <h3 className="font-bold text-green-800 text-sm mb-2">D-SNP Benefits</h3>
           <ul className="space-y-1.5 text-xs text-green-900">
             {[
@@ -426,7 +426,7 @@ export function DualEligible() {
             ))}
           </ul>
         </div>
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
           <h3 className="font-bold text-blue-800 text-sm mb-2">D-SNP Eligibility</h3>
           <ul className="space-y-1.5 text-xs text-blue-900">
             {[

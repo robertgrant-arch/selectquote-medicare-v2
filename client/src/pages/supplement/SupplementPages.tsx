@@ -24,7 +24,7 @@ function BenefitsTable({ highlighted }: { highlighted: string }) {
     <div className="overflow-x-auto mb-4">
       <table className="w-full text-xs border-collapse">
         <thead>
-          <tr className="bg-blue-50">
+          <tr className="bg-[#EEF5F7]">
             <th className="text-left p-2.5 font-semibold text-gray-700 border border-gray-200 w-1/2">Benefit</th>
             <th className={`p-2.5 font-semibold border border-gray-200 text-center ${highlighted === "Plan F" ? "bg-blue-200" : ""}`}>Plan F</th>
             <th className={`p-2.5 font-semibold border border-gray-200 text-center ${highlighted === "Plan G" ? "bg-blue-200" : ""}`}>Plan G</th>
@@ -35,9 +35,9 @@ function BenefitsTable({ highlighted }: { highlighted: string }) {
           {benefits.map((row) => (
             <tr key={row.benefit} className="border border-gray-200 hover:bg-gray-50">
               <td className="p-2.5 text-gray-700">{row.benefit}</td>
-              <td className={`p-2.5 text-center font-medium border border-gray-200 ${row.f === "100%" || row.f === "80%" ? "text-[#1B365D]" : "text-red-500"} ${highlighted === "Plan F" ? "bg-blue-50" : ""}`}>{row.f}</td>
-              <td className={`p-2.5 text-center font-medium border border-gray-200 ${row.g === "100%" || row.g === "80%" ? "text-[#1B365D]" : "text-red-500"} ${highlighted === "Plan G" ? "bg-blue-50" : ""}`}>{row.g}</td>
-              <td className={`p-2.5 text-center font-medium border border-gray-200 ${row.n === "100%" || row.n === "80%" ? "text-[#1B365D]" : "text-red-500"} ${highlighted === "Plan N" ? "bg-blue-50" : ""}`}>{row.n}</td>
+              <td className={`p-2.5 text-center font-medium border border-gray-200 ${row.f === "100%" || row.f === "80%" ? "text-[#1C3A48]" : "text-amber-600"} ${highlighted === "Plan F" ? "bg-[#EEF5F7]" : ""}`}>{row.f}</td>
+              <td className={`p-2.5 text-center font-medium border border-gray-200 ${row.g === "100%" || row.g === "80%" ? "text-[#1C3A48]" : "text-amber-600"} ${highlighted === "Plan G" ? "bg-[#EEF5F7]" : ""}`}>{row.g}</td>
+              <td className={`p-2.5 text-center font-medium border border-gray-200 ${row.n === "100%" || row.n === "80%" ? "text-[#1C3A48]" : "text-amber-600"} ${highlighted === "Plan N" ? "bg-[#EEF5F7]" : ""}`}>{row.n}</td>
             </tr>
           ))}
         </tbody>
@@ -95,7 +95,7 @@ export function MedigapPlanF() {
       <div className="overflow-x-auto mb-4">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="bg-blue-50">
+            <tr className="bg-[#EEF5F7]">
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Age at Enrollment</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center">Avg Monthly Premium</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center">Annual Premium</th>
@@ -127,7 +127,7 @@ export function MedigapPlanF() {
         ($257 in 2025) and Plan G does not. To determine which is better for you, compare the
         premium difference:
       </p>
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800 mb-6">
+      <div className="bg-[#EEF5F7] border border-blue-100 rounded-xl p-4 text-sm text-blue-800 mb-6">
         <strong>Simple math:</strong> If Plan F costs more than $257/year more than Plan G, Plan G
         saves you money. In most markets, Plan G premiums are $20–$60/month less than Plan F,
         meaning Plan G is almost always the better financial choice for new enrollees — even if
@@ -182,7 +182,7 @@ export function MedigapPlanG() {
       <div className="overflow-x-auto mb-4">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="bg-blue-50">
+            <tr className="bg-[#EEF5F7]">
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Age</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center">Avg Monthly Premium</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center">Annual Total (incl. deductible)</th>
@@ -302,7 +302,7 @@ export function MedigapPlanN() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="bg-blue-50">
+            <tr className="bg-[#EEF5F7]">
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Feature</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center">Plan G</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center bg-blue-100">Plan N</th>
@@ -321,7 +321,7 @@ export function MedigapPlanN() {
               <tr key={row.feature} className="border border-gray-200 hover:bg-gray-50">
                 <td className="p-3 text-gray-700">{row.feature}</td>
                 <td className="p-3 text-center text-gray-600">{row.g}</td>
-                <td className="p-3 text-center font-medium text-blue-700 bg-blue-50">{row.n}</td>
+                <td className="p-3 text-center font-medium text-blue-700 bg-[#EEF5F7]">{row.n}</td>
               </tr>
             ))}
           </tbody>
@@ -349,7 +349,7 @@ export function MedigapPlanN() {
         ))}
       </ul>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800 mb-6">
+      <div className="bg-[#EEF5F7] border border-blue-100 rounded-xl p-4 text-sm text-blue-800 mb-6">
         <div className="flex items-start gap-2">
           <Info size={15} className="shrink-0 mt-0.5" />
           <div>
@@ -418,7 +418,7 @@ export function CompareSupplementPlans() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="bg-blue-50">
+            <tr className="bg-[#EEF5F7]">
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Factor</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center">Plan F</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center">Plan G</th>
@@ -438,7 +438,7 @@ export function CompareSupplementPlans() {
               <tr key={row.factor} className="border border-gray-200 hover:bg-gray-50">
                 <td className="p-3 font-medium text-gray-700">{row.factor}</td>
                 <td className="p-3 text-center text-gray-600 text-xs">{row.f}</td>
-                <td className="p-3 text-center text-blue-700 font-medium text-xs bg-blue-50">{row.g}</td>
+                <td className="p-3 text-center text-blue-700 font-medium text-xs bg-[#EEF5F7]">{row.g}</td>
                 <td className="p-3 text-center text-gray-600 text-xs">{row.n}</td>
               </tr>
             ))}
@@ -450,7 +450,7 @@ export function CompareSupplementPlans() {
         Medigap vs. Medicare Advantage: Which Is Right for You?
       </h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+        <div className="bg-[#EEF5F7] border border-blue-100 rounded-xl p-4">
           <h3 className="font-bold text-blue-800 text-sm mb-2">Choose Medigap if you:</h3>
           <ul className="space-y-1.5 text-xs text-blue-900">
             {[
@@ -490,7 +490,7 @@ export function CompareSupplementPlans() {
         <Link href="/medicare-supplement/plan-g" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white" style={{ backgroundColor: ACCENT }}>
           Learn About Plan G <ArrowRight size={14} />
         </Link>
-        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1B365D", borderColor: "#1B365D" }}>
+        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1C3A48", borderColor: "#1C3A48" }}>
           Compare Medicare Advantage Plans
         </Link>
       </div>
