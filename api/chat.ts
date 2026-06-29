@@ -198,7 +198,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'claude-3-5-haiku-20241022',
         max_tokens: 1024,
         temperature: 0.7,
         system: systemPrompt,
@@ -210,7 +210,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!anthropicRes.ok) {
       const errText = await anthropicRes.text();
-      console.error(`[chat] Anthropic error ${anthropicRes.status}:`, errText.slice(0, 500));
+      console.error(`[chat] Anthropic error ${anthropicRes.status}:`, errText.slice(0, 2000));
       sendSSE(res, 'error', { message: `AI API error: ${anthropicRes.status}` });
       res.end();
       return;
