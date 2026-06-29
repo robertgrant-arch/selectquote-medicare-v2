@@ -93,14 +93,6 @@ function sanitizeHistory(
   return filtered;
 }
 
-function stripCitations(text: string): string {
-  return text
-    .replace(/\s*\[\d+\](?:\s*\[\d+\])*/g, '')
-    .replace(/\s+([.,;:!?])/g, '$1')
-    .replace(/[ \t]{2,}/g, ' ')
-    .trim();
-}
-
 // ── Phase / chips ─────────────────────────────────────────────────────────────
 type Phase = 'welcome' | 'discovery' | 'plan_search' | 'comparison' | 'deep_dive' | 'enrollment';
 
@@ -173,9 +165,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const apiKey = process.env.PERPLEXITY_API_KEY;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    res.status(500).json({ error: 'PERPLEXITY_API_KEY not configured' });
+    res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' });
     return;
   }
 
@@ -186,8 +178,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const rawHistory = Array.isArray(history) ? history.slice(-MAX_HISTORY_MESSAGES) : [];
   const cleanHistory = sanitizeHistory(rawHistory as Array<{ role: string; content: string }>);
 
+  const systemPrompt = SYSTEM_PROMPT + (COVERAGE_CHIPS_ENABLED ? COVERAGE_FLOW_INSTRUCTIONS : '') + contextMessage;
   const messages = [
-    { role: 'system', content: SYSTEM_PROMPT + (COVERAGE_CHIPS_ENABLED ? COVERAGE_FLOW_INSTRUCTIONS : '') + contextMessage },
     ...cleanHistory,
     { role: 'user', content: message },
   ];
@@ -198,30 +190,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('X-Accel-Buffering', 'no');
 
   try {
-    const perplexityRes = await fetch('https://api.perplexity.ai/chat/completions', {
+    const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'sonar',
-        messages,
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1024,
         temperature: 0.7,
+        system: systemPrompt,
+        messages,
         stream: true,
       }),
       signal: AbortSignal.timeout(55_000),
     });
 
-    if (!perplexityRes.ok) {
-      const errText = await perplexityRes.text();
-      console.error(`[chat] Perplexity error ${perplexityRes.status}:`, errText.slice(0, 500));
-      sendSSE(res, 'error', { message: `AI API error: ${perplexityRes.status}` });
+    if (!anthropicRes.ok) {
+      const errText = await anthropicRes.text();
+      console.error(`[chat] Anthropic error ${anthropicRes.status}:`, errText.slice(0, 500));
+      sendSSE(res, 'error', { message: `AI API error: ${anthropicRes.status}` });
       res.end();
       return;
     }
 
-    const reader = perplexityRes.body?.getReader();
+    const reader = anthropicRes.body?.getReader();
     if (!reader) {
       sendSSE(res, 'error', { message: 'No response body from AI' });
       res.end();
@@ -243,26 +238,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         const raw = line.slice(6).trim();
-        if (raw === '[DONE]') continue;
         try {
           const evt = JSON.parse(raw) as {
-            choices?: Array<{ delta?: { content?: string }; finish_reason?: string }>;
+            type?: string;
+            delta?: { type?: string; text?: string };
           };
-          const token = evt.choices?.[0]?.delta?.content;
-          if (token) {
-            fullText += token;
-            sendSSE(res, 'delta', token);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta' && evt.delta.text) {
+            fullText += evt.delta.text;
+            sendSSE(res, 'delta', evt.delta.text);
           }
         } catch { /* skip malformed lines */ }
       }
-    }
-
-    // Post-process: strip citation markers Perplexity sometimes adds
-    const cleanText = stripCitations(fullText);
-
-    // If citations were stripped, send a corrected final delta
-    if (cleanText !== fullText) {
-      sendSSE(res, 'replace', cleanText);
     }
 
     // Send phase / chips / profileUpdate as a single meta event
