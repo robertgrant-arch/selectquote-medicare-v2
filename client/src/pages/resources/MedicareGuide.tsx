@@ -545,43 +545,52 @@ export default function MedicareGuide() {
   const [extraHelpOpen, setExtraHelpOpen] = useState(false); // collapsed by default
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F7F8FA" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#FAF9F5" }}>
       <Header />
 
-      {/* Hero */}
+      {/* Hero — dark navy, matches AI Compare */}
       <section
-        className="py-12 text-white"
-        style={{ background: "linear-gradient(135deg, #004D2C 0%, #0369A1 60%, #0EA5E9 100%)" }}
+        className="text-white"
+        style={{ backgroundColor: "#1C3A48", position: "relative", overflow: "hidden" }}
       >
-        <div className="container">
+        {/* Subtle dot pattern overlay */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute", inset: 0, opacity: 0.05,
+            backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }}
+        />
+        <div className="container" style={{ position: "relative", paddingTop: "44px", paddingBottom: "52px" }}>
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-white/70 text-sm mb-4">
-            <Link href="/" className="hover:text-white transition-colors no-underline text-white/70">Home</Link>
-            <ChevronRight size={13} />
-            <Link href="/resources" className="hover:text-white transition-colors no-underline text-white/70">Resources</Link>
-            <ChevronRight size={13} />
-            <span className="text-white font-medium">Medicare Guide</span>
+          <nav className="flex items-center gap-2 text-xs font-medium mb-8" style={{ color: "rgba(255,255,255,0.55)" }}>
+            <Link href="/" className="hover:text-white transition-colors no-underline" style={{ color: "rgba(255,255,255,0.55)" }}>Home</Link>
+            <ChevronRight size={11} style={{ color: "rgba(255,255,255,0.28)" }} />
+            <Link href="/resources" className="hover:text-white transition-colors no-underline" style={{ color: "rgba(255,255,255,0.55)" }}>Resources</Link>
+            <ChevronRight size={11} style={{ color: "rgba(255,255,255,0.28)" }} />
+            <span style={{ color: "rgba(255,255,255,0.88)", fontWeight: 500 }}>Medicare Guide</span>
           </nav>
           <h1
             className="text-3xl lg:text-4xl font-bold mb-3"
-            style={{ fontFamily: "'Inter', serif" }}
+            style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.02em" }}
           >
             Medicare Guide
           </h1>
-          <p className="text-white/85 text-lg max-w-2xl">
+          <p className="text-lg max-w-2xl" style={{ color: "rgba(255,255,255,0.75)" }}>
             Everything you need to know about Medicare coverage, costs, enrollment, and financial
             assistance programs — in one place.
           </p>
           <div className="flex flex-wrap gap-3 mt-5">
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/20">
+            <div className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border" style={{ backgroundColor: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.85)" }}>
               <FileText size={12} />
               Complete Medicare Guide
             </div>
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/20">
+            <div className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border" style={{ backgroundColor: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.85)" }}>
               <DollarSign size={12} />
               Extra Help / LIS Programs
             </div>
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/20">
+            <div className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border" style={{ backgroundColor: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.85)" }}>
               <Users size={12} />
               Updated for 2025
             </div>
@@ -623,21 +632,21 @@ export default function MedicareGuide() {
           {/* Bottom CTA */}
           <div
             className="mt-6 rounded-2xl p-8 text-white text-center"
-            style={{ background: "linear-gradient(135deg, #004D2C 0%, #1C3A48 100%)" }}
+            style={{ backgroundColor: "#0A1820" }}
           >
             <h2
               className="text-2xl font-bold mb-2"
-              style={{ fontFamily: "'Inter', serif" }}
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
               Ready to Compare Plans?
             </h2>
-            <p className="text-white/80 mb-5">
+            <p className="mb-5" style={{ color: "rgba(235,245,248,0.55)" }}>
               Enter your ZIP code to see all available plans in your area — free, with no obligation.
             </p>
             <Link
               href="/plans?zip=64106"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-bold no-underline transition-all"
-              style={{ backgroundColor: "#1C3A48", color: "white" }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-bold no-underline"
+              style={{ backgroundColor: "#237A92", color: "white" }}
             >
               See Plans Near You
               <ChevronRight size={16} />
@@ -647,12 +656,15 @@ export default function MedicareGuide() {
       </div>
 
       {/* Minimal footer */}
-      <footer className="bg-gray-900 text-gray-500 py-6 text-center text-xs">
+      <footer
+        className="py-6 text-center text-xs"
+        style={{ backgroundColor: "#060E14", color: "rgba(255,255,255,0.25)", lineHeight: 1.72 }}
+      >
         <p>
           We are not affiliated with or endorsed by the U.S. government or the federal Medicare
-          program. This is a mock demonstration application for educational purposes only.
+          program. This is a demonstration application for educational purposes only.
         </p>
-        <p className="mt-1">© 2025 MedicarePlan Finder. All rights reserved.</p>
+        <p className="mt-1">© 2026 MedicarePlan Finder. All rights reserved.</p>
       </footer>
     </div>
   );
