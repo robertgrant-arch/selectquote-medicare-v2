@@ -17,7 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     method: req.method ?? 'GET',
     headers: req.headers as Record<string, string>,
     body: req.method !== 'GET' && req.method !== 'HEAD'
-      ? JSON.stringify(req.body)
+      ? (typeof req.body === 'string' ? req.body : JSON.stringify(req.body))
       : undefined,
   });
 

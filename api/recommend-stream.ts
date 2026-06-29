@@ -136,8 +136,8 @@ Keep the tone warm, clear, and helpful. Avoid jargon. Do not repeat the cost num
 }
 
 // ── SSE helper ────────────────────────────────────────────────────────────────
-function sendSSE(res: VercelResponse, event: string, data: string) {
-  res.write(`event: ${event}\ndata: ${data}\n\n`);
+function sendSSE(res: VercelResponse, event: string, data: unknown) {
+  res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────────
@@ -163,7 +163,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const forgeApiKey = process.env.BUILT_IN_FORGE_API_KEY;
 
   if (!forgeApiUrl || !forgeApiKey) {
-    sendSSE(res, 'error', JSON.stringify({ message: 'Forge API not configured' }));
+    sendSSE(res, 'error', { message: 'Forge API not configured' });
     res.end();
     return;
   }
@@ -186,14 +186,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!forgeRes.ok) {
       const errorText = await forgeRes.text();
-      sendSSE(res, 'error', JSON.stringify({ message: `AI API error: ${forgeRes.status} — ${errorText.slice(0, 200)}` }));
+      sendSSE(res, 'error', { message: `AI API error: ${forgeRes.status} — ${errorText.slice(0, 200)}` });
       res.end();
       return;
     }
 
     const reader = forgeRes.body?.getReader();
     if (!reader) {
-      sendSSE(res, 'error', JSON.stringify({ message: 'No response body from AI' }));
+      sendSSE(res, 'error', { message: 'No response body from AI' });
       res.end();
       return;
     }
@@ -214,7 +214,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!line.startsWith('data: ')) continue;
         const raw = line.slice(6).trim();
         if (raw === '[DONE]') {
-          if (!doneSent) { sendSSE(res, 'done', '{}'); doneSent = true; }
+          if (!doneSent) { sendSSE(res, 'done', {}); doneSent = true; }
           continue;
         }
         try {
@@ -222,9 +222,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             choices?: Array<{ delta?: { content?: string }; finish_reason?: string }>;
           };
           const content = evt.choices?.[0]?.delta?.content;
-          if (content) sendSSE(res, 'delta', JSON.stringify(content));
+          if (content) sendSSE(res, 'delta', content);
           if (evt.choices?.[0]?.finish_reason === 'stop') {
-            if (!doneSent) { sendSSE(res, 'done', '{}'); doneSent = true; }
+            if (!doneSent) { sendSSE(res, 'done', {}); doneSent = true; }
           }
         } catch {
           // malformed JSON line — skip
@@ -232,11 +232,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    if (!doneSent) sendSSE(res, 'done', '{}');
+    if (!doneSent) sendSSE(res, 'done', {});
     res.end();
   } catch (err) {
     console.error('[recommend-stream] Error:', (err as Error)?.message ?? 'unknown');
-    sendSSE(res, 'error', JSON.stringify({ message: (err as Error).message }));
+    sendSSE(res, 'error', { message: (err as Error).message });
     res.end();
   }
 }
