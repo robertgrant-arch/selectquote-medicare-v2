@@ -50,7 +50,7 @@ export default function MAHMOPlans() {
             desc: "Instead of meeting a large deductible first, most HMO plans charge set copays per visit — e.g., $0 for primary care, $35–$40 for specialists — making costs easy to predict.",
           },
         ].map((item) => (
-          <div key={item.step} className="flex gap-3 bg-gray-50 rounded-lg p-4">
+          <div key={item.step} className="flex gap-3 rounded-lg p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
             <div className="w-6 h-6 rounded-full bg-[#E8F2F5] text-[#1C3A48] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
               {item.step[0]}
             </div>
@@ -133,7 +133,7 @@ export default function MAHMOPlans() {
               { item: "Max Out-of-Pocket", range: "$3,400 – $8,850", note: "Average MOOP increased to ~$5,100 in 2025" },
               { item: "Inpatient Hospital (days 1–5)", range: "$250 – $350/day", note: "After day 5, often $0" },
             ].map((row) => (
-              <tr key={row.item} className="border border-gray-200 hover:bg-gray-50">
+              <tr key={row.item} className="border border-gray-200" style={{ transition: "background-color 0.1s" }} onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#FAF9F5")} onMouseLeave={e => (e.currentTarget.style.backgroundColor = "")}>
                 <td className="p-3 font-medium text-gray-800">{row.item}</td>
                 <td className="p-3 text-gray-700 font-semibold">{row.range}</td>
                 <td className="p-3 text-gray-500 text-xs">{row.note}</td>
@@ -163,7 +163,7 @@ export default function MAHMOPlans() {
           { benefit: "Meals", detail: "Post-hospitalization meal delivery (some plans)" },
           { benefit: "Part B Giveback", detail: "Some plans reduce your Part B premium by $10–$100/month" },
         ].map((b) => (
-          <div key={b.benefit} className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+          <div key={b.benefit} className="rounded-lg p-3 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
             <div className="font-semibold text-gray-800 text-sm mb-1">{b.benefit}</div>
             <div className="text-gray-500 text-xs leading-relaxed">{b.detail}</div>
           </div>

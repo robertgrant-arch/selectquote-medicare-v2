@@ -600,3 +600,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'An unexpected error occurred while loading plans.', plans: [] });
   }
 }
+
+export { enrichPlansWithDrugCosts };

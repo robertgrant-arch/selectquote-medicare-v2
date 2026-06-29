@@ -153,6 +153,13 @@ export const quoteSessions = mysqlTable("quote_sessions", {
   zip: varchar("zip", { length: 10 }),
   /** Public county name — not PHI */
   county: varchar("county", { length: 128 }),
+  /**
+   * Manus OAuth openId for authenticated users; null for anonymous sessions.
+   * Set on first save when ctx.user is present, or via the claim procedure
+   * (triggered after login when the client holds a prior anonymous token).
+   * Not PHI — this is the OAuth identifier, not a Medicare/medical identifier.
+   */
+  userId: varchar("userId", { length: 64 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastAccessedAt: timestamp("lastAccessedAt").defaultNow().notNull(),
@@ -167,6 +174,7 @@ export const quoteSessions = mysqlTable("quote_sessions", {
   index("idx_quote_sessions_token_hash").on(t.resumeTokenHash),
   index("idx_quote_sessions_expires").on(t.expiresAt),
   index("idx_quote_sessions_status").on(t.status),
+  index("idx_quote_sessions_user_id").on(t.userId),
 ]);
 
 export type QuoteSession = typeof quoteSessions.$inferSelect;

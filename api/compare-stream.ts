@@ -41,24 +41,58 @@ function benefitList(p: any): string {
   return benefits.join(', ') || 'None';
 }
 
-function planSummary(p: any, label: string): string {
+// ── User-context formatting ───────────────────────────────────────────────────
+
+interface UserContext {
+  medications?: Array<{ name: string; dosage?: string }>;
+  doctors?: Array<{ name: string; specialty?: string }>;
+  /** Estimated annual drug cost keyed by plan.id */
+  drugCosts?: Record<string, number>;
+  /** In-network doctor count keyed by plan.planId */
+  doctorNetwork?: Record<string, number>;
+}
+
+function formatUserProfile(ctx: UserContext | undefined): string {
+  if (!ctx) return '';
+  const lines: string[] = [];
+  if (ctx.medications?.length) {
+    lines.push('Medications: ' + ctx.medications.map(m => m.dosage ? `${m.name} ${m.dosage}` : m.name).join(', '));
+  }
+  if (ctx.doctors?.length) {
+    lines.push('Doctors: ' + ctx.doctors.map(d => d.specialty ? `${d.name} (${d.specialty})` : d.name).join(', '));
+  }
+  return lines.length ? `USER PROFILE:\n${lines.join('\n')}` : '';
+}
+
+function planSummary(p: any, label: string, ctx?: UserContext): string {
   const copays = p.copays || {};
   const rx = p.rxDrugs || {};
   const stars = p.starRating || {};
+  const drugCost = ctx?.drugCosts?.[p.id];
+  const inNetCount = ctx?.doctorNetwork?.[p.planId];
+  const totalDocs = ctx?.doctors?.length ?? 0;
+  const networkNote = inNetCount !== undefined && totalDocs > 0
+    ? ` | User's doctors in-network: ${inNetCount}/${totalDocs}`
+    : '';
+  const drugNote = drugCost !== undefined
+    ? ` | Est. annual drug cost for user: $${drugCost.toLocaleString()}`
+    : '';
   return `${label}: ${s(p.planName)} (${s(p.carrier)}, ${s(p.planType)})
 - Premium: $${n(p.premium)}/mo | Deductible: $${n(p.deductible)} | MOOP: $${n(p.maxOutOfPocket).toLocaleString()}
 - PCP: ${s(copays.primaryCare)} | Specialist: ${s(copays.specialist)} | ER: ${s(copays.emergency)}
-- Rx: T1 ${s(rx.tier1)} / T2 ${s(rx.tier2)} / T3 ${s(rx.tier3)} / T4 ${s(rx.tier4)} | Gap: ${rx.gap ? 'Yes' : 'No'}
-- Stars: ${n(stars.overall)}/5 | Network: ${n(p.networkSize).toLocaleString()}+ providers
+- Rx: T1 ${s(rx.tier1)} / T2 ${s(rx.tier2)} / T3 ${s(rx.tier3)} / T4 ${s(rx.tier4)} | Gap: ${rx.gap ? 'Yes' : 'No'}${drugNote}
+- Stars: ${n(stars.overall)}/5 | Network: ${n(p.networkSize).toLocaleString()}+ providers${networkNote}
 - Extra benefits: ${benefitList(p)}`;
 }
 
-function build2PlanPrompt(current: any, newPlan: any): string {
-  return `You are a Medicare Advantage expert. Compare these two plans concisely. The user already sees a full data table — provide ONLY the narrative analysis below.
+function build2PlanPrompt(current: any, newPlan: any, ctx?: UserContext): string {
+  const userProfile = formatUserProfile(ctx);
+  const personalized = userProfile ? ` Pay close attention to how each plan handles this user's specific medications and doctors.` : '';
+  return `You are a Medicare Advantage expert.${userProfile ? `\n\n${userProfile}` : ''} Compare these two plans concisely.${personalized} The user already sees a full data table — provide ONLY the narrative analysis below.
 
-${planSummary(current, 'CURRENT PLAN')}
+${planSummary(current, 'CURRENT PLAN', ctx)}
 
-${planSummary(newPlan, 'NEW PLAN')}
+${planSummary(newPlan, 'NEW PLAN', ctx)}
 
 Respond in EXACTLY this markdown format (keep each section brief):
 
@@ -66,24 +100,26 @@ Respond in EXACTLY this markdown format (keep each section brief):
 2-3 sentences summarizing the key trade-offs in plain language.
 
 ## Key Differences
-- **Cost:** [1-2 sentences on premium/MOOP/copay differences]
-- **Rx Drugs:** [1-2 sentences on drug coverage differences]
+- **Cost:** [1-2 sentences on premium/MOOP/copay differences${ctx?.drugCosts ? '; include estimated annual drug cost if meaningful' : ''}]
+- **Rx Drugs:** [1-2 sentences on drug coverage differences${ctx?.medications?.length ? ` — reference the user's specific medications` : ''}]
 - **Extra Benefits:** [what's gained or lost switching plans]
-- **Network:** [HMO vs PPO implications if different, or network size note]
+- **Network:** [${ctx?.doctors?.length ? `note which plan covers more of the user's doctors; ` : ''}HMO vs PPO implications if different, or network size note]
 - **Quality:** [star rating comparison and what it means]
 
 ## Recommendation
 1 short paragraph with a clear recommendation. Who should switch? Who should stay? Be specific.`;
 }
 
-function build3PlanPrompt(current: any, plan2: any, plan3: any): string {
-  return `You are a Medicare Advantage expert. Compare these three plans concisely. The user already sees a full side-by-side data table — provide ONLY the narrative analysis below.
+function build3PlanPrompt(current: any, plan2: any, plan3: any, ctx?: UserContext): string {
+  const userProfile = formatUserProfile(ctx);
+  const personalized = userProfile ? ` Pay close attention to how each plan handles this user's specific medications and doctors.` : '';
+  return `You are a Medicare Advantage expert.${userProfile ? `\n\n${userProfile}` : ''} Compare these three plans concisely.${personalized} The user already sees a full side-by-side data table — provide ONLY the narrative analysis below.
 
-${planSummary(current, 'PLAN 1 (Current Plan)')}
+${planSummary(current, 'PLAN 1 (Current Plan)', ctx)}
 
-${planSummary(plan2, 'PLAN 2 (New Plan 1)')}
+${planSummary(plan2, 'PLAN 2 (New Plan 1)', ctx)}
 
-${planSummary(plan3, 'PLAN 3 (New Plan 2)')}
+${planSummary(plan3, 'PLAN 3 (New Plan 2)', ctx)}
 
 Respond in EXACTLY this markdown format (keep each section brief):
 
@@ -91,10 +127,10 @@ Respond in EXACTLY this markdown format (keep each section brief):
 2-3 sentences summarizing the overall landscape across all three plans.
 
 ## Key Differences
-- **Cost:** [Compare premiums, deductibles, and MOOP across all three]
-- **Rx Drugs:** [Drug coverage differences across all three]
+- **Cost:** [Compare premiums, deductibles, and MOOP across all three${ctx?.drugCosts ? '; include estimated annual drug cost if meaningful' : ''}]
+- **Rx Drugs:** [Drug coverage differences across all three${ctx?.medications?.length ? ` — reference the user's specific medications` : ''}]
 - **Extra Benefits:** [Notable differences in dental, vision, OTC, fitness, etc.]
-- **Network:** [HMO/PPO differences and network size comparison]
+- **Network:** [${ctx?.doctors?.length ? `note which plan covers more of the user's doctors; ` : ''}HMO/PPO differences and network size comparison]
 - **Quality:** [Star rating comparison across all three plans]
 
 ## Recommendation
@@ -253,7 +289,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const { currentPlan, newPlan, thirdPlan } = body;
+  const { currentPlan, newPlan, thirdPlan, userContext } = body;
 
   // Set up SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
@@ -263,8 +299,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const prompt = thirdPlan
-      ? build3PlanPrompt(currentPlan, newPlan, thirdPlan)
-      : build2PlanPrompt(currentPlan, newPlan);
+      ? build3PlanPrompt(currentPlan, newPlan, thirdPlan, userContext)
+      : build2PlanPrompt(currentPlan, newPlan, userContext);
     const maxTokens = thirdPlan ? 1280 : 1024;
 
     // Try Anthropic API first, then Forge API

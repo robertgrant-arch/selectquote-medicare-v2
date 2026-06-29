@@ -2,7 +2,7 @@
 // Design: Chapter-style | Navy #1C3A48 | Red #C41E3A | Light Blue #E8F2F5
 // Layout: Sticky top bar + horizontal quick filters + 2-col plan grid + left filter sidebar
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useSearch, useLocation, Link } from "wouter";
 import {
   MapPin,
@@ -41,6 +41,7 @@ import type { FilterState, MedicarePlan, RxDrug, Doctor, PlanDoctorNetworkStatus
 import type { MBIVerifyResult } from "@/components/MBIVerifyModal";
 import { useSessionState } from "@/hooks/useSessionState";
 import { useQuoteHandoff } from "@/contexts/QuoteHandoffContext";
+import { useQuoteSession } from "@/features/quote-session/hooks/useQuoteSession";
 
 const DEFAULT_FILTERS: FilterState = {
   planType: [],
@@ -221,6 +222,66 @@ export default function Plans() {
   const [aiModel, setAiModel] = useState<ScoringModelType>('B');
   const compareStore = useCompareStore();
   const quoteHandoff = useQuoteHandoff();
+  const { save: saveQuoteSession, session: quoteSession } = useQuoteSession();
+
+  // Pre-populate doctors and drugs from the quote session on first load.
+  // Only applies when local sessionStorage state is empty — user's active UI
+  // choices always take priority over the DB snapshot.
+  const sessionAppliedRef = useRef(false);
+  useEffect(() => {
+    if (!quoteSession || sessionAppliedRef.current) return;
+    sessionAppliedRef.current = true;
+
+    if ((quoteSession.providers?.length ?? 0) > 0 && doctors.length === 0) {
+      setDoctors(
+        quoteSession.providers!.map((p) => ({
+          id:        p.npi ?? String(p.id),
+          name:      p.name,
+          npi:       p.npi ?? '',
+          specialty: p.specialty ?? '',
+          address:   '',
+        })),
+      );
+    }
+
+    if ((quoteSession.medications?.length ?? 0) > 0 && rxDrugs.length === 0) {
+      setRxDrugs(
+        quoteSession.medications!.map((m) => ({
+          id:        String(m.id),
+          name:      m.name,
+          dosage:    m.dosage ?? '',
+          frequency: m.frequency ?? 'Once daily',
+          isGeneric: false,
+        })),
+      );
+    }
+  }, [quoteSession]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Write to quoteSession DB whenever the user saves doctors or drugs via the modals.
+  // Uses independent calls so saving doctors doesn't wipe medications and vice-versa.
+  const handleDoctorsSave = useCallback((newDoctors: Doctor[]) => {
+    setDoctors(newDoctors);
+    saveQuoteSession({
+      zip,
+      providers: newDoctors.map(d => ({
+        name: d.name,
+        npi: d.npi || undefined,
+        specialty: d.specialty || undefined,
+      })),
+    });
+  }, [setDoctors, saveQuoteSession, zip]);
+
+  const handleRxDrugsSave = useCallback((newDrugs: RxDrug[]) => {
+    setRxDrugs(newDrugs);
+    saveQuoteSession({
+      zip,
+      medications: newDrugs.map(d => ({
+        name: d.name,
+        dosage: d.dosage || undefined,
+        frequency: d.frequency || undefined,
+      })),
+    });
+  }, [setRxDrugs, saveQuoteSession, zip]);
   const [aiCompareOpen, setAICompareOpen] = useState(false);
   const [doctorNetworkMap, setDoctorNetworkMap] = useState<Record<string, PlanDoctorNetworkStatus>>({});
 
@@ -734,8 +795,8 @@ export default function Plans() {
       )}
 
       {/* ── Modals ──────────────────────────────────────────────────── */}
-      <RxDrugsModal open={rxModalOpen} onClose={() => setRxModalOpen(false)} selectedDrugs={rxDrugs} onSave={setRxDrugs} />
-      <DoctorsModal open={doctorsModalOpen} onClose={() => setDoctorsModalOpen(false)} selectedDoctors={doctors} onSave={setDoctors} zip={zip} />
+      <RxDrugsModal open={rxModalOpen} onClose={() => setRxModalOpen(false)} selectedDrugs={rxDrugs} onSave={handleRxDrugsSave} />
+      <DoctorsModal open={doctorsModalOpen} onClose={() => setDoctorsModalOpen(false)} selectedDoctors={doctors} onSave={handleDoctorsSave} zip={zip} />
       <EnrollModal open={enrollModalOpen} onClose={() => setEnrollModalOpen(false)} plan={enrollPlan} />
       <PlanDetailsModal
         plans={detailPlans}

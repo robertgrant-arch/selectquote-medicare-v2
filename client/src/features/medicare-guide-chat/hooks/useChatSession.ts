@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import type { Message, ConversationPhase, UserProfile } from '../types/chat';
-import { streamChat, chatErrorMessage } from '../lib/chatStreamClient';
+import type { Message, ConversationPhase, UserProfile, ValidatedProvider, ValidatedMedication } from '../types/chat';
+import { streamChat, chatErrorMessage, type TopPlan } from '../lib/chatStreamClient';
 import { parseActionTags, dispatchChatActions } from '../lib/chatActions';
 import { loadPersisted, savePersisted } from '../lib/chatStorage';
+import { useQuoteSession } from '../../quote-session/hooks/useQuoteSession';
 
 export function useChatSession() {
   const persisted = useRef(loadPersisted());
@@ -13,10 +14,17 @@ export function useChatSession() {
   const [showScrollPill, setShowScrollPill] = useState(false);
   const [phase, setPhase] = useState<ConversationPhase>('welcome');
   const [userProfile, setUserProfile] = useState<Partial<UserProfile>>({});
+  const [topPlans, setTopPlans] = useState<TopPlan[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const atBottomRef = useRef(true);
   const abortRef = useRef<AbortController | null>(null);
+  // Tracks prior validated PHI counts to detect new entities without triggering
+  // an infinite loop when the save function reference changes between renders.
+  const prevPhiCountRef = useRef({ providers: 0, meds: 0 });
+  const { save: saveQuoteSession } = useQuoteSession();
+  const saveQuoteSessionRef = useRef(saveQuoteSession);
+  saveQuoteSessionRef.current = saveQuoteSession;
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
@@ -55,6 +63,76 @@ export function useChatSession() {
     savePersisted(messages, isOpen);
   }, [messages, isOpen, isLoading]);
 
+  // Write confidence-gated PHI to the quote session when new validated entities arrive.
+  // Full-replace semantics in the repository mean we always send the complete accumulated list.
+  useEffect(() => {
+    const providers = userProfile.validatedProviders ?? [];
+    const meds = userProfile.validatedMedications ?? [];
+    if (
+      providers.length === prevPhiCountRef.current.providers &&
+      meds.length === prevPhiCountRef.current.meds
+    ) return;
+    prevPhiCountRef.current = { providers: providers.length, meds: meds.length };
+    if (providers.length === 0 && meds.length === 0) return;
+    saveQuoteSessionRef.current({
+      zip: userProfile.zipCode,
+      providers: providers.map(p => ({ name: p.name, npi: p.npi, specialty: p.specialty })),
+      medications: meds.map(m => ({ name: m.name, dosage: m.dosage, frequency: m.frequency })),
+    });
+
+    // Mirror to sessionStorage so Plans.tsx (mqe_doctors / mqe_rxDrugs) reflects
+    // chat-collected data without requiring the user to re-enter it in the modals.
+    try {
+      if (providers.length > 0) {
+        const existing: Array<{ id: string; name: string; npi: string; specialty: string; address: string }> =
+          JSON.parse(sessionStorage.getItem('mqe_doctors') ?? '[]');
+        const merged = [...existing];
+        for (const p of providers) {
+          const npi = p.npi ?? `chat-${p.name.toLowerCase().replace(/\s+/g, '-')}`;
+          if (!merged.some(d => d.npi === npi || d.name.toLowerCase() === p.name.toLowerCase())) {
+            merged.push({ id: npi, name: p.name, npi, specialty: p.specialty ?? '', address: '' });
+          }
+        }
+        sessionStorage.setItem('mqe_doctors', JSON.stringify(merged));
+      }
+      if (meds.length > 0) {
+        const existing: Array<{ id: string; name: string; dosage: string; frequency: string; isGeneric: boolean }> =
+          JSON.parse(sessionStorage.getItem('mqe_rxDrugs') ?? '[]');
+        const merged = [...existing];
+        for (const m of meds) {
+          if (!merged.some(d => d.name.toLowerCase() === m.name.toLowerCase())) {
+            const id = `rx-${m.name}-${m.dosage ?? 'unknown'}`.toLowerCase().replace(/\s+/g, '-');
+            merged.push({ id, name: m.name, dosage: m.dosage ?? '', frequency: m.frequency ?? 'Once daily', isGeneric: false });
+          }
+        }
+        sessionStorage.setItem('mqe_rxDrugs', JSON.stringify(merged));
+      }
+    } catch { /* sessionStorage unavailable (SSR guard) */ }
+  }, [userProfile.validatedProviders, userProfile.validatedMedications, userProfile.zipCode]);
+
+  // Fetch real plan IDs when ZIP becomes available so the CTA can deep-link
+  // into /ai-compare with plans pre-selected.
+  useEffect(() => {
+    const zip = userProfile.zipCode;
+    if (!zip) return;
+    const controller = new AbortController();
+    fetch(`/api/plans?zip=${zip}`, { signal: controller.signal })
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then((data: { plans?: Array<{ id: string; planName: string; carrier: string; premium: number; starRating?: { overall?: number }; planType?: string }> }) => {
+        const plans: TopPlan[] = (data.plans ?? []).slice(0, 3).map(p => ({
+          id: p.id,
+          name: p.planName,
+          carrier: p.carrier,
+          premium: p.premium,
+          stars: p.starRating?.overall ?? 0,
+          type: p.planType ?? '',
+        }));
+        setTopPlans(plans);
+      })
+      .catch(() => { /* non-fatal — CTA falls back to /plans */ });
+    return () => controller.abort();
+  }, [userProfile.zipCode]);
+
   const runCompletion = useCallback(async (history: Message[]) => {
     setIsLoading(true);
     atBottomRef.current = true;
@@ -81,6 +159,7 @@ export function useChatSession() {
         controller,
         phase,
         userProfile,
+        topPlans.length > 0 ? topPlans : undefined,
       );
 
       // Apply action tags (strips them from displayed text)
@@ -89,7 +168,33 @@ export function useChatSession() {
 
       // Apply meta: chips, phase update, profile update
       if (meta.phase) setPhase(meta.phase);
-      if (meta.profileUpdate) setUserProfile((prev) => ({ ...prev, ...meta.profileUpdate }));
+      if (meta.profileUpdate) {
+        const update = meta.profileUpdate;
+        setUserProfile((prev) => {
+          // Merge validated PHI arrays — accumulate across turns without name duplicates.
+          // Scalar fields (zipCode, hasDoctor, etc.) are overwritten as before.
+          const incomingProviders = (update.validatedProviders as ValidatedProvider[] | undefined) ?? [];
+          const incomingMeds = (update.validatedMedications as ValidatedMedication[] | undefined) ?? [];
+          const mergedProviders = [...(prev.validatedProviders ?? [])];
+          for (const p of incomingProviders) {
+            if (!mergedProviders.some(ep => ep.name.toLowerCase() === p.name.toLowerCase())) {
+              mergedProviders.push(p);
+            }
+          }
+          const mergedMeds = [...(prev.validatedMedications ?? [])];
+          for (const m of incomingMeds) {
+            if (!mergedMeds.some(em => em.name.toLowerCase() === m.name.toLowerCase())) {
+              mergedMeds.push(m);
+            }
+          }
+          return {
+            ...prev,
+            ...update,
+            validatedProviders: mergedProviders,
+            validatedMedications: mergedMeds,
+          };
+        });
+      }
 
       setMessages((prev) => {
         const updated = [...prev];
@@ -97,7 +202,8 @@ export function useChatSession() {
           role: 'assistant',
           content: actions.length > 0 ? cleanText : fullText,
           chips: meta.chips,
-          cta: meta.cta,
+          cta: meta.recommendation ? undefined : meta.cta,
+          recommendation: meta.recommendation,
         };
         return updated;
       });
@@ -112,7 +218,7 @@ export function useChatSession() {
       setIsLoading(false);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
-  }, [phase, userProfile]);
+  }, [phase, userProfile, topPlans]);
 
   const send = useCallback((raw: string) => {
     const text = raw.trim();

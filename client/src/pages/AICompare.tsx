@@ -23,20 +23,22 @@ import {
   Zap,
   Clock,
   Info,
+  MessageSquare,
 } from "lucide-react";
 import { Streamdown } from "streamdown";
 import Header from "@/components/Header";
 import CarrierLogo from "@/components/CarrierLogo";
 import StarRating from "@/components/StarRating";
 import type { MedicarePlan } from "@/lib/types";
+import { useQuoteSession } from "@/features/quote-session/hooks/useQuoteSession";
 
 // ── sessionStorage cache helpers ─────────────────────────────────────────────
 // sessionStorage (tab-scoped) instead of localStorage — cleared on tab close.
 
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 
-function getCacheKey(ids: string[]): string {
-  return `medicare-compare-${CACHE_VERSION}-${[...ids].sort().join("__")}`;
+function getCacheKey(ids: string[], personalized = false): string {
+  return `medicare-compare-${CACHE_VERSION}-${[...ids].sort().join("__")}${personalized ? '-phi' : ''}`;
 }
 
 interface CachedResult {
@@ -45,9 +47,9 @@ interface CachedResult {
   planIds: string[];
 }
 
-function loadCache(ids: string[]): CachedResult | null {
+function loadCache(ids: string[], personalized = false): CachedResult | null {
   try {
-    const raw = sessionStorage.getItem(getCacheKey(ids));
+    const raw = sessionStorage.getItem(getCacheKey(ids, personalized));
     if (!raw) return null;
     return JSON.parse(raw) as CachedResult;
   } catch {
@@ -55,17 +57,17 @@ function loadCache(ids: string[]): CachedResult | null {
   }
 }
 
-function saveCache(ids: string[], result: CachedResult): void {
+function saveCache(ids: string[], result: CachedResult, personalized = false): void {
   try {
-    sessionStorage.setItem(getCacheKey(ids), JSON.stringify(result));
+    sessionStorage.setItem(getCacheKey(ids, personalized), JSON.stringify(result));
   } catch {
     // ignore storage errors
   }
 }
 
-function clearCache(ids: string[]): void {
+function clearCache(ids: string[], personalized = false): void {
   try {
-    sessionStorage.removeItem(getCacheKey(ids));
+    sessionStorage.removeItem(getCacheKey(ids, personalized));
   } catch {
     // ignore
   }
@@ -301,10 +303,17 @@ function PlanMiniCard({ plan, label, color }: { plan: MedicarePlan; label: strin
 
 // ── 3-Plan Comparison Table ───────────────────────────────────────────────────
 
-function CompareTable3({ plans, labels, colors }: {
+interface PersonalizedTableData {
+  drugCosts?: [number | undefined, number | undefined, number | undefined];
+  doctorNetwork?: [number | undefined, number | undefined, number | undefined];
+  totalDoctors: number;
+}
+
+function CompareTable3({ plans, labels, colors, personalized }: {
   plans: [MedicarePlan, MedicarePlan, MedicarePlan];
   labels: [string, string, string];
   colors: [string, string, string];
+  personalized?: PersonalizedTableData;
 }) {
   const [p1, p2, p3] = plans;
 
@@ -313,9 +322,34 @@ function CompareTable3({ plans, labels, colors }: {
     vals: [string, string, string];
     nums?: [number, number, number];
     lowerIsBetter?: boolean;
+    isPersonalized?: boolean;
   };
 
-  const rows: RowDef[] = [
+  const personalizedRows: RowDef[] = [];
+  if (personalized) {
+    if (personalized.drugCosts?.some(v => v !== undefined)) {
+      personalizedRows.push({
+        label: '★ Your Drug Cost/yr',
+        vals: personalized.drugCosts.map(v => v !== undefined ? `$${v.toLocaleString()}` : '—') as [string, string, string],
+        nums: personalized.drugCosts.map(v => v ?? 0) as [number, number, number],
+        lowerIsBetter: true,
+        isPersonalized: true,
+      });
+    }
+    if (personalized.doctorNetwork?.some(v => v !== undefined) && personalized.totalDoctors > 0) {
+      personalizedRows.push({
+        label: `★ Doctors In-Network (${personalized.totalDoctors})`,
+        vals: personalized.doctorNetwork.map(v =>
+          v !== undefined ? `${v}/${personalized.totalDoctors}` : '—'
+        ) as [string, string, string],
+        nums: personalized.doctorNetwork.map(v => v ?? 0) as [number, number, number],
+        lowerIsBetter: false,
+        isPersonalized: true,
+      });
+    }
+  }
+
+  const standardRows: RowDef[] = [
     {
       label: "Monthly Premium",
       vals: [
@@ -442,6 +476,8 @@ function CompareTable3({ plans, labels, colors }: {
     },
   ];
 
+  const rows: RowDef[] = [...personalizedRows, ...standardRows];
+
   // Determine best value highlight for numeric rows
   function getBestIdx(nums: [number, number, number], lowerIsBetter: boolean): number {
     const best = lowerIsBetter ? Math.min(...nums) : Math.max(...nums);
@@ -471,8 +507,8 @@ function CompareTable3({ plans, labels, colors }: {
           {rows.map((row, i) => {
             const bestIdx = row.nums ? getBestIdx(row.nums, row.lowerIsBetter ?? true) : -1;
             return (
-              <tr key={row.label} className={i % 2 === 0 ? "bg-gray-50/50" : "bg-white"}>
-                <td className="py-2.5 pr-4 text-xs font-medium text-gray-500 whitespace-nowrap">{row.label}</td>
+              <tr key={row.label} className={row.isPersonalized ? "bg-blue-50/40" : i % 2 === 0 ? "bg-gray-50/50" : "bg-white"}>
+                <td className={`py-2.5 pr-4 text-xs font-medium whitespace-nowrap ${row.isPersonalized ? 'text-[#237A92]' : 'text-gray-500'}`}>{row.label}</td>
                 {row.vals.map((val, j) => (
                   <td
                     key={j}
@@ -512,20 +548,77 @@ export default function AICompare() {
   const [planIds, setPlanIds] = useState<[string, string, string]>(["", "", ""]);
   const [allPlans, setAllPlans] = useState<MedicarePlan[]>([]);
   const [plansLoading, setPlansLoading] = useState(false);
+  const [doctorNetworkMap, setDoctorNetworkMap] = useState<Record<string, number>>({});
 
-  // Fetch plans from API on mount (use default ZIP 64106 for AI Compare)
+  // Stable zip from URL — no need to re-read on every render
+  const [zip] = useState(() => new URLSearchParams(window.location.search).get("zip") || "64106");
+
+  // PHI from quote session (same unified store as Plans page and chat)
+  const { session } = useQuoteSession();
+
+  const phiDoctors = useMemo(
+    () => (session?.providers ?? []).map(p => ({
+      id: p.npi ?? String(p.id),
+      name: p.name,
+      npi: p.npi ?? '',
+      specialty: p.specialty ?? '',
+    })),
+    [session],
+  );
+
+  const phiDrugs = useMemo(
+    () => (session?.medications ?? []).map(m => ({ name: m.name, dosage: m.dosage })),
+    [session],
+  );
+
+  const hasPhiContext = phiDoctors.length > 0 || phiDrugs.length > 0;
+
+  // Fetch plans — re-fetches when phiDrugs loads so estimatedAnnualDrugCost is populated
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const zip = params.get("zip") || "64106";
     setPlansLoading(true);
-    fetch(`/api/plans?zip=${zip}`)
+    const drugsParam = phiDrugs.length > 0
+      ? `&drugs=${encodeURIComponent(JSON.stringify(phiDrugs))}`
+      : '';
+    fetch(`/api/plans?zip=${zip}${drugsParam}`)
       .then((r) => r.json())
       .then((data: { plans?: MedicarePlan[] }) => {
         setAllPlans(data.plans ?? []);
       })
       .catch(() => setAllPlans([]))
       .finally(() => setPlansLoading(false));
-  }, []);
+  }, [zip, phiDrugs]);
+
+  // Fetch doctor network coverage for selected plans when PHI doctors are available
+  useEffect(() => {
+    if (!phiDoctors.length) return;
+    const selected = planIds
+      .filter(Boolean)
+      .map(id => allPlans.find(p => p.id === id))
+      .filter((p): p is MedicarePlan => Boolean(p));
+    if (!selected.length) return;
+
+    fetch('/api/provider-network', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        doctors: phiDoctors.map(d => ({ npi: d.npi, name: d.name, specialty: d.specialty })),
+        plans: selected.map(p => ({
+          planId: p.planId,
+          contractId: p.contractId,
+          carrier: p.carrier,
+          networkSize: p.networkSize,
+        })),
+        zip,
+      }),
+    })
+      .then(r => r.json())
+      .then((data: Record<string, { inNetworkCount: number }>) => {
+        setDoctorNetworkMap(
+          Object.fromEntries(Object.entries(data).map(([planId, v]) => [planId, v.inNetworkCount]))
+        );
+      })
+      .catch(() => {});
+  }, [phiDoctors, planIds, allPlans, zip]);
 
   // Progressive state
   const [phase, setPhase] = useState<ComparePhase>("idle");
@@ -536,7 +629,17 @@ export default function AICompare() {
 
   const abortRef = useRef<AbortController | null>(null);
 
-  // Pre-fill plan IDs from URL params (e.g. from Plan Recommender)
+  // Read chat context flags from URL (set by the chatbot handoff)
+  const chatContext = useMemo(() => {
+    const p = new URLSearchParams(window.location.search);
+    return {
+      fromChat: p.get("from") === "chat",
+      hasDoctors: p.get("hasDoctors") === "1",
+      hasMeds: p.get("hasMeds") === "1",
+    };
+  }, []);
+
+  // Pre-fill plan IDs from URL params (e.g. from Plan Recommender or chatbot handoff)
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const p1 = params.get("plan1") ?? "";
@@ -557,6 +660,20 @@ export default function AICompare() {
   const allUnique = new Set(planIds.filter(Boolean)).size === planIds.filter(Boolean).length;
   const canCompare = allSelected && allUnique;
 
+  // Personalized data for the comparison table rows (drug cost + doctor network)
+  const personalizedTableData = useMemo((): PersonalizedTableData | undefined => {
+    if (!hasPhiContext) return undefined;
+    return {
+      drugCosts: [plans[0], plans[1], plans[2]].map(p =>
+        p ? (p as any).estimatedAnnualDrugCost as number | undefined : undefined
+      ) as [number | undefined, number | undefined, number | undefined],
+      doctorNetwork: [plans[0], plans[1], plans[2]].map(p =>
+        p ? doctorNetworkMap[p.planId] : undefined
+      ) as [number | undefined, number | undefined, number | undefined],
+      totalDoctors: phiDoctors.length,
+    };
+  }, [hasPhiContext, plans, doctorNetworkMap, phiDoctors.length]);
+
   const activePlanIds = planIds.filter(Boolean);
 
   const handleCompare = useCallback(async (forceRefresh = false) => {
@@ -572,7 +689,7 @@ export default function AICompare() {
 
     // Check cache first (unless forced refresh) — called directly to avoid stale closure
     if (!forceRefresh) {
-      const currentCachedResult = loadCache(planIds);
+      const currentCachedResult = loadCache(planIds, hasPhiContext);
       if (currentCachedResult) {
         setStreamedText(currentCachedResult.analysis);
         setGeneratedAt(currentCachedResult.generatedAt);
@@ -599,11 +716,30 @@ export default function AICompare() {
     setPhase("streaming");
 
     try {
+      // Build userContext from PHI so Claude's analysis references actual medications and doctors
+      const userContext = hasPhiContext ? {
+        medications: phiDrugs,
+        doctors: phiDoctors.map(d => ({ name: d.name, specialty: d.specialty || undefined })),
+        drugCosts: Object.fromEntries(
+          ([p0, p1, p2] as MedicarePlan[]).flatMap(p => {
+            const cost = (p as any).estimatedAnnualDrugCost as number | undefined;
+            return cost !== undefined ? [[p.id, cost]] : [];
+          })
+        ),
+        doctorNetwork: Object.fromEntries(
+          ([p0, p1, p2] as MedicarePlan[]).flatMap(p => {
+            const count = p.planId ? doctorNetworkMap[p.planId] : undefined;
+            return count !== undefined ? [[p.planId, count]] : [];
+          })
+        ),
+      } : undefined;
+
       // Normalize plans — use the guarded local variables (never plans[n] directly)
       const body = JSON.stringify({
         currentPlan: normalizePlan(p0),
         newPlan: normalizePlan(p1),
         thirdPlan: normalizePlan(p2),
+        ...(userContext ? { userContext } : {}),
       });
 
       const response = await fetch("/api/compare-stream", {
@@ -644,7 +780,7 @@ export default function AICompare() {
               const ts = new Date().toISOString();
               setGeneratedAt(ts);
               setPhase("done");
-              saveCache(planIds, { analysis: fullText, generatedAt: ts, planIds });
+              saveCache(planIds, { analysis: fullText, generatedAt: ts, planIds }, hasPhiContext);
               return;
             }
             continue;
@@ -685,14 +821,14 @@ export default function AICompare() {
       setGeneratedAt(ts);
       setPhase("done");
       if (fullText) {
-        saveCache(planIds, { analysis: fullText, generatedAt: ts, planIds });
+        saveCache(planIds, { analysis: fullText, generatedAt: ts, planIds }, hasPhiContext);
       }
     } catch (err) {
       if ((err as Error).name === "AbortError") return;
       setErrorMsg((err as Error).message || "An unexpected error occurred.");
       setPhase("error");
     }
-  }, [plans, planIds, canCompare]);
+  }, [plans, planIds, canCompare, hasPhiContext, phiDoctors, phiDrugs, doctorNetworkMap]);
 
   const handleReset = () => {
     abortRef.current?.abort();
@@ -704,7 +840,7 @@ export default function AICompare() {
   };
 
   const handleRefresh = () => {
-    if (canCompare) clearCache(planIds);
+    if (canCompare) clearCache(planIds, hasPhiContext);
     handleCompare(true);
   };
 
@@ -781,6 +917,31 @@ export default function AICompare() {
       </div>
 
       <div className="container py-8">
+        {/* ── Chat handoff banner ───────────────────────────────────────────── */}
+        {chatContext.fromChat && activePlanIds.length > 0 && (
+          <div
+            className="flex items-start gap-3 rounded-xl border px-4 py-3 mb-6"
+            style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}
+          >
+            <MessageSquare size={16} style={{ color: "#237A92" }} className="mt-0.5 shrink-0" />
+            <p className="text-sm" style={{ color: "#1C3A48" }}>
+              <span className="font-semibold">Plans pre-selected from your Medicare AI Advisor conversation.</span>
+              {(chatContext.hasDoctors || chatContext.hasMeds) && (
+                <span className="text-gray-600">
+                  {" "}We've matched plans
+                  {chatContext.hasDoctors && chatContext.hasMeds
+                    ? " based on your doctors and prescriptions"
+                    : chatContext.hasDoctors
+                    ? " based on your preferred doctors"
+                    : " based on your prescriptions"}
+                  .
+                </span>
+              )}
+              {" "}Review the selections below, then click <em>Compare Plans with AI</em>.
+            </p>
+          </div>
+        )}
+
         {/* ── Plan Selection Card ───────────────────────────────────────────── */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
           <div className="flex items-center gap-2 mb-5">
@@ -788,7 +949,7 @@ export default function AICompare() {
               <span className="text-xs font-bold" style={{ color: "#1C3A48" }}>1</span>
             </div>
             <h2 className="text-base font-bold text-gray-900">Select Three Plans to Compare</h2>
-            {canCompare && loadCache(planIds) && phase === "idle" && (
+            {canCompare && loadCache(planIds, hasPhiContext) && phase === "idle" && (
               <div className="ml-auto flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-full border" style={{ color: "#237A92", backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
                 <Clock size={10} />
                 Cached result available
@@ -850,7 +1011,7 @@ export default function AICompare() {
             ) : (
               <>
                 <Sparkles size={18} />
-                {canCompare && loadCache(planIds) && phase === "idle" ? "Show Cached Comparison" : "Compare Plans with AI"}
+                {canCompare && loadCache(planIds, hasPhiContext) && phase === "idle" ? "Show Cached Comparison" : "Compare Plans with AI"}
               </>
             )}
           </button>
@@ -897,6 +1058,7 @@ export default function AICompare() {
                     plans={[plans[0], plans[1], plans[2]]}
                     labels={PLAN_LABELS}
                     colors={PLAN_COLORS}
+                    personalized={personalizedTableData}
                   />
                 </div>
               </div>

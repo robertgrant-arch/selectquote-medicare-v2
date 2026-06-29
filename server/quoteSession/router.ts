@@ -25,6 +25,8 @@ import {
   createSession,
   updateSession,
   loadByTokenHash,
+  loadByUserId,
+  claimSession,
   loadById,
   markCompleted,
   markAbandoned,
@@ -112,9 +114,40 @@ export const quoteSessionRouter = router({
     .input(SaveQuoteInput)
     .mutation(async ({ input, ctx }) => {
       const ip = clientIp(ctx.req as any);
+      const userId = (ctx.user as { openId?: string } | null)?.openId ?? undefined;
 
+      // ── Authenticated path ──────────────────────────────────────────────────
+      if (userId) {
+        // If the client supplies a resumeToken, claim that anonymous session for
+        // this user, then update it. This covers the "login after chatting" case.
+        if (input.resumeToken) {
+          const tokenHash = hashResumeToken(input.resumeToken);
+          const anonSession = await loadByTokenHash(tokenHash);
+          if (anonSession) {
+            await claimSession(anonSession.sessionId, userId);
+            await updateSession(anonSession.sessionId, input, ip);
+            return { sessionId: anonSession.sessionId, created: false };
+          }
+        }
+
+        // Look up an existing session for this user.
+        const existing = await loadByUserId(userId);
+        if (existing) {
+          await updateSession(existing.sessionId, input, ip);
+          return { sessionId: existing.sessionId, created: false };
+        }
+
+        // First-time save for this user — create a session linked to their userId.
+        // A token is still generated so the client can resume on other devices.
+        const rawToken = generateResumeToken();
+        const tokenHash = hashResumeToken(rawToken);
+        const keyVersion = activeKeyVersion();
+        const { sessionId } = await createSession(tokenHash, input, keyVersion, ip, userId);
+        return { sessionId, resumeToken: rawToken, created: true };
+      }
+
+      // ── Anonymous path (unchanged) ──────────────────────────────────────────
       if (input.resumeToken) {
-        // Update existing session.
         const tokenHash = hashResumeToken(input.resumeToken);
         const existing = await loadByTokenHash(tokenHash);
         if (!existing) {
@@ -124,17 +157,58 @@ export const quoteSessionRouter = router({
         return { sessionId: existing.sessionId, created: false };
       }
 
-      // Create new session.
+      // Anonymous, no token — create new session.
       const rawToken = generateResumeToken();
       const tokenHash = hashResumeToken(rawToken);
       const keyVersion = activeKeyVersion();
       const { sessionId } = await createSession(tokenHash, input, keyVersion, ip);
+      return { sessionId, resumeToken: rawToken, created: true };
+    }),
 
-      return {
-        sessionId,
-        resumeToken: rawToken, // returned once — client must hold this
-        created: true,
-      };
+  /**
+   * load — unified PHI load for both authenticated and anonymous users.
+   *
+   * Authenticated users: loads by userId (no token required).
+   * Anonymous users: loads by resumeToken from input.
+   * Returns null (not an error) when no session exists — callers treat this
+   * as an empty state rather than a failure.
+   */
+  load: publicProcedure
+    .input(z.object({ resumeToken: z.string().max(128).optional() }))
+    .query(async ({ input, ctx }) => {
+      const userId = (ctx.user as { openId?: string } | null)?.openId ?? undefined;
+
+      if (userId) {
+        return await loadByUserId(userId);
+      }
+
+      if (input.resumeToken) {
+        const tokenHash = hashResumeToken(input.resumeToken);
+        return await loadByTokenHash(tokenHash);
+      }
+
+      return null;
+    }),
+
+  /**
+   * claim — explicitly link an anonymous resume-token session to the
+   * currently authenticated user. Called by the client on login when a
+   * stored token exists in localStorage. Idempotent.
+   */
+  claim: publicProcedure
+    .input(z.object({ resumeToken: z.string().min(1).max(128) }))
+    .mutation(async ({ input, ctx }) => {
+      const userId = (ctx.user as { openId?: string } | null)?.openId ?? undefined;
+
+      // No-op for unauthenticated callers — the client fires this optimistically.
+      if (!userId) return { claimed: false };
+
+      const tokenHash = hashResumeToken(input.resumeToken);
+      const session = await loadByTokenHash(tokenHash);
+      if (!session) return { claimed: false };
+
+      await claimSession(session.sessionId, userId);
+      return { claimed: true, sessionId: session.sessionId };
     }),
 
   /**

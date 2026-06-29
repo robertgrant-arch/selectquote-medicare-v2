@@ -22,6 +22,16 @@ export interface ChatMeta {
   phase?: ConversationPhase;
   profileUpdate?: Partial<UserProfile>;
   cta?: { label: string; href: string };
+  recommendation?: import('../types/chat').RecommendationHandoff;
+}
+
+export interface TopPlan {
+  id: string;
+  name: string;
+  carrier: string;
+  premium: number;
+  stars: number;
+  type: string;
 }
 
 export async function streamChat(
@@ -30,6 +40,7 @@ export async function streamChat(
   controller: AbortController = new AbortController(),
   phase?: ConversationPhase,
   userProfile?: Partial<UserProfile>,
+  topPlans?: TopPlan[],
 ): Promise<{ text: string; meta: ChatMeta }> {
   let idleTimer = setTimeout(() => controller.abort(), CHAT_IDLE_TIMEOUT_MS);
   const resetIdle = () => {
@@ -53,6 +64,7 @@ export async function streamChat(
         history,
         userProfile: userProfile ?? {},
         phase: phase ?? 'welcome',
+        ...(topPlans && topPlans.length > 0 ? { topPlans } : {}),
       }),
       signal: controller.signal,
     });

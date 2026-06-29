@@ -13,7 +13,7 @@
  * hashResumeToken() and pass the hash. This module stores only the hash.
  */
 
-import { eq, and, gt } from "drizzle-orm";
+import { eq, and, gt, desc } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { getDb } from "../db";
 import {
@@ -58,6 +58,7 @@ export async function createSession(
   input: SaveQuoteInputType,
   keyVersion: string,
   clientIp?: string,
+  userId?: string,
 ): Promise<CreateSessionResult> {
   const db = await getDb();
   if (!db) throw new Error("[quoteSession] Database unavailable");
@@ -74,6 +75,7 @@ export async function createSession(
     dataMinimizationStatus: "full",
     zip: input.zip ?? null,
     county: input.county ?? null,
+    userId: userId ?? null,
     createdAt: now,
     updatedAt: now,
     lastAccessedAt: now,
@@ -161,6 +163,50 @@ export async function loadById(sessionId: string): Promise<QuoteSessionOutputTyp
 
   if (rows.length === 0) return null;
   return assembleOutput(rows[0]);
+}
+
+// ── Load by userId (authenticated user) ──────────────────────────────────────
+
+export async function loadByUserId(userId: string): Promise<QuoteSessionOutputType | null> {
+  const db = await getDb();
+  if (!db) throw new Error("[quoteSession] Database unavailable");
+
+  const rows = await db
+    .select()
+    .from(quoteSessions)
+    .where(
+      and(
+        eq(quoteSessions.userId, userId),
+        gt(quoteSessions.expiresAt, new Date()),
+        eq(quoteSessions.status, "active"),
+      ),
+    )
+    .orderBy(desc(quoteSessions.lastAccessedAt))
+    .limit(1);
+
+  if (rows.length === 0) return null;
+  const session = rows[0];
+
+  await db.update(quoteSessions)
+    .set({ lastAccessedAt: new Date(), expiresAt: expiresAt() })
+    .where(eq(quoteSessions.id, session.id));
+
+  await appendAudit(session.id, "session_resumed", "Quote session resumed by userId", undefined);
+
+  return assembleOutput(session);
+}
+
+// ── Claim anonymous session for an authenticated user ─────────────────────────
+// Sets userId on an existing anonymous session, upgrading it to authenticated.
+// Idempotent: safe to call even if the session is already claimed.
+
+export async function claimSession(sessionId: string, userId: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("[quoteSession] Database unavailable");
+  await db.update(quoteSessions)
+    .set({ userId, lastAccessedAt: new Date(), expiresAt: expiresAt() })
+    .where(eq(quoteSessions.id, sessionId));
+  await appendAudit(sessionId, "session_claimed", "Anonymous session claimed by authenticated user", undefined);
 }
 
 // ── Mark completed / abandoned ───────────────────────────────────────────────
