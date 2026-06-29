@@ -210,8 +210,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!anthropicRes.ok) {
       const errText = await anthropicRes.text();
-      console.error(`[chat] Anthropic error ${anthropicRes.status}:`, errText.slice(0, 2000));
-      sendSSE(res, 'error', { message: `AI API error: ${anthropicRes.status}` });
+      let errDetail = errText.slice(0, 300);
+      try { const j = JSON.parse(errText); errDetail = j?.error?.message ?? errDetail; } catch { /* ignore */ }
+      console.error(`[chat] Anthropic ${anthropicRes.status}:`, errDetail);
+      sendSSE(res, 'error', { message: `AI API error: ${anthropicRes.status}`, detail: errDetail });
       res.end();
       return;
     }
