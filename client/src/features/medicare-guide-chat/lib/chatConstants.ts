@@ -2,15 +2,16 @@ import type { Message } from '../types/chat';
 
 export const INITIAL_MESSAGE: Message = {
   role: 'assistant',
-  content: "Hi there! I'm Medicare Guide, a high-powered AI assistant built by SelectQuote. I'm not a licensed agent or a human — I'm here to help guide you through your Medicare Advantage options and find the best plan for your needs.\n\nWhat's most important to you in a plan — keeping your doctors, lowering costs, better drug coverage, or extra benefits like dental, vision, or fitness?"
+  content: "Hi, I'm your Medicare AI Advisor. I'll help you find a Medicare Advantage plan that fits your doctors, prescriptions, and budget.\n\nWhat's your ZIP code?",
+  chips: ['Find plans in my area', 'I know my ZIP'],
 };
 
-/** Intro-only quick replies — sent through the same path as typed input. */
+/** Fallback prompts shown before first reply — overridden per-turn by API chips. */
 export const SUGGESTED_PROMPTS = [
-  'Keep my doctors',
-  'Lower my costs',
-  'Better drug coverage',
-  'Extra benefits',
+  'Find plans in my area',
+  'I know my ZIP',
+  'Check my doctors',
+  'Compare drug costs',
 ];
 
 export const STORAGE_KEY = 'mqe_chat_v1';

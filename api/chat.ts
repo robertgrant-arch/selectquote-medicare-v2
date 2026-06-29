@@ -2,153 +2,195 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export const config = { maxDuration: 60 };
 
-const SYSTEM_PROMPT = `You are Medicare Guide, an AI-powered Medicare counseling assistant built by SelectQuote. You are NOT a licensed insurance agent. You are an educational, analytical, and plan-comparison assistant.
+// ── System prompt (from medicare-ai-advisor) ─────────────────────────────────
+const SYSTEM_PROMPT = `You are Medicare AI Advisor, a licensed-agent-supporting sales assistant for Medicare Advantage plans.
 
-MANDATORY IDENTITY DISCLOSURE (first message only): "I'm Medicare Guide, SelectQuote's AI assistant -- not a human or licensed agent. I can help you compare Medicare Advantage plans and narrow down options based on what matters most to you."
+YOUR GOAL (in order):
+1) Qualify the user quickly (ZIP, doctors, prescriptions, budget).
+2) Recommend ONE best-fit Medicare Advantage plan (2 max).
+3) Close: get them to start enrollment online or connect with a licensed agent at 1-800-555-0199.
 
-PERSONA: Warm, conversational, patient, senior-friendly. Never robotic, never pushy, never too formal. Ask only one question at a time. Keep replies short and easy to understand.
+STYLE RULES (strict):
+- Keep every reply SHORT: max 3 short paragraphs OR 5 bullets. No walls of text.
+- Plain, warm, human language. Talk like a trusted friend who sells Medicare.
+- Never list data sources, citations, star-rating methodology, or carrier rosters in chat.
+- Never include bracketed reference markers like [1] or [2][3] in your reply. Speak naturally.
+- Do NOT teach Medicare 101 unless the user explicitly asks.
+- Never recommend more than 2 plans at once.
+- Every reply ends with ONE clear next step (a question or a call-to-action), not a menu.
+- No emojis unless the user uses them first.
 
-===== CONVERSATION FLOW (STRICT ORDER) =====
+CONVERSATION FLOW:
+1. Opening: If you don't have the ZIP yet, ask for it. Nothing else.
+2. Discovery: Once you have ZIP, ask in ONE message about (a) main doctor/clinic, (b) prescriptions, (c) monthly budget comfort.
+3. Recommend: Present ONE best-fit plan in this shape:
+   - Plan name - the single benefit that matches their top need
+   - $X/mo premium, $Y out-of-pocket max
+   - Covers their doctor / drug
+   Then ask: "Want to start enrollment on this plan, or see one backup to compare?"
+4. Close: If they show any interest, move them toward enrollment or a licensed agent. Do not re-explain.
 
-You MUST follow this exact conversation order. Do NOT skip steps or combine them:
+SAFETY:
+- Never give medical advice.
+- If the user asks something you don't know, offer to connect them with a licensed agent at 1-800-555-0199.
 
-STEP 1 - GREETING AND PREFERENCE QUESTION:
-Your very first message must be a warm intro followed by asking what matters most.
-Example: "Hi, I'm Medicare Guide, SelectQuote's AI assistant -- not a human or licensed agent. I can help you compare Medicare Advantage plans and narrow down options based on what matters most to you. To start, what's most important to you in a plan -- keeping your doctors, lowering costs, better drug coverage, or extra benefits like dental, vision, or fitness?"
+REMEMBER: You are selling. Be confident, concise, and always moving toward the next step.`;
 
-STEP 2 - FOLLOW-UP ABOUT SPECIFICS:
-After the user answers, ask ONE follow-up about doctors, prescriptions, or benefits.
-Example: "Thanks, that helps. Are there any specific doctors you want to keep, prescriptions you take regularly, or extra benefits you definitely want included?"
+const COVERAGE_FLOW_INSTRUCTIONS = `
 
-STEP 3 - ASK FOR ZIP CODE:
-Only after gathering preferences, ask for ZIP.
-Example: "Got it. That gives me a better sense of what to look for. What ZIP code should I use to check plans available in your area?"
-
-STEP 4 - SHOW PLANS:
-After receiving ZIP, recommend plans. Tell the user they can view full plan details on the site at /plans?zip={ZIP}.
-
-STEP 5 - OFFER LICENSED ADVISOR:
-After showing plans, offer to connect them with a licensed advisor.
-Example: "Based on what you've told me, these look like some strong options. If you'd like, I can also connect you with a licensed Medicare advisor who can walk through these with you at no cost."
-
-STEP 6 - ASK FOR FIRST NAME (separate message):
-Example: "If that sounds helpful, what's your first name?"
-
-STEP 7 - ASK FOR PHONE NUMBER (separate message):
-Example: "Thanks, {{name}}. What's the best phone number for an advisor to reach you?"
-
-IMPORTANT RULES:
-- Do NOT ask for ZIP in the very first message
-- Do NOT ask for name or phone before showing plan value
-- Ask for first name and phone in SEPARATE messages
-- Use smooth transitions
-- If the user gives ZIP early, skip ahead to Step 4 but still do Steps 5-7 after
-
-===== ACTION TAGS (CRITICAL) =====
-
-When your response should trigger a UI action, append an invisible JSON action tag at the END of your message.
-The frontend will parse and remove these tags before displaying your message.
-
-Available actions:
-1. OPEN_DRUGS_DOCTORS_MODAL - When the user mentions they have specific doctors or medications they want to keep.
-   Append: [ACTION:{"type":"OPEN_DRUGS_DOCTORS_MODAL"}]
-   Example trigger: User says "I take metformin and lisinopril" or "I need to keep my cardiologist"
-
-2. COLLECT_PHONE - When you are asking for the user's phone number (Step 7).
-   Append: [ACTION:{"type":"COLLECT_PHONE"}]
-
-3. COLLECT_NAME - When you are asking for the user's first name (Step 6).
-   Append: [ACTION:{"type":"COLLECT_NAME"}]
-
-IMPORTANT ACTION RULES:
-- ALWAYS append the action tag when the context matches
-- The action tag must be on its own line at the very end of your message
-- When a user mentions doctors OR medications, ALWAYS trigger OPEN_DRUGS_DOCTORS_MODAL
-- Naturally transition to asking for phone by saying something like "Would it be helpful to connect you with a licensed Medicare advisor who can walk through these options with you at no cost?"
-- If they say yes, ask for their name first, then phone number in separate messages
-
-
-===== QUOTING MODULE WORKFLOW =====
-
-When you have the user's ZIP code, direct them to these site tools:
-- View all plans: /plans?zip={ZIP}
-- AI plan comparison: /ai-compare
-- Find best plan quiz: /find-best-plan
-- Drug formulary lookup: /part-d/formulary-search
-- Doctor/provider search: /plan-lookup
-
-===== PLAN KNOWLEDGE =====
-
-Medicare plan types:
-- Original Medicare: Part A (hospital) + Part B (medical). 80/20 cost sharing.
-- Medicare Advantage (Part C): All-in-one, often $0 premium, may include dental/vision/hearing/fitness.
-- Medigap: Supplements Original Medicare. Standardized plans (A,B,C,D,F,G,K,L,M,N).
-- Part D: Prescription drug coverage. Standalone or included in MA.
-- D-SNP: Dual Special Needs Plans for Medicare + Medicaid.
-
-HARD STOPS:
-- Crisis/self-harm: Respond ONLY with 988 hotline.
-- Medical emergency: Direct to 911.
-
-PROHIBITED: "guaranteed coverage" | "you're enrolled" | "best plan" | "this offer expires" | "locked in"
-COMPLIANCE: "We are not affiliated with or endorsed by the U.S. government or the federal Medicare program. Plan availability, benefits, and premiums vary by location."
+COVERAGE WORKFLOW (override step 2 of CONVERSATION FLOW):
+2a. Once you have the ZIP, do NOT ask for doctor + prescriptions + budget all at once. Instead ask: "What do you want to check first — your doctors, your prescriptions, both, or just see plans?" Keep it warm and one sentence.
+2b. If the user picks doctors: ask for one doctor name at a time. Confirm specialty/clinic if ambiguous. After each, ask if they want to add another or move on.
+2c. If the user picks prescriptions: ask for one drug name at a time. Confirm strength/form if ambiguous. After each, ask if they want to add another or move on.
+2d. If the user picks both: do doctors first, then prescriptions, using the same one-at-a-time pattern.
+2e. If the user picks plans first: skip ahead to step 3 and recommend, but offer to verify doctors/prescriptions on whatever plan they like.
+2f. Only ask about budget AFTER doctors and/or prescriptions are captured (or skipped). Keep it as one short question.
 `;
 
-// ─── PHI boundary: message sanitization ─────────────────────────────────────
-// Implemented in server/chatBoundary.ts (extracted for testability).
-// The chat system prompt deliberately collects the user's first name and phone
-// number (Steps 6–7) for advisor lead generation. Those values appear in the
-// conversation history and would otherwise be re-sent to the AI on every
-// subsequent turn, which is unnecessary — the AI only needed them to capture
-// them, not to reason about them further.
-//
-// This function applies two defenses before the message array reaches any AI:
-//   1. Phone-number redaction — replaces North-American phone patterns with a
-//      placeholder so raw digits are never re-transmitted to the model.
-//   2. Sliding context window — caps the history at MAX_CHAT_CONTEXT_MESSAGES
-//      so older turns (which may contain names and other PII) are dropped
-//      before sending. The AI needs recent context to continue the conversation,
-//      not the full history.
-//
-// PHI that is NOT redacted here (by design):
-//   - ZIP codes: needed by the AI to look up plans (not a HIPAA identifier alone)
-//   - First name: one-word, no reliable pattern; risk is low and the AI needs it
-//     for a warm, personal tone through the rest of the session
-//   - Health preferences mentioned conversationally: user-volunteered context the
-//     AI legitimately needs for plan recommendations
+// ── Rate limiting ─────────────────────────────────────────────────────────────
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 20;
+const RATE_WINDOW = 60_000;
 
-// Inlined from server/chatBoundary — Vercel bundles each api/ function
-// in isolation so cross-directory server/ imports don't resolve at runtime.
-interface ChatMessage { role: string; content: string | unknown; }
-const PHONE_RE = /\b(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g;
-const MAX_CHAT_CONTEXT_MESSAGES = 20;
-function sanitizeMessagesForAI(messages: ChatMessage[]): ChatMessage[] {
-  return messages.slice(-MAX_CHAT_CONTEXT_MESSAGES).map((msg) => ({
-    ...msg,
-    content: typeof msg.content === 'string'
-      ? msg.content.replace(PHONE_RE, '[phone redacted]')
-      : msg.content,
-  }));
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT) return false;
+  entry.count++;
+  return true;
 }
 
-function sendSSE(res: VercelResponse, event: string, data: string) {
+// ── Input helpers ─────────────────────────────────────────────────────────────
+const MAX_MESSAGE_LENGTH = 2000;
+const MAX_HISTORY_MESSAGES = 40;
+const PHONE_RE = /\b(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g;
+
+function sanitizeHistory(
+  history: Array<{ role: string; content: string }>
+): Array<{ role: string; content: string }> {
+  if (!history || history.length === 0) return [];
+  const filtered: Array<{ role: string; content: string }> = [];
+  for (const msg of history) {
+    if (msg.role !== 'user' && msg.role !== 'assistant') continue;
+    const content = typeof msg.content === 'string'
+      ? msg.content.replace(PHONE_RE, '[phone redacted]')
+      : String(msg.content);
+    // Merge consecutive same-role messages
+    if (filtered.length > 0 && filtered[filtered.length - 1].role === msg.role) {
+      filtered[filtered.length - 1].content += '\n' + content;
+    } else {
+      filtered.push({ role: msg.role, content });
+    }
+  }
+  // Anthropic/Perplexity require first message is user
+  while (filtered.length > 0 && filtered[0].role !== 'user') filtered.shift();
+  // Remove trailing user message (the current turn is sent separately)
+  if (filtered.length > 0 && filtered[filtered.length - 1].role === 'user') filtered.pop();
+  return filtered;
+}
+
+function stripCitations(text: string): string {
+  return text
+    .replace(/\s*\[\d+\](?:\s*\[\d+\])*/g, '')
+    .replace(/\s+([.,;:!?])/g, '$1')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+}
+
+// ── Phase / chips ─────────────────────────────────────────────────────────────
+type Phase = 'welcome' | 'discovery' | 'plan_search' | 'comparison' | 'deep_dive' | 'enrollment';
+
+const COVERAGE_CHIPS_ENABLED = process.env.NEXT_PUBLIC_COVERAGE_CHIPS === '1';
+
+function extractChips(phase?: string): string[] {
+  const defaults: Record<string, string[]> = {
+    welcome:     ['Find plans in my area', 'I know my ZIP'],
+    discovery:   ['Show my best plan', 'I take prescriptions', 'I have a preferred doctor'],
+    plan_search: ['Show my best match', 'Compare 2 plans'],
+    comparison:  ['Start enrollment', 'Talk to an agent'],
+    deep_dive:   ['Start enrollment', 'Talk to an agent'],
+    enrollment:  ['Continue enrollment', 'Talk to an agent'],
+  };
+  if (COVERAGE_CHIPS_ENABLED && (phase === 'discovery' || phase === 'welcome')) {
+    if (phase === 'welcome') return ['Find plans in my area', 'I know my ZIP'];
+    return ['My doctors', 'My prescriptions', 'Both', 'Just show plans first'];
+  }
+  return defaults[phase ?? 'welcome'] ?? defaults.welcome;
+}
+
+function determinePhase(userMsg: string, currentPhase?: string): Phase {
+  const msg = userMsg.toLowerCase();
+  if (msg.includes('enroll') || msg.includes('sign up') || msg.includes('apply')) return 'enrollment';
+  if (msg.includes('compare') || msg.includes('side by side') || msg.includes('difference')) return 'comparison';
+  if (msg.includes('find plan') || msg.includes('search') || msg.includes('show me plans')) return 'plan_search';
+  if (msg.includes('zip') || msg.includes('medication') || msg.includes('doctor') || msg.includes('budget')) return 'discovery';
+  if (msg.includes('tell me more') || msg.includes('details') || msg.includes('coverage')) return 'deep_dive';
+  return (currentPhase as Phase) ?? 'welcome';
+}
+
+function extractProfileData(userMsg: string): Record<string, string> {
+  const profile: Record<string, string> = {};
+  const zipMatch = userMsg.match(/\b\d{5}\b/);
+  if (zipMatch) profile.zipCode = zipMatch[0];
+  return profile;
+}
+
+// ── SSE helper ────────────────────────────────────────────────────────────────
+function sendSSE(res: VercelResponse, event: string, data: unknown) {
   res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
 
+// ── Handler ───────────────────────────────────────────────────────────────────
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
-  const { messages: rawMessages } = req.body || {};
-  if (!rawMessages || !Array.isArray(rawMessages)) {
-    res.status(400).json({ error: 'Missing messages array' });
+  const ip = (req.headers['x-forwarded-for'] as string) ?? 'unknown';
+  if (!checkRateLimit(ip)) {
+    res.status(429).json({ error: 'Too many requests' });
     return;
   }
-  // PHI boundary: strip phone numbers and cap the context window before any
-  // AI provider receives the message history.
-  const messages = sanitizeMessagesForAI(rawMessages as ChatMessage[]);
+
+  const { message, history, userProfile, phase } = (req.body ?? {}) as {
+    message?: unknown;
+    history?: unknown;
+    userProfile?: Record<string, unknown>;
+    phase?: string;
+  };
+
+  if (typeof message !== 'string' || message.trim().length === 0) {
+    res.status(400).json({ error: 'Message content required' });
+    return;
+  }
+  if (message.length > MAX_MESSAGE_LENGTH) {
+    res.status(400).json({ error: 'Message too long' });
+    return;
+  }
+
+  const apiKey = process.env.PERPLEXITY_API_KEY;
+  if (!apiKey) {
+    res.status(500).json({ error: 'PERPLEXITY_API_KEY not configured' });
+    return;
+  }
+
+  const contextMessage = userProfile && Object.keys(userProfile).length > 0
+    ? `\n\nUser context: ${JSON.stringify(userProfile)}. Current phase: ${phase ?? 'welcome'}.`
+    : '';
+
+  const rawHistory = Array.isArray(history) ? history.slice(-MAX_HISTORY_MESSAGES) : [];
+  const cleanHistory = sanitizeHistory(rawHistory as Array<{ role: string; content: string }>);
+
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT + (COVERAGE_CHIPS_ENABLED ? COVERAGE_FLOW_INSTRUCTIONS : '') + contextMessage },
+    ...cleanHistory,
+    { role: 'user', content: message },
+  ];
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
@@ -156,166 +198,87 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('X-Accel-Buffering', 'no');
 
   try {
-    // Try Anthropic first, then OpenAI
-    const anthropicKey = process.env.ANTHROPIC_API_KEY;
-    const openaiKey = process.env.OPENAI_API_KEY;
+    const perplexityRes = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'sonar',
+        messages,
+        temperature: 0.7,
+        stream: true,
+      }),
+      signal: AbortSignal.timeout(55_000),
+    });
 
-    if (anthropicKey) {
-      await streamFromAnthropic(anthropicKey, messages, res);
-    } else if (openaiKey) {
-      await streamFromOpenAI(openaiKey, messages, res);
-    } else {
-      sendSSE(res, 'error', 'No AI API key configured');
+    if (!perplexityRes.ok) {
+      const errText = await perplexityRes.text();
+      console.error(`[chat] Perplexity error ${perplexityRes.status}:`, errText.slice(0, 500));
+      sendSSE(res, 'error', { message: `AI API error: ${perplexityRes.status}` });
       res.end();
+      return;
     }
+
+    const reader = perplexityRes.body?.getReader();
+    if (!reader) {
+      sendSSE(res, 'error', { message: 'No response body from AI' });
+      res.end();
+      return;
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullText = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') continue;
+        try {
+          const evt = JSON.parse(raw) as {
+            choices?: Array<{ delta?: { content?: string }; finish_reason?: string }>;
+          };
+          const token = evt.choices?.[0]?.delta?.content;
+          if (token) {
+            fullText += token;
+            sendSSE(res, 'delta', token);
+          }
+        } catch { /* skip malformed lines */ }
+      }
+    }
+
+    // Post-process: strip citation markers Perplexity sometimes adds
+    const cleanText = stripCitations(fullText);
+
+    // If citations were stripped, send a corrected final delta
+    if (cleanText !== fullText) {
+      sendSSE(res, 'replace', cleanText);
+    }
+
+    // Send phase / chips / profileUpdate as a single meta event
+    const nextPhase = determinePhase(message, phase);
+    const profileUpdate = extractProfileData(message);
+    sendSSE(res, 'meta', {
+      chips: extractChips(nextPhase),
+      phase: nextPhase,
+      ...(Object.keys(profileUpdate).length > 0 ? { profileUpdate } : {}),
+    });
+
+    sendSSE(res, 'done', {});
+    res.end();
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    sendSSE(res, 'error', `Streaming error: ${message}`);
+    console.error('[chat] Error:', (err as Error)?.message);
+    sendSSE(res, 'error', { message: (err as Error).message ?? 'Unknown error' });
     res.end();
   }
-}
-
-async function streamFromAnthropic(apiKey: string, messages: any[], res: VercelResponse) {
-  // Convert messages to Anthropic format (separate system from user/assistant)
-  const anthropicMessages = messages.map((m: any) => ({
-    role: m.role === 'assistant' ? 'assistant' : 'user',
-    content: m.content,
-  }));
-
-  const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1200,
-      stream: true,
-      system: SYSTEM_PROMPT,
-      messages: anthropicMessages,
-    }),
-    signal: AbortSignal.timeout(55_000),
-  });
-
-  if (!anthropicRes.ok) {
-    const errorText = await anthropicRes.text();
-    console.error(`[chat] Anthropic error ${anthropicRes.status}:`, errorText.slice(0, 500));
-    sendSSE(res, 'error', `AI API error: ${anthropicRes.status} — ${errorText.slice(0, 200)}`);
-    res.end();
-    return;
-  }
-
-  const reader = anthropicRes.body?.getReader();
-  if (!reader) {
-    sendSSE(res, 'error', 'No response body');
-    res.end();
-    return;
-  }
-
-  const decoder = new TextDecoder();
-  let buffer = '';
-  let doneSent = false;
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() ?? '';
-
-    for (const line of lines) {
-      if (line.startsWith('event: message_stop')) {
-        if (!doneSent) { sendSSE(res, 'done', ''); doneSent = true; }
-        continue;
-      }
-      if (!line.startsWith('data: ')) continue;
-      const dataStr = line.slice(6).trim();
-      if (!dataStr) continue;
-
-      try {
-        const event = JSON.parse(dataStr);
-        if (event.type === 'content_block_delta' && event.delta?.text) {
-          sendSSE(res, 'delta', event.delta.text);
-        }
-        if (event.type === 'message_stop') {
-          if (!doneSent) { sendSSE(res, 'done', ''); doneSent = true; }
-        }
-      } catch { /* skip */ }
-    }
-  }
-
-  if (!doneSent) sendSSE(res, 'done', '');
-  res.end();
-}
-
-async function streamFromOpenAI(apiKey: string, messages: any[], res: VercelResponse) {
-  const openaiMessages = [
-    { role: 'system', content: SYSTEM_PROMPT },
-    ...messages.map((m: any) => ({ role: m.role, content: m.content }))
-  ];
-
-  const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o',
-      messages: openaiMessages,
-      stream: true,
-      temperature: 0.4,
-      max_tokens: 1200,
-    }),
-    signal: AbortSignal.timeout(60_000),
-  });
-
-  if (!openaiRes.ok) {
-    sendSSE(res, 'error', `OpenAI error: ${openaiRes.status}`);
-    res.end();
-    return;
-  }
-
-  const reader = openaiRes.body?.getReader();
-  if (!reader) {
-    sendSSE(res, 'error', 'No response body');
-    res.end();
-    return;
-  }
-
-  const decoder = new TextDecoder();
-  let buffer = '';
-  let doneSent = false;
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() ?? '';
-
-    for (const line of lines) {
-      if (!line.startsWith('data: ')) continue;
-      const dataStr = line.slice(6).trim();
-      if (dataStr === '[DONE]') {
-        if (!doneSent) { sendSSE(res, 'done', ''); doneSent = true; }
-        continue;
-      }
-      try {
-        const event = JSON.parse(dataStr);
-        const content = event.choices?.[0]?.delta?.content;
-        if (content) sendSSE(res, 'delta', content);
-        if (event.choices?.[0]?.finish_reason === 'stop') {
-          if (!doneSent) { sendSSE(res, 'done', ''); doneSent = true; }
-        }
-      } catch { /* skip */ }
-    }
-  }
-
-  if (!doneSent) sendSSE(res, 'done', '');
-  res.end();
 }

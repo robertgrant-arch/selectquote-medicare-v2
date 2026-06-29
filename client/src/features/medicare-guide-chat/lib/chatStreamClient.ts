@@ -1,19 +1,11 @@
 import { CHAT_IDLE_TIMEOUT_MS } from './chatConstants';
-
-/**
- * Transport adapter for the chat slice.
- *
- * Owns the HTTP + SSE details of talking to /api/chat: request shape, stream
- * parsing, idle-timeout, and failure detection. The server contract is
- * unchanged — only { role, content } is sent.
- */
+import type { ConversationPhase, UserProfile } from '../types/chat';
 
 const ERROR_GENERIC =
-  "I couldn't reach the assistant just now. Please try again, or call 1-800-555-0100 to speak with a licensed advisor.";
+  "I couldn't reach the assistant just now. Please try again, or call 1-800-555-0199 to speak with a licensed advisor.";
 const ERROR_OFFLINE = 'You appear to be offline. Check your connection and try again.';
 const ERROR_TIMEOUT = 'That response took too long to come back. Please try again.';
 
-/** Maps a transport failure to honest, user-facing copy (no failure-hiding). */
 export function chatErrorMessage(err: unknown): string {
   if (typeof navigator !== 'undefined' && navigator.onLine === false) return ERROR_OFFLINE;
   if (err instanceof DOMException && err.name === 'AbortError') return ERROR_TIMEOUT;
@@ -25,32 +17,42 @@ export interface ApiMessage {
   content: string;
 }
 
-/**
- * POSTs the message history to /api/chat and streams the SSE response,
- * invoking `onDelta` with the accumulated text as tokens arrive.
- *
- * Resolves with the full text on success. Throws on transport failure, an
- * `error` event, or an empty stream (e.g. a 200 that yields no tokens).
- */
+export interface ChatMeta {
+  chips?: string[];
+  phase?: ConversationPhase;
+  profileUpdate?: Partial<UserProfile>;
+}
+
 export async function streamChat(
   apiMessages: ApiMessage[],
   onDelta: (accumulated: string) => void,
-  // Caller-owned controller so the orchestrator can cancel (e.g. on unmount);
-  // streamChat also fires it on idle-timeout. Defaults to a private one.
   controller: AbortController = new AbortController(),
-): Promise<string> {
+  phase?: ConversationPhase,
+  userProfile?: Partial<UserProfile>,
+): Promise<{ text: string; meta: ChatMeta }> {
   let idleTimer = setTimeout(() => controller.abort(), CHAT_IDLE_TIMEOUT_MS);
   const resetIdle = () => {
     clearTimeout(idleTimer);
     idleTimer = setTimeout(() => controller.abort(), CHAT_IDLE_TIMEOUT_MS);
   };
 
+  // Build history: all messages except the last (which is the current user turn)
+  const history = apiMessages.slice(0, -1);
+  const lastMsg = apiMessages[apiMessages.length - 1];
+
   let accumulated = '';
+  let meta: ChatMeta = {};
+
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: apiMessages }),
+      body: JSON.stringify({
+        message: lastMsg?.content ?? '',
+        history,
+        userProfile: userProfile ?? {},
+        phase: phase ?? 'welcome',
+      }),
       signal: controller.signal,
     });
 
@@ -81,22 +83,32 @@ export async function streamChat(
           if (currentEventType === 'error') throw new Error(dataStr);
           if (currentEventType === 'delta') {
             try {
-              const data = JSON.parse(dataStr);
-              if (data && typeof data === 'string') {
-                accumulated += data;
+              const token = JSON.parse(dataStr);
+              if (token && typeof token === 'string') {
+                accumulated += token;
                 onDelta(accumulated);
               }
             } catch { /* skip parse errors */ }
+          }
+          if (currentEventType === 'replace') {
+            try {
+              const clean = JSON.parse(dataStr);
+              if (typeof clean === 'string') {
+                accumulated = clean;
+                onDelta(accumulated);
+              }
+            } catch { /* ignore */ }
+          }
+          if (currentEventType === 'meta') {
+            try { meta = JSON.parse(dataStr); } catch { /* ignore */ }
           }
           currentEventType = '';
         }
       }
     }
 
-    // A 200 that yields no tokens (e.g. a proxy returning non-SSE HTML) is a
-    // failure, not a finished turn.
     if (accumulated.trim() === '') throw new Error('Empty response stream');
-    return accumulated;
+    return { text: accumulated, meta };
   } finally {
     clearTimeout(idleTimer);
   }

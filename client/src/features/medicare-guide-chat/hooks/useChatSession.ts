@@ -1,14 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import type { Message } from '../types/chat';
+import type { Message, ConversationPhase, UserProfile } from '../types/chat';
 import { streamChat, chatErrorMessage } from '../lib/chatStreamClient';
 import { parseActionTags, dispatchChatActions } from '../lib/chatActions';
 import { loadPersisted, savePersisted } from '../lib/chatStorage';
 
-/**
- * Orchestration hook for the chat slice: owns conversation state, the single
- * request runner (used by first sends, quick replies, and retries), scroll
- * coordination, focus, and session persistence. Holds no view markup.
- */
 export function useChatSession() {
   const persisted = useRef(loadPersisted());
   const [isOpen, setIsOpen] = useState(persisted.current.isOpen);
@@ -16,12 +11,13 @@ export function useChatSession() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showScrollPill, setShowScrollPill] = useState(false);
+  const [phase, setPhase] = useState<ConversationPhase>('welcome');
+  const [userProfile, setUserProfile] = useState<Partial<UserProfile>>({});
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const atBottomRef = useRef(true);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Cancel any in-flight request when the chat unmounts.
   useEffect(() => () => abortRef.current?.abort(), []);
 
   const scrollToBottom = useCallback((smooth = false) => {
@@ -38,7 +34,6 @@ export function useChatSession() {
     if (atBottom) setShowScrollPill(false);
   }, []);
 
-  // Follow the stream only when already at the bottom; otherwise surface a pill.
   useEffect(() => {
     if (atBottomRef.current) scrollToBottom();
     else setShowScrollPill(true);
@@ -48,7 +43,6 @@ export function useChatSession() {
     if (isOpen && !isLoading && inputRef.current) inputRef.current.focus();
   }, [isOpen, isLoading]);
 
-  // Escape closes the panel (standard dialog affordance).
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsOpen(false); };
@@ -56,45 +50,56 @@ export function useChatSession() {
     return () => document.removeEventListener('keydown', onKey);
   }, [isOpen]);
 
-  // Persist only stable states (never an in-flight empty/streaming bubble).
   useEffect(() => {
     if (isLoading) return;
     savePersisted(messages, isOpen);
   }, [messages, isOpen, isLoading]);
 
-  // Single request path: `history` ends with the user turn to answer.
   const runCompletion = useCallback(async (history: Message[]) => {
     setIsLoading(true);
     atBottomRef.current = true;
     setShowScrollPill(false);
     setMessages([...history, { role: 'assistant', content: '' }]);
 
-    // Replace any prior controller; this turn owns cancellation from here.
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
     try {
-      // API contract unchanged: only { role, content }, greeting excluded.
+      // Send only {role, content} pairs; skip the initial greeting
       const apiMessages = history.slice(1).map(({ role, content }) => ({ role, content }));
-      const fullText = await streamChat(apiMessages, (accumulated) => {
-        setMessages((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = { role: 'assistant', content: accumulated };
-          return updated;
-        });
-      }, controller);
 
-      // Success: process action tags and strip them from the displayed text.
+      const { text: fullText, meta } = await streamChat(
+        apiMessages,
+        (accumulated) => {
+          setMessages((prev) => {
+            const updated = [...prev];
+            updated[updated.length - 1] = { role: 'assistant', content: accumulated };
+            return updated;
+          });
+        },
+        controller,
+        phase,
+        userProfile,
+      );
+
+      // Apply action tags (strips them from displayed text)
       const { cleanText, actions } = parseActionTags(fullText);
-      if (actions.length > 0) {
-        dispatchChatActions(actions);
-        setMessages((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = { role: 'assistant', content: cleanText };
-          return updated;
-        });
-      }
+      if (actions.length > 0) dispatchChatActions(actions);
+
+      // Apply meta: chips, phase update, profile update
+      if (meta.phase) setPhase(meta.phase);
+      if (meta.profileUpdate) setUserProfile((prev) => ({ ...prev, ...meta.profileUpdate }));
+
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = {
+          role: 'assistant',
+          content: actions.length > 0 ? cleanText : fullText,
+          chips: meta.chips,
+        };
+        return updated;
+      });
     } catch (err) {
       const message = chatErrorMessage(err);
       setMessages((prev) => {
@@ -106,7 +111,7 @@ export function useChatSession() {
       setIsLoading(false);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
-  }, []);
+  }, [phase, userProfile]);
 
   const send = useCallback((raw: string) => {
     const text = raw.trim();
@@ -115,7 +120,6 @@ export function useChatSession() {
     runCompletion([...messages, { role: 'user', content: text }]);
   }, [messages, isLoading, runCompletion]);
 
-  // Retry drops the failed assistant turn and regenerates from the last user message.
   const retry = useCallback(() => {
     if (isLoading) return;
     let lastUser = -1;
@@ -127,18 +131,11 @@ export function useChatSession() {
   }, [messages, isLoading, runCompletion]);
 
   return {
-    isOpen,
-    setIsOpen,
-    messages,
-    input,
-    setInput,
-    isLoading,
-    showScrollPill,
-    scrollRef,
-    inputRef,
-    handleScroll,
-    scrollToBottom,
-    send,
-    retry,
+    isOpen, setIsOpen,
+    messages, input, setInput,
+    isLoading, showScrollPill,
+    scrollRef, inputRef,
+    handleScroll, scrollToBottom,
+    send, retry,
   };
 }

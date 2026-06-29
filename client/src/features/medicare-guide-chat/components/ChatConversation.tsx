@@ -2,7 +2,6 @@ import { RefObject } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Message } from '../types/chat';
-import { SUGGESTED_PROMPTS } from '../lib/chatConstants';
 import { groupMessages } from '../lib/messageGroups';
 import { AssistantGlyph, AssistantMessage, UserMessage } from './MessageBubble';
 
@@ -32,7 +31,6 @@ export function ChatConversation({
 }) {
   const groups = groupMessages(messages);
   const lastIndex = messages.length - 1;
-  const showIntroChips = messages.length === 1 && !isLoading;
 
   return (
     <div className="relative flex-1 overflow-hidden">
@@ -56,7 +54,9 @@ export function ChatConversation({
                       content={msg.content}
                       error={msg.error}
                       streaming={isLoading && index === lastIndex && msg.content !== ''}
+                      chips={msg.chips}
                       onRetry={onRetry}
+                      onChipClick={onSendPrompt}
                     />
                   ))}
                 </div>
@@ -70,19 +70,6 @@ export function ChatConversation({
             )
           )}
 
-          {showIntroChips && (
-            <div className="flex flex-wrap gap-2 pl-[42px]">
-              {SUGGESTED_PROMPTS.map((prompt) => (
-                <button
-                  key={prompt}
-                  onClick={() => onSendPrompt(prompt)}
-                  className="rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 

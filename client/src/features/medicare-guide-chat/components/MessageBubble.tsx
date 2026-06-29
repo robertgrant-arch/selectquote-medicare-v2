@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Stethoscope, AlertCircle, RotateCw } from 'lucide-react';
+import { Stethoscope, AlertCircle, RotateCw, ChevronRight } from 'lucide-react';
 import { RichText } from '../lib/richText';
 
 /** Small assistant identity glyph, shown once per assistant turn-group. */
@@ -39,12 +39,16 @@ export const AssistantMessage = memo(function AssistantMessage({
   content,
   error,
   streaming,
+  chips,
   onRetry,
+  onChipClick,
 }: {
   content: string;
   error?: boolean;
   streaming?: boolean;
+  chips?: string[];
   onRetry: () => void;
+  onChipClick?: (chip: string) => void;
 }) {
   if (error) {
     return (
@@ -65,16 +69,32 @@ export const AssistantMessage = memo(function AssistantMessage({
   }
 
   return (
-    <div className="w-fit max-w-full rounded-2xl rounded-bl-sm bg-muted px-4 py-2.5 text-sm leading-relaxed text-foreground">
-      {content ? (
-        <>
-          <RichText text={content} />
-          {streaming && (
-            <span className="ml-0.5 inline-block h-4 w-px translate-y-0.5 animate-pulse bg-foreground/70 motion-reduce:animate-none" />
-          )}
-        </>
-      ) : (
-        <TypingDots />
+    <div className="w-fit max-w-full space-y-2">
+      <div className="rounded-2xl rounded-bl-sm bg-muted px-4 py-2.5 text-sm leading-relaxed text-foreground">
+        {content ? (
+          <>
+            <RichText text={content} />
+            {streaming && (
+              <span className="ml-0.5 inline-block h-4 w-px translate-y-0.5 animate-pulse bg-foreground/70 motion-reduce:animate-none" />
+            )}
+          </>
+        ) : (
+          <TypingDots />
+        )}
+      </div>
+      {!streaming && chips && chips.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {chips.map((chip) => (
+            <button
+              key={chip}
+              onClick={() => onChipClick?.(chip)}
+              className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <ChevronRight className="size-3" />
+              {chip}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );
