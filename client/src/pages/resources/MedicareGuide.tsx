@@ -646,7 +646,7 @@ export default function MedicareGuide() {
             <Link
               href="/plans?zip=64106"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-bold no-underline"
-              style={{ backgroundColor: "#F26522", color: "white" }}
+              style={{ backgroundColor: "#237A92", color: "white" }}
             >
               See Plans Near You
               <ChevronRight size={16} />

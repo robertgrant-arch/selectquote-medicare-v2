@@ -323,11 +323,11 @@ export default function Header() {
 
         .hdr-signin:hover { color: ${T.body} !important; }
 
-        .hdr-cta:hover         { background-color: #D4561A !important; }
-        .hdr-cta:focus-visible { outline: 2px solid #F26522; outline-offset: 2px; }
+        .hdr-cta:hover         { background-color: #112333 !important; }
+        .hdr-cta:focus-visible { outline: 2px solid ${T.teal}; outline-offset: 2px; }
 
-        .hdr-mob-cta:hover         { background-color: #D4561A !important; }
-        .hdr-mob-cta:focus-visible { outline: 2px solid #F26522; outline-offset: 2px; }
+        .hdr-mob-cta:hover         { background-color: #112333 !important; }
+        .hdr-mob-cta:focus-visible { outline: 2px solid ${T.teal}; outline-offset: 2px; }
 
         .hdr-ham:hover { background-color: ${T.warm} !important; }
 
@@ -380,7 +380,7 @@ export default function Header() {
                   gap:            "11px",
                 }}
               >
-                {/* SelectQuote orange brand mark */}
+                {/* Teal vertical bar — brand mark */}
                 <span
                   aria-hidden="true"
                   style={{
@@ -388,7 +388,7 @@ export default function Header() {
                     width:           "3px",
                     height:          "26px",
                     borderRadius:    "2px",
-                    backgroundColor: "#F26522",
+                    backgroundColor: T.teal,
                     flexShrink:      0,
                   }}
                 />
@@ -501,7 +501,7 @@ export default function Header() {
                   fontWeight:      600,
                   letterSpacing:   "0.005em",
                   color:           "#fff",
-                  backgroundColor: "#F26522",
+                  backgroundColor: T.dark,
                   borderRadius:    "6px",
                   textDecoration:  "none",
                   transition:      "background-color 0.14s",
@@ -582,7 +582,7 @@ export default function Header() {
                     fontWeight:      600,
                     letterSpacing:   "0.005em",
                     color:           "#fff",
-                    backgroundColor: "#F26522",
+                    backgroundColor: T.dark,
                     borderRadius:    "6px",
                     textDecoration:  "none",
                     transition:      "background-color 0.14s",

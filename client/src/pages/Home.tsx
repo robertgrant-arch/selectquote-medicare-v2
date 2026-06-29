@@ -258,8 +258,8 @@ export default function Home() {
           outline: none;
         }
         #hm .btn-primary { transition: background-color 0.14s; }
-        #hm .btn-primary:hover { background-color: #D4561A !important; }
-        #hm .btn-primary:focus-visible { outline: 2px solid #F26522; outline-offset: 2px; }
+        #hm .btn-primary:hover { background-color: #112333 !important; }
+        #hm .btn-primary:focus-visible { outline: 2px solid ${T.teal}; outline-offset: 2px; }
         #hm .btn-teal { transition: background-color 0.14s; }
         #hm .btn-teal:hover { background-color: ${T.tealL} !important; }
         #hm .btn-teal:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
@@ -400,7 +400,7 @@ export default function Home() {
                       className="btn-primary"
                       style={{
                         fontFamily: F.sans, padding: "17px 26px",
-                        backgroundColor: "#F26522", color: "#fff",
+                        backgroundColor: T.dark, color: "#fff",
                         fontWeight: 600, fontSize: "15px",
                         borderRadius: "6px", border: "none",
                         cursor: "pointer", flexShrink: 0,
