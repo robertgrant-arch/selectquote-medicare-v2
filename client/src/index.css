@@ -41,19 +41,27 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* ── Medicare Brand Colors ── */
+  /* ── SelectQuote Brand Colors ── */
+  /* Primary — SelectQuote orange */
+  --color-brand-orange: #F26522;
+  --color-brand-orange-dark: #D4561A;
+  --color-brand-orange-light: #FEF0E6;
+  /* Supporting navy */
   --color-brand-navy: #1C3A48;
   --color-brand-navy-dark: #0B1B24;
-  --color-brand-navy-light: #237A92;
+  /* Teal accent — "rich teal" per brand doc */
   --color-brand-teal: #237A92;
   --color-brand-teal-light: #2E96B0;
+  --color-brand-teal-fill: #E8F2F5;
+  --color-brand-teal-border: #C6DAE0;
+  /* Surfaces */
   --color-brand-rule: #E2EAED;
   --color-brand-warm: #FAF9F5;
   --color-brand-body: #3E5560;
   --color-brand-sub: #7A9BA6;
-  /* Legacy aliases — kept for any remaining utility-class references */
-  --color-brand-red: #1C3A48;
-  --color-brand-red-dark: #112333;
+  /* Legacy aliases */
+  --color-brand-red: #F26522;
+  --color-brand-red-dark: #D4561A;
   --color-brand-blue-light: #E8F2F5;
   --color-brand-blue-mid: #D6E8ED;
   --color-brand-gray: #3E5560;
@@ -177,27 +185,27 @@
     }
   }
 
-  /* ── Primary Button ── */
+  /* ── Primary Button — SelectQuote orange ── */
   .btn-primary {
-    background-color: #1C3A48;
+    background-color: #F26522;
     color: white;
     font-family: 'DM Sans', sans-serif;
     font-weight: 600;
     border-radius: 6px;
     transition: background-color 0.14s ease;
   }
-  .btn-primary:hover { background-color: #112333; }
+  .btn-primary:hover { background-color: #D4561A; }
 
-  /* ── CTA Button ── */
+  /* ── CTA Button — SelectQuote orange ── */
   .btn-cta {
-    background-color: #1C3A48;
+    background-color: #F26522;
     color: white;
     font-family: 'DM Sans', sans-serif;
     font-weight: 600;
     border-radius: 6px;
     transition: background-color 0.14s ease;
   }
-  .btn-cta:hover { background-color: #112333; }
+  .btn-cta:hover { background-color: #D4561A; }
 
   /* ── Secondary / Outline Button ── */
   .btn-secondary {
@@ -275,8 +283,8 @@
     color: #237A92;
   }
   .quick-filter-tab.active {
-    background-color: #1C3A48;
-    border-color: #1C3A48;
+    background-color: #F26522;
+    border-color: #F26522;
     color: white;
   }
 
