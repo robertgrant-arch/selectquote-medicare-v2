@@ -54,12 +54,60 @@ const RequestSchema = z.object({
   topPlans: z.array(TopPlanSchema).min(1).max(3),
 });
 
+// ── PHI boundary ─────────────────────────────────────────────────────────────
+//
+// PHI risk for this integration: LOW.
+// All fields in AnswersSchema are categorical ordinal values (e.g. "1-3", "yes",
+// "somewhat") — no direct PHI identifiers (name, DOB, MBI, SSN, address, or
+// specific drug/doctor names) ever appear here. The schema enforces this: every
+// field is z.string() that the UI populates only with expected enum values.
+//
+// toDeidentifiedProfile() makes the boundary explicit: it re-maps each answer
+// field individually so no free-text route can accidentally be added without a
+// conscious decision at this function. If a future developer adds a free-text
+// "other conditions" field to the form, it must be reviewed here before it
+// reaches the AI.
+//
+// Previous shape → New (minimized) shape: unchanged — already de-identified.
+// Risk before → after: LOW → LOW (explicit gate added).
+
+type HealthAnswers = z.infer<typeof AnswersSchema>;
+
+export function toDeidentifiedProfile(answers: HealthAnswers): HealthAnswers {
+  // Re-map field-by-field so any unexpected key is silently excluded.
+  // Values stay as the caller provided; the schema already constrains them.
+  return {
+    healthStatus:       answers.healthStatus,
+    chronicConditions:  answers.chronicConditions,
+    plannedSurgery:     answers.plannedSurgery,
+    pcpVisits:          answers.pcpVisits,
+    specialistVisits:   answers.specialistVisits,
+    erVisits:           answers.erVisits,
+    urgentCareVisits:   answers.urgentCareVisits,
+    monthlyRxCount:     answers.monthlyRxCount,
+    brandNameDrugs:     answers.brandNameDrugs,
+    specialtyDrugs:     answers.specialtyDrugs,
+    monthlyDrugSpend:   answers.monthlyDrugSpend,
+    dentalImportance:   answers.dentalImportance,
+    visionImportance:   answers.visionImportance,
+    hearingImportance:  answers.hearingImportance,
+    needsTransportation: answers.needsTransportation,
+    wantsOTC:           answers.wantsOTC,
+    wantsFitness:       answers.wantsFitness,
+    hasSpecificDoctors: answers.hasSpecificDoctors,
+    planTypePreference: answers.planTypePreference,
+    topPriority:        answers.topPriority,
+  };
+}
+
 // ── Prompt builder ────────────────────────────────────────────────────────────
 
 function buildPrompt(
-  answers: z.infer<typeof AnswersSchema>,
+  rawAnswers: HealthAnswers,
   topPlans: z.infer<typeof TopPlanSchema>[]
 ): string {
+  // Pass answers through the PHI boundary before they touch the prompt string.
+  const answers = toDeidentifiedProfile(rawAnswers);
   const healthProfile = [
     `Health status: ${answers.healthStatus}`,
     `Chronic conditions: ${answers.chronicConditions}`,

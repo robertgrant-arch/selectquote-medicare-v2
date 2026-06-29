@@ -173,8 +173,7 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
                     checked={consentChecked}
                     onChange={(e) => setConsentChecked(e.target.checked)}
                     className="mt-0.5 w-4 h-4 rounded"
-                    style={{ borderColor: "#C6DAE0" }}
-                    style={{ accentColor: "#1C3A48" }}
+                    style={{ borderColor: "#C6DAE0", accentColor: "#1C3A48" }}
                   />
                   <span className="text-xs" style={{ color: "#3E5560" }}>
                     I consent to share my Medicare claims data with SelectQuote for the purpose
@@ -189,8 +188,7 @@ export default function BlueButtonModal({ isOpen, onClose, onDrugsFetched }: Blu
                     checked={hipaaChecked}
                     onChange={(e) => setHipaaChecked(e.target.checked)}
                     className="mt-0.5 w-4 h-4 rounded"
-                    style={{ borderColor: "#C6DAE0" }}
-                    style={{ accentColor: "#1C3A48" }}
+                    style={{ borderColor: "#C6DAE0", accentColor: "#1C3A48" }}
                   />
                   <span className="text-xs" style={{ color: "#3E5560" }}>
                     I acknowledge that I have read and understand the HIPAA Privacy Notice and CMS

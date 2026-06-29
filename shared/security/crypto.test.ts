@@ -5,30 +5,44 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { encryptField, decryptField, hashForLookup, maskValue } from "./crypto";
+import {
+  encryptField,
+  decryptField,
+  hashForLookup,
+  maskValue,
+  validateCryptoEnv,
+} from "./crypto";
 
 // ---------------------------------------------------------------------------
 // Test key fixtures (64-char hex = 32 bytes each)
 // ---------------------------------------------------------------------------
 
-const KEY_K1 = "a".repeat(64); // key ID "k1" — active key
-const KEY_K2 = "b".repeat(64); // key ID "k2" — legacy key for rotation tests
+const KEY_K1   = "a".repeat(64); // encryption key ID "k1" — active key
+const KEY_K2   = "b".repeat(64); // encryption key ID "k2" — legacy key for rotation tests
+const KEY_HMAC = "c".repeat(64); // dedicated HMAC lookup key
 
 const CTX = { purpose: "eligibility", field: "mbi" };
 
-function setEnv(activeId: string, keys: Record<string, string>) {
+function setEnv(
+  activeId: string,
+  keys: Record<string, string>,
+  hmacKey: string = KEY_HMAC
+) {
   // Clear all existing KEY_* vars so tests don't bleed into each other.
   for (const k of Object.keys(process.env)) {
     if (k.startsWith("KEY_")) delete process.env[k];
   }
+  delete process.env.HMAC_LOOKUP_KEY;
   process.env.ACTIVE_KEY_ID = activeId;
   for (const [id, hex] of Object.entries(keys)) {
     process.env[`KEY_${id}`] = hex;
   }
+  process.env.HMAC_LOOKUP_KEY = hmacKey;
 }
 
 function clearEnv() {
   delete process.env.ACTIVE_KEY_ID;
+  delete process.env.HMAC_LOOKUP_KEY;
   for (const k of Object.keys(process.env)) {
     if (k.startsWith("KEY_")) delete process.env[k];
   }
@@ -160,7 +174,7 @@ describe("wrong key", () => {
     const payload = encryptField("secret", CTX);
 
     // Swap k1 for a different key value
-    process.env.KEY_k1 = "c".repeat(64);
+    process.env.KEY_k1 = "d".repeat(64);
     expect(() => decryptField(payload, CTX)).toThrow(/authentication failed/);
   });
 
@@ -207,7 +221,7 @@ describe("key rotation", () => {
 });
 
 // ---------------------------------------------------------------------------
-// hashForLookup
+// hashForLookup — uses HMAC_LOOKUP_KEY (separate from encryption keys)
 // ---------------------------------------------------------------------------
 
 describe("hashForLookup", () => {
@@ -221,17 +235,39 @@ describe("hashForLookup", () => {
     expect(hashForLookup("a@example.com")).not.toBe(hashForLookup("b@example.com"));
   });
 
-  it("changes when the key changes", () => {
+  it("is controlled by HMAC_LOOKUP_KEY, not by the encryption key", () => {
     const h1 = hashForLookup("robert@example.com");
 
+    // Changing the active encryption key has NO effect on lookup hashes.
+    // This is the desired behavior: lookup hashes are stable across encryption key rotations.
     process.env.KEY_k1 = "d".repeat(64);
+    process.env.ACTIVE_KEY_ID = "k1";
     const h2 = hashForLookup("robert@example.com");
+    expect(h1).toBe(h2); // stable — same HMAC_LOOKUP_KEY, different encryption key
+  });
 
+  it("changes when HMAC_LOOKUP_KEY changes (rare — only if lookup key is rotated)", () => {
+    const h1 = hashForLookup("robert@example.com");
+
+    // Changing HMAC_LOOKUP_KEY DOES change the hash (and invalidates all DB lookup indexes).
+    // This should only happen if HMAC_LOOKUP_KEY is compromised — not on normal rotation.
+    process.env.HMAC_LOOKUP_KEY = "e".repeat(64);
+    const h2 = hashForLookup("robert@example.com");
     expect(h1).not.toBe(h2);
   });
 
   it("returns a 64-char hex string", () => {
     expect(hashForLookup("test")).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it("throws if HMAC_LOOKUP_KEY is missing", () => {
+    delete process.env.HMAC_LOOKUP_KEY;
+    expect(() => hashForLookup("test")).toThrow(/HMAC_LOOKUP_KEY/);
+  });
+
+  it("throws if HMAC_LOOKUP_KEY is not valid hex", () => {
+    process.env.HMAC_LOOKUP_KEY = "not-valid-hex!!";
+    expect(() => hashForLookup("test")).toThrow(/64 hex characters/);
   });
 });
 
@@ -266,7 +302,60 @@ describe("maskValue", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Environment validation
+// validateCryptoEnv
+// ---------------------------------------------------------------------------
+
+describe("validateCryptoEnv", () => {
+  it("passes with all required vars set correctly", () => {
+    setEnv("k1", { k1: KEY_K1 });
+    expect(() => validateCryptoEnv()).not.toThrow();
+  });
+
+  it("passes with multiple encryption keys (rotation scenario)", () => {
+    setEnv("k2", { k1: KEY_K1, k2: KEY_K2 });
+    expect(() => validateCryptoEnv()).not.toThrow();
+  });
+
+  it("fails if ACTIVE_KEY_ID is missing", () => {
+    delete process.env.ACTIVE_KEY_ID;
+    expect(() => validateCryptoEnv()).toThrow(/ACTIVE_KEY_ID is not set/);
+  });
+
+  it("fails if the active key's KEY_<id> var is missing", () => {
+    process.env.ACTIVE_KEY_ID = "k99";
+    // KEY_k99 not set; KEY_k1 is present from beforeEach
+    expect(() => validateCryptoEnv()).toThrow(/KEY_k99 is not set/);
+  });
+
+  it("fails if any KEY_* var is not valid 64-char hex", () => {
+    process.env.KEY_k1 = "tooshort";
+    expect(() => validateCryptoEnv()).toThrow(/64 hex characters/);
+  });
+
+  it("fails if HMAC_LOOKUP_KEY is missing", () => {
+    delete process.env.HMAC_LOOKUP_KEY;
+    expect(() => validateCryptoEnv()).toThrow(/HMAC_LOOKUP_KEY is not set/);
+  });
+
+  it("fails if HMAC_LOOKUP_KEY is not valid 64-char hex", () => {
+    process.env.HMAC_LOOKUP_KEY = "badhex!";
+    expect(() => validateCryptoEnv()).toThrow(/64 hex characters/);
+  });
+
+  it("reports all errors at once (not just the first)", () => {
+    clearEnv();
+    try {
+      validateCryptoEnv();
+    } catch (err) {
+      const msg = (err as Error).message;
+      expect(msg).toMatch(/ACTIVE_KEY_ID/);
+      expect(msg).toMatch(/HMAC_LOOKUP_KEY/);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Environment validation (inline — called by encrypt/decrypt/hash)
 // ---------------------------------------------------------------------------
 
 describe("environment validation", () => {
@@ -277,6 +366,11 @@ describe("environment validation", () => {
 
   it("throws if KEY_<id> is wrong length", () => {
     process.env.KEY_k1 = "tooshort";
-    expect(() => encryptField("x", CTX)).toThrow(/64-char hex/);
+    expect(() => encryptField("x", CTX)).toThrow(/64 hex characters/);
+  });
+
+  it("throws if KEY_<id> contains non-hex characters", () => {
+    process.env.KEY_k1 = "g".repeat(64); // "g" is not valid hex
+    expect(() => encryptField("x", CTX)).toThrow(/64 hex characters/);
   });
 });

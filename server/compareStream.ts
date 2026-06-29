@@ -74,6 +74,20 @@ const PlanInputSchema = z.object({
 
 type PlanInput = z.infer<typeof PlanInputSchema>;
 
+// ── PHI boundary ─────────────────────────────────────────────────────────────
+//
+// PHI risk for this integration: NONE.
+// Payloads sent to the AI contain only public plan data: carrier name, plan
+// name, plan type, premium, copays, star ratings, benefit flags, and network
+// size. No consumer identifiers (name, DOB, MBI, SSN, medications, providers,
+// or ZIP) are included in the prompt.
+//
+// The "CURRENT PLAN" label refers to a plan record the user is comparing,
+// not to the user's personal record from pVerify or any other PHI source.
+//
+// Previous shape → Current (minimized) shape: unchanged — already PHI-free.
+// Risk before → after: NONE → NONE (confirmed + documented).
+
 // ── Prompt builders ───────────────────────────────────────────────────────────
 
 function benefitList(p: PlanInput): string {

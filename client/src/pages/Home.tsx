@@ -14,12 +14,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useLocation, Link } from "wouter";
-import { Phone, ChevronRight } from "lucide-react";
+import { Phone, ChevronRight, RotateCcw, X as XIcon } from "lucide-react";
 import GuidedWorkflowModal, { type MBIVerifyResult } from "@/components/GuidedWorkflowModal";
 import { useZipValidation } from "@/features/zip-validation/lib/useZipValidation";
 import CountySelector from "@/features/zip-validation/components/CountySelector";
 import Header from "@/components/Header";
 import { useQuoteHandoff } from "@/contexts/QuoteHandoffContext";
+import { trpc } from "@/lib/trpc";
+import type { Doctor } from "@/lib/types";
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const T = {
@@ -106,6 +108,8 @@ function useReveal() {
 }
 
 // ─── Home ─────────────────────────────────────────────────────────────────────
+const RESUME_TOKEN_KEY = "mqe_resume_token";
+
 export default function Home() {
   const [zip, setZip]               = useState("");
   const [inputError, setInputError] = useState("");
@@ -115,6 +119,65 @@ export default function Home() {
   const [showMBIModal, setShowMBIModal] = useState(false);
   const [pendingZip, setPendingZip]     = useState("");
   const [, navigate]                    = useLocation();
+
+  // ── Resume session state ─────────────────────────────────────────────────
+  const [savedToken, setSavedToken] = useState<string | null>(() =>
+    typeof window !== "undefined" ? localStorage.getItem(RESUME_TOKEN_KEY) : null
+  );
+  const [showResumeBanner, setShowResumeBanner] = useState(false);
+  const [resumeInitialDoctors, setResumeInitialDoctors]   = useState<Doctor[]>([]);
+  const [resumeInitialDrugs, setResumeInitialDrugs]       = useState<{ name: string; dosage: string }[]>([]);
+  const [resumeInitialVerify, setResumeInitialVerify]     = useState<MBIVerifyResult | null>(null);
+  const [resumeZip, setResumeZip]                         = useState<string>("");
+
+  const resumeQuery = trpc.quoteSession.resume.useQuery(
+    { resumeToken: savedToken ?? "" },
+    { enabled: !!savedToken, retry: false }
+  );
+
+  useEffect(() => {
+    if (resumeQuery.data) {
+      const session = resumeQuery.data;
+      if (session.status === "active") {
+        setShowResumeBanner(true);
+        setResumeZip(session.zip ?? "");
+        setResumeInitialDoctors(
+          (session.providers ?? []).map((p, i) => ({
+            id: p.npi ?? `resume-${i}`,
+            name: p.name,
+            specialty: p.specialty ?? "General",
+            npi: p.npi ?? "",
+            address: session.zip ?? "",
+          }))
+        );
+        setResumeInitialDrugs(
+          (session.medications ?? []).map((m) => ({ name: m.name, dosage: m.dosage ?? "" }))
+        );
+        if (session.eligibility?.eligibilityResultJson) {
+          try {
+            setResumeInitialVerify(JSON.parse(session.eligibility.eligibilityResultJson) as MBIVerifyResult);
+          } catch { /* ignore malformed */ }
+        }
+      }
+    }
+    if (resumeQuery.isError) {
+      // Token expired or invalid — clear it silently
+      localStorage.removeItem(RESUME_TOKEN_KEY);
+      setSavedToken(null);
+    }
+  }, [resumeQuery.data, resumeQuery.isError]);
+
+  const handleResumeDismiss = () => {
+    setShowResumeBanner(false);
+    localStorage.removeItem(RESUME_TOKEN_KEY);
+    setSavedToken(null);
+  };
+
+  const handleResumeAccept = () => {
+    setShowResumeBanner(false);
+    setPendingZip(resumeZip || zip);
+    setShowMBIModal(true);
+  };
 
   const rBenefits    = useReveal();
   const rCoverage    = useReveal();
@@ -225,7 +288,43 @@ export default function Home() {
       `}</style>
 
       {showMBIModal && (
-        <GuidedWorkflowModal zip={pendingZip} onSkip={handleMBISkip} onComplete={handleWorkflowComplete} />
+        <GuidedWorkflowModal
+          zip={pendingZip}
+          onSkip={handleMBISkip}
+          onComplete={handleWorkflowComplete}
+          initialDoctors={showResumeBanner ? undefined : resumeInitialDoctors}
+          initialDrugs={showResumeBanner ? undefined : resumeInitialDrugs}
+          initialVerifyResult={showResumeBanner ? undefined : resumeInitialVerify}
+          initialStep={!showResumeBanner && resumeInitialDoctors.length > 0 ? "doctorsDrugs" : undefined}
+        />
+      )}
+
+      {/* ── Resume-session banner ───────────────────────────────────────── */}
+      {showResumeBanner && !showMBIModal && (
+        <div
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-4 px-5 py-3.5 rounded-xl shadow-lg"
+          style={{ backgroundColor: "#1C3A48", border: "1px solid #2E5266", maxWidth: "480px", width: "calc(100% - 32px)" }}
+        >
+          <RotateCcw size={18} className="shrink-0 text-white/80" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-white leading-tight">Continue where you left off</p>
+            <p className="text-xs text-white/60 mt-0.5 truncate">
+              {resumeZip ? `ZIP ${resumeZip}` : "Your saved quote session is ready"}
+              {resumeInitialDoctors.length > 0 && ` · ${resumeInitialDoctors.length} doctor${resumeInitialDoctors.length > 1 ? "s" : ""}`}
+              {resumeInitialDrugs.length > 0 && ` · ${resumeInitialDrugs.length} drug${resumeInitialDrugs.length > 1 ? "s" : ""}`}
+            </p>
+          </div>
+          <button
+            onClick={handleResumeAccept}
+            className="shrink-0 px-3 py-1.5 text-xs font-bold rounded-lg"
+            style={{ backgroundColor: "#237A92", color: "white" }}
+          >
+            Resume
+          </button>
+          <button onClick={handleResumeDismiss} className="shrink-0 text-white/50 hover:text-white/80 transition-colors">
+            <XIcon size={16} />
+          </button>
+        </div>
       )}
 
       <Header />

@@ -148,10 +148,9 @@ export default function VerifyCoverage() {
     if (!lastName.trim()) return setFormError("Last name is required.");
     if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dob)) return setFormError("Date of birth must be in MM/DD/YYYY format.");
 
+    // pVerify eligibility accepts ONLY mbi/ssn (PHI minimization). Name/DOB were
+    // collected for UI validation but were always stripped server-side — do not send.
     eligibilityMutation.mutate({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      dob,
       mbi: mbi.trim() || undefined,
     });
   };

@@ -36,7 +36,7 @@ import AICompareModal from "@/features/plan-compare/components/AICompareModal";
 import PlanDetailsModal from "@/components/PlanDetailsModal";
 import AITop3Cards from "@/components/AITop3Cards";
 import { scoreAllPlans, MODEL_A, MODEL_B } from "@/lib/aiRecommendationEngine";
-import type { ScoringModel } from "@/lib/aiRecommendationEngine";
+import type { ScoringModel, ScoringModelType, PlanScore } from "@/lib/aiRecommendationEngine";
 import type { FilterState, MedicarePlan, RxDrug, Doctor, PlanDoctorNetworkStatus } from "@/lib/types";
 import type { MBIVerifyResult } from "@/components/MBIVerifyModal";
 import { useSessionState } from "@/hooks/useSessionState";
@@ -205,7 +205,7 @@ export default function Plans() {
   const [doctorsModalOpen, setDoctorsModalOpen] = useState(false);
   const [enrollModalOpen, setEnrollModalOpen] = useState(false);
   const [enrollPlan, setEnrollPlan] = useState<MedicarePlan | null>(null);
-  const [detailPlans, setDetailPlans] = useState<MedicarePlan[]>([]);
+  const [detailPlans, setDetailPlans] = useState<PlanScore[] | MedicarePlan[]>([]);
   const [detailIndex, setDetailIndex] = useState<number | null>(null);
   const [detailIsAi, setDetailIsAi] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -218,7 +218,7 @@ export default function Plans() {
   const [locationInfo, setLocationInfo] = useState<{ stateAbbr: string; countyName: string } | null>(null);
   const [eligibility, setEligibility] = useState<MBIVerifyResult | null>(null);
   const [showCurrentPlanBanner, setShowCurrentPlanBanner] = useState(true);
-  const [aiModel, setAiModel] = useState<ScoringModel>('B');
+  const [aiModel, setAiModel] = useState<ScoringModelType>('B');
   const compareStore = useCompareStore();
   const quoteHandoff = useQuoteHandoff();
   const [aiCompareOpen, setAICompareOpen] = useState(false);
@@ -570,7 +570,7 @@ export default function Plans() {
           {topPlan && (
             <AITop3Cards
               scores={aiScores}
-              model={aiModel}
+              model={aiModel === 'A' ? MODEL_A : MODEL_B}
               onEnroll={handleEnroll}
               doctors={doctors}
               doctorNetworkMap={doctorNetworkMap}
@@ -681,14 +681,11 @@ export default function Plans() {
                     <PlanCard
                         plan={plan}
                         onEnroll={handleEnroll}
-                        onFavorite={toggleFavorite}
-                        isFavorite={favorites.has(plan.id)}
-                        viewMode={viewMode}
+                        onToggleFavorite={toggleFavorite}
+                        isFavorited={favorites.has(plan.id)}
                         onCompareActivate={handleCompareActivate}
                         isCompareActive={activeCompareId === plan.id}
-                        allPlans={filteredPlans}
                         rxDrugs={rxDrugs}
-                        doctors={doctors}
                         doctorNetworkStatus={doctorNetworkMap[plan.planId]}
                         hasRxDrugs={rxDrugs.length > 0}
                         hasDoctors={doctors.length > 0}

@@ -44,6 +44,13 @@ interface PlanCardProps {
   doctorNetworkStatus?: PlanDoctorNetworkStatus;
   rxDrugs?: RxDrug[];
   subsidyLevel?: "full" | "partial" | "none";
+  hasRxDrugs?: boolean;
+  hasDoctors?: boolean;
+  matchScore?: number;
+  matchLabel?: string;
+  isInCompare?: boolean;
+  isCompareFull?: boolean;
+  onCompareToggle?: (plan: MedicarePlan) => void;
 }
 
 const BENEFIT_ICONS = {
@@ -89,7 +96,6 @@ export default function PlanCard({
   isInCompare = false,
   isCompareFull = false,
   onCompareToggle,
-  verificationSummary,
 }: PlanCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [heartAnimating, setHeartAnimating] = useState(false);
@@ -135,7 +141,7 @@ export default function PlanCard({
         {/* Card Header */}
         <div className="flex items-start gap-3 p-4 pb-2">
           <div className="cursor-pointer" onClick={() => setModalImage(`https://logo.clearbit.com/${plan.carrier.toLowerCase().replace(/\s+/g, '')}.com`)}>
-            <CarrierLogo carrier={plan.carrier} color={plan.carrierLogoColor} textColor={plan.carrierLogoTextColor} />
+            <CarrierLogo carrier={plan.carrier} bgColor={plan.carrierLogoColor} textColor={plan.carrierLogoTextColor} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "#7A9BA6" }}>{plan.carrier}</p>
@@ -168,7 +174,7 @@ export default function PlanCard({
             </div>
           </div>
           <div className="flex flex-col items-end gap-1">
-            <StarRating rating={plan.starRating.overall} label={plan.starRating.label} />
+            <StarRating rating={plan.starRating.overall} />
             <button onClick={handleFavorite} aria-label={isFavorited ? `Remove ${plan.planName} from saved plans` : `Save ${plan.planName} to favorites`} aria-pressed={isFavorited} className={`p-1.5 rounded-full transition-all ${heartAnimating ? "scale-125" : ""}`}>
               <Heart size={16} className={isFavorited ? "fill-red-500 text-red-500" : "hover:text-red-400"} style={isFavorited ? {} : { color: "#C6DAE0" }} />
             </button>
@@ -424,7 +430,7 @@ export default function PlanCard({
         {/* Inline Compare */}
         {onCompareActivate && (
           <InlineCompare
-            planId={plan.id}
+            plan={plan}
             isActive={isCompareActive}
             onActivate={onCompareActivate}
           />
@@ -484,7 +490,7 @@ export default function PlanCard({
                   <p className="text-xs" style={{ color: "#7A9BA6" }}>max OOP</p>
                 </div>
                 <div className="w-px h-10" style={{ backgroundColor: "#E2EAED" }} />
-                <StarRating rating={plan.starRating.overall} label={plan.starRating.label} />
+                <StarRating rating={plan.starRating.overall} />
               </div>
             </div>
           </div>

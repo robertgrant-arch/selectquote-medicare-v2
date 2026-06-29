@@ -4,14 +4,40 @@
  * Uses AES-256-GCM with authenticated encryption and envelope-style payloads
  * so that key rotation, audit context, and tamper detection are all first-class.
  *
- * Environment variables
- * ---------------------
- *   ACTIVE_KEY_ID   – ID of the key to use for new encryptions (e.g. "k1")
- *   KEY_<id>        – 32-byte hex-encoded AES-256 key (e.g. KEY_k1=aabbcc...)
+ * Required environment variables
+ * --------------------------------
+ *   ACTIVE_KEY_ID       – ID of the key used for NEW encryptions (e.g. "k1")
+ *   KEY_<id>            – 64-char hex AES-256 key for each configured key ID
+ *                         At minimum KEY_<ACTIVE_KEY_ID> must be present.
+ *                         Keep old IDs present so legacy ciphertext can still
+ *                         be decrypted during and after rotation.
+ *   HMAC_LOOKUP_KEY     – 64-char hex key used ONLY for hashForLookup().
+ *                         Separate from the encryption keys so it is stable
+ *                         across encryption key rotations. Changing this key
+ *                         invalidates all indexed lookup hashes in the DB.
+ *
+ * Design notes
+ * ------------
+ *   • encryptField / decryptField use the key_id embedded in the envelope,
+ *     so decryption always works as long as that key is still in env.
+ *   • hashForLookup uses HMAC_LOOKUP_KEY directly (not the active encryption
+ *     key). This means lookup hashes remain stable when you rotate encryption
+ *     keys, which is the expected operational behavior.
+ *   • All keys must be valid 64-character lowercase hex strings (32 bytes).
+ *   • There is no plaintext fallback mode. A missing or invalid key is always
+ *     a hard error.
+ *
+ * Startup validation
+ * ------------------
+ *   Call validateCryptoEnv() once at server startup (before the first request).
+ *   It checks all three conditions above and throws with a descriptive message
+ *   if any is violated. This gives a clear startup failure rather than a
+ *   confusing error on the first encrypt/decrypt call.
  *
  * Usage in a vertical slice (server-side only)
  * -------------------------------------------
- *   import { encryptField, decryptField, hashForLookup, maskValue } from "@shared/security/crypto";
+ *   import { encryptField, decryptField, hashForLookup, maskValue,
+ *            validateCryptoEnv } from "@shared/security/crypto";
  *
  *   const stored = encryptField(user.email, { purpose: "auth", field: "email" });
  *   const plain  = decryptField(stored,      { purpose: "auth", field: "email" });
@@ -24,7 +50,6 @@ import {
   createDecipheriv,
   createHmac,
   randomBytes,
-  timingSafeEqual,
 } from "node:crypto";
 
 // ---------------------------------------------------------------------------
@@ -34,27 +59,103 @@ import {
 interface EncryptedEnvelope {
   version: 1;
   key_id: string;
-  iv: string;       // base64
+  iv: string;         // base64
   ciphertext: string; // base64
-  auth_tag: string; // base64
+  auth_tag: string;   // base64
 }
 
 // ---------------------------------------------------------------------------
-// Key management
+// Key management internals
 // ---------------------------------------------------------------------------
+
+const HEX_RE = /^[0-9a-fA-F]{64}$/;
 
 function getActiveKeyId(): string {
   const id = process.env.ACTIVE_KEY_ID;
   if (!id) throw new Error("[crypto] ACTIVE_KEY_ID env var is not set");
+  if (!/^[\w-]+$/.test(id))
+    throw new Error("[crypto] ACTIVE_KEY_ID must contain only alphanumerics, underscores, or hyphens");
   return id;
 }
 
 function loadKey(keyId: string): Buffer {
   const hex = process.env[`KEY_${keyId}`];
   if (!hex) throw new Error(`[crypto] KEY_${keyId} env var is not set`);
-  if (hex.length !== 64)
-    throw new Error(`[crypto] KEY_${keyId} must be a 64-char hex string (32 bytes)`);
+  if (!HEX_RE.test(hex))
+    throw new Error(`[crypto] KEY_${keyId} must be exactly 64 hex characters (32 bytes)`);
   return Buffer.from(hex, "hex");
+}
+
+function loadHmacLookupKey(): Buffer {
+  const hex = process.env.HMAC_LOOKUP_KEY;
+  if (!hex) throw new Error("[crypto] HMAC_LOOKUP_KEY env var is not set");
+  if (!HEX_RE.test(hex))
+    throw new Error("[crypto] HMAC_LOOKUP_KEY must be exactly 64 hex characters (32 bytes)");
+  return Buffer.from(hex, "hex");
+}
+
+// ---------------------------------------------------------------------------
+// Startup validation — call once from server/_core/index.ts
+// ---------------------------------------------------------------------------
+
+/**
+ * Validates all required crypto env vars and throws a descriptive Error if any
+ * are missing or malformed. Call this at server startup before handling any
+ * requests.
+ *
+ * Checks:
+ *   1. ACTIVE_KEY_ID is set and contains only safe characters.
+ *   2. KEY_<ACTIVE_KEY_ID> is set and is a valid 64-char hex string.
+ *   3. At least one KEY_* var is present.
+ *   4. Every KEY_* var that IS present is a valid 64-char hex string
+ *      (so stale keys in env don't silently fail on first use).
+ *   5. HMAC_LOOKUP_KEY is set and is a valid 64-char hex string.
+ */
+export function validateCryptoEnv(): void {
+  const errors: string[] = [];
+
+  // 1. ACTIVE_KEY_ID
+  const activeId = process.env.ACTIVE_KEY_ID;
+  if (!activeId) {
+    errors.push("ACTIVE_KEY_ID is not set");
+  } else if (!/^[\w-]+$/.test(activeId)) {
+    errors.push("ACTIVE_KEY_ID contains invalid characters (use alphanumerics, underscores, hyphens)");
+  } else {
+    // 2. Active key must be present and valid
+    const activeHex = process.env[`KEY_${activeId}`];
+    if (!activeHex) {
+      errors.push(`KEY_${activeId} is not set (required because ACTIVE_KEY_ID="${activeId}")`);
+    } else if (!HEX_RE.test(activeHex)) {
+      errors.push(`KEY_${activeId} must be exactly 64 hex characters (32 bytes)`);
+    }
+  }
+
+  // 3 & 4. All KEY_* vars that exist must be valid
+  const keyVars = Object.keys(process.env).filter((k) => k.startsWith("KEY_"));
+  if (keyVars.length === 0) {
+    errors.push("No KEY_<id> vars found — at least one encryption key is required");
+  }
+  for (const k of keyVars) {
+    const hex = process.env[k]!;
+    if (!HEX_RE.test(hex)) {
+      errors.push(`${k} must be exactly 64 hex characters (32 bytes) — found length ${hex.length}`);
+    }
+  }
+
+  // 5. HMAC_LOOKUP_KEY
+  const hmacHex = process.env.HMAC_LOOKUP_KEY;
+  if (!hmacHex) {
+    errors.push("HMAC_LOOKUP_KEY is not set");
+  } else if (!HEX_RE.test(hmacHex)) {
+    errors.push("HMAC_LOOKUP_KEY must be exactly 64 hex characters (32 bytes)");
+  }
+
+  if (errors.length > 0) {
+    throw new Error(
+      `[crypto] Environment validation failed:\n${errors.map((e) => `  • ${e}`).join("\n")}\n` +
+        "See docs/key-management.md for setup instructions."
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -98,6 +199,7 @@ export function encryptField(
 /**
  * Decrypts an envelope produced by encryptField.
  * Throws if the envelope is malformed, the key is missing, or authentication fails.
+ * Uses the key_id embedded in the envelope — works transparently across rotations.
  */
 export function decryptField(
   payload: string,
@@ -136,17 +238,21 @@ export function decryptField(
 }
 
 // ---------------------------------------------------------------------------
-// Deterministic lookup hash (HMAC-SHA-256 keyed on the active key)
+// Deterministic lookup hash (HMAC-SHA-256 keyed on HMAC_LOOKUP_KEY)
 // ---------------------------------------------------------------------------
 
 /**
  * Returns a stable, keyed hex digest suitable for indexed lookups (e.g. email).
- * Uses the same active key as encryption so it rotates when the key rotates.
+ *
+ * Uses HMAC_LOOKUP_KEY — a dedicated key that is SEPARATE from the encryption
+ * keys. This means lookup hashes remain stable when you rotate encryption keys,
+ * which is the expected operational behavior. You only need to re-hash when
+ * HMAC_LOOKUP_KEY itself is rotated (which should be rare — only if compromised).
+ *
  * NOT reversible — do not use this as a substitute for encryption.
  */
 export function hashForLookup(value: string): string {
-  const keyId = getActiveKeyId();
-  const key = loadKey(keyId);
+  const key = loadHmacLookupKey();
   return createHmac("sha256", key).update(value, "utf8").digest("hex");
 }
 

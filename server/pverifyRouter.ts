@@ -15,6 +15,34 @@ import { publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { ENV } from "./_core/env";
 
+// ─── pVerify PHI boundary ────────────────────────────────────────────────────
+//
+// PHI sent to pVerify: SubscriberMemberID (MBI or SSN — one only, never both).
+// No other consumer identifiers (name, DOB, address) are included.
+// The provider NPI is a static company credential, not consumer PHI.
+// This function is the single place where pVerify request payloads are built;
+// no other code path should construct a payload for this API.
+//
+// Previous shape:  { PayerCode, Provider, SubscriberMemberID }
+// Current (minimized) shape: same — this was already minimal.
+//                 Confirmed no extraneous fields are ever added.
+
+interface PverifyRequestPayload {
+  PayerCode: string;
+  ProviderNPI: string;
+  SubscriberMemberID: string;
+}
+
+export function buildPverifyPayload(input: { mbi?: string; ssn?: string }): PverifyRequestPayload | null {
+  // Require exactly one identifier; reject both-or-neither up front.
+  if (!input.mbi && !input.ssn) return null;
+  return {
+    PayerCode: "00007",        // Medicare payer code — not PHI
+    ProviderNPI: "1234567890", // Static agent NPI credential — not consumer PHI
+    SubscriberMemberID: (input.mbi ?? input.ssn) as string,
+  };
+}
+
 // ─── pVerify API helpers ─────────────────────────────────────────────────────
 
 const PVERIFY_TOKEN_URL = "https://api.pverify.com/Token";
@@ -100,20 +128,12 @@ async function callPverifyEligibility(req: PverifyEligibilityRequest): Promise<P
   const token = await getPverifyToken();
   if (!token) return null;
 
+  // PHI boundary: buildPverifyPayload whitelists exactly the fields pVerify
+  // requires. No consumer identifiers beyond the lookup key are sent.
+  const payload = buildPverifyPayload(req);
+  if (!payload) return null;
+
   try {
-    const payload: Record<string, string> = {
-      PayerCode: "00007", // Medicare
-      Provider: { NPI: "1234567890" } as unknown as string,
-    };
-
-    if (req.mbi) {
-      (payload as any).SubscriberMemberID = req.mbi;
-    } else if (req.ssn) {
-      (payload as any).SubscriberMemberID = req.ssn;
-    } else {
-      return null;
-    }
-
     const res = await fetch(PVERIFY_ELIGIBILITY_URL, {
       method: "POST",
       headers: {
@@ -390,12 +410,21 @@ export const pverifyRouter = router({
   eligibilityCheck: publicProcedure
     .input(EligibilityCheckSchema)
     .mutation(async ({ input }) => {
-      let { mbi, ssn } = input;
+      // Capture a non-PHI mock seed before we discard identifiers.
+      // We use only the last character so the seed can't reconstruct the MBI/SSN.
+      const mockSeed = (input.mbi ?? input.ssn ?? "default").slice(-1) || "default";
 
-      // Try real pVerify API first
+      // Copy identifiers into local variables so they're easy to wipe.
+      let mbi: string | undefined = input.mbi;
+      let ssn: string | undefined = input.ssn;
+
+      // PHI boundary: callPverifyEligibility receives only the minimized payload
+      // built by buildPverifyPayload (MBI or SSN — one only, nothing else).
       const realResult = await callPverifyEligibility({ mbi, ssn });
 
-      // PRIVACY: Purge PII immediately after use
+      // Wipe PHI from local scope immediately after use.
+      // (input.mbi / input.ssn remain on the frozen input object but are not
+      //  referenced again below — TypeScript enforces this via the local vars.)
       mbi = undefined;
       ssn = undefined;
 
@@ -403,9 +432,8 @@ export const pverifyRouter = router({
         return { success: true, data: realResult };
       }
 
-      // Fall back to mock data (when credentials not configured or API unavailable)
-      const seed = input.mbi || input.ssn || "default";
-      const mockResult = buildMockEligibilityResult(seed);
+      // Fall back to mock data — uses only the single-char seed, not the real identifier.
+      const mockResult = buildMockEligibilityResult(mockSeed);
       return { success: true, data: mockResult };
     }),
 

@@ -13,7 +13,7 @@
  * hashResumeToken() and pass the hash. This module stores only the hash.
  */
 
-import { eq, and, gt, sql } from "drizzle-orm";
+import { eq, and, gt } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { getDb } from "../db";
 import {
@@ -29,6 +29,10 @@ import type { SaveQuoteInputType, QuoteSessionOutputType } from "./schemas";
 
 // Sessions expire after 30 days of inactivity.
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+function activeKeyVersion(): string {
+  return process.env.ACTIVE_KEY_ID ?? "";
+}
 
 // ── Internal helpers ─────────────────────────────────────────────────────────
 
@@ -185,6 +189,8 @@ async function writeChildRows(sessionId: string, input: SaveQuoteInputType): Pro
   const db = await getDb();
   if (!db) return;
 
+  const keyVersion = activeKeyVersion();
+
   // Contact
   if (input.contact) {
     const c = input.contact;
@@ -194,6 +200,7 @@ async function writeChildRows(sessionId: string, input: SaveQuoteInputType): Pro
     await db.delete(quoteSessionContact).where(eq(quoteSessionContact.sessionId, sessionId));
     await db.insert(quoteSessionContact).values({
       sessionId,
+      encryptionKeyVersion: keyVersion,
       firstName:       c.firstName   ? enc(c.firstName,   "firstName")   : null,
       lastName:        c.lastName    ? enc(c.lastName,    "lastName")    : null,
       dateOfBirth:     c.dateOfBirth ? enc(c.dateOfBirth, "dateOfBirth") : null,
@@ -209,11 +216,12 @@ async function writeChildRows(sessionId: string, input: SaveQuoteInputType): Pro
     await db.delete(quoteSessionEligibility).where(eq(quoteSessionEligibility.sessionId, sessionId));
     await db.insert(quoteSessionEligibility).values({
       sessionId,
-      mbi:                  e.mbi                   ? enc(e.mbi,                   "mbi")                   : null,
+      encryptionKeyVersion: keyVersion,
+      mbi:                   e.mbi                   ? enc(e.mbi,                   "mbi")                   : null,
       eligibilityResultJson: e.eligibilityResultJson ? enc(e.eligibilityResultJson, "eligibilityResultJson") : null,
-      currentPlanName:      e.currentPlanName        ? enc(e.currentPlanName,       "currentPlanName")       : null,
-      currentPlanCarrier:   e.currentPlanCarrier     ? enc(e.currentPlanCarrier,    "currentPlanCarrier")    : null,
-      verifiedAt:           e.verifiedAt             ? new Date(e.verifiedAt)                                : null,
+      currentPlanName:       e.currentPlanName       ? enc(e.currentPlanName,       "currentPlanName")       : null,
+      currentPlanCarrier:    e.currentPlanCarrier    ? enc(e.currentPlanCarrier,    "currentPlanCarrier")    : null,
+      verifiedAt:            e.verifiedAt            ? new Date(e.verifiedAt)                                : null,
     });
   }
 
@@ -224,9 +232,10 @@ async function writeChildRows(sessionId: string, input: SaveQuoteInputType): Pro
       await db.insert(quoteSessionMedications).values(
         input.medications.map((m) => ({
           sessionId,
+          encryptionKeyVersion: keyVersion,
           drugName:  enc(m.name,        "drugName"),
-          dosage:    m.dosage    ? enc(m.dosage,    "dosage")    : null,
-          frequency: m.frequency ?? null,
+          dosage:    m.dosage    ? enc(m.dosage,    "dosage")       : null,
+          frequency: m.frequency ? enc(m.frequency, "frequency")   : null,
         })),
       );
     }
@@ -239,6 +248,7 @@ async function writeChildRows(sessionId: string, input: SaveQuoteInputType): Pro
       await db.insert(quoteSessionProviders).values(
         input.providers.map((p) => ({
           sessionId,
+          encryptionKeyVersion: keyVersion,
           doctorName: enc(p.name,      "doctorName"),
           npi:        p.npi       ? enc(p.npi,       "npi")       : null,
           specialty:  p.specialty ? enc(p.specialty, "specialty") : null,
@@ -290,8 +300,8 @@ async function assembleOutput(session: typeof quoteSessions.$inferSelect): Promi
     medications: medRows.map((m) => ({
       id:        m.id,
       name:      dec(m.drugName, "drugName"),
-      dosage:    decOrUndefined(m.dosage, "dosage"),
-      frequency: m.frequency ?? undefined,
+      dosage:    decOrUndefined(m.dosage,    "dosage"),
+      frequency: decOrUndefined(m.frequency, "frequency"),
     })),
 
     providers: provRows.map((p) => ({

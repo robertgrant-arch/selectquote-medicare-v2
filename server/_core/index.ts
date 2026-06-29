@@ -13,6 +13,7 @@ import { registerCompareStreamRoute } from "../compareStream";
 import recommendStreamRouter from "../recommendStream";
 import { registerPlansRoute, registerValidateZipRoute, prewarmPlanCache } from "../plansRouter";
 import { seedCmsDataSources, startCmsPipelineCron } from "../cmsPipeline";
+import { validateCryptoEnv } from "../../shared/security/crypto";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -34,6 +35,13 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  // Fail fast if crypto env vars are missing or malformed.
+  // This surfaces configuration errors before the server accepts any connections.
+  // Skipped in test environments where crypto keys are set per-test.
+  if (process.env.NODE_ENV !== "test") {
+    validateCryptoEnv();
+  }
+
   const app = express();
   const server = createServer(app);
 

@@ -27,14 +27,17 @@ import {
 
 // ── Crypto env setup ──────────────────────────────────────────────────────────
 
-const KEY_K1 = "a".repeat(64);
+const KEY_K1   = "a".repeat(64);
+const KEY_HMAC = "c".repeat(64);
 
 function setCryptoEnv() {
-  process.env.ACTIVE_KEY_ID = "k1";
-  process.env.KEY_k1 = KEY_K1;
+  process.env.ACTIVE_KEY_ID   = "k1";
+  process.env.KEY_k1          = KEY_K1;
+  process.env.HMAC_LOOKUP_KEY = KEY_HMAC;
 }
 function clearCryptoEnv() {
   delete process.env.ACTIVE_KEY_ID;
+  delete process.env.HMAC_LOOKUP_KEY;
   for (const k of Object.keys(process.env)) {
     if (k.startsWith("KEY_")) delete process.env[k];
   }
@@ -434,8 +437,9 @@ describe("repository", () => {
 
     // Rotate to k2 — k1 still available for legacy decryption
     const KEY_K2 = "b".repeat(64);
-    process.env.ACTIVE_KEY_ID = "k2";
-    process.env.KEY_k2 = KEY_K2;
+    process.env.ACTIVE_KEY_ID   = "k2";
+    process.env.KEY_k2          = KEY_K2;
+    // HMAC_LOOKUP_KEY is unchanged — lookup hashes stay stable during encryption key rotation
 
     // Decrypt legacy contact row (encrypted under k1)
     const firstName = decOrUndefined(legacyContactRow.firstName, "firstName");

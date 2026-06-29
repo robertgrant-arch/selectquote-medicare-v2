@@ -103,10 +103,9 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
         setError("Please also enter your name and date of birth.");
         return;
       }
+      // pVerify accepts ONLY mbi/ssn (PHI minimization). Name/DOB are collected
+      // for UI validation but were always stripped server-side — do not send.
       eligibilityMutation.mutate({
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        dob,
         mbi: mbi.trim(),
       });
     } else {
@@ -118,11 +117,10 @@ export default function MBIVerifyModal({ zip, onSkip, onVerified }: Props) {
         setError("Date of birth must be in MM/DD/YYYY format.");
         return;
       }
-      eligibilityMutation.mutate({
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        dob,
-      });
+      // NOTE: name-only lookup has no MBI/SSN to send; the server requires one
+      // and will reject this. This is a pre-existing functional gap (logged) —
+      // behavior is unchanged (the request was already stripped to no-identifier).
+      eligibilityMutation.mutate({});
     }
   };
 

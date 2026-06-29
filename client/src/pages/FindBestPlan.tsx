@@ -1,12 +1,12 @@
 /**
-import TermTip from '@/features/education/components/TermTip';
-import { useZipValidation } from '@/features/zip-validation/lib/useZipValidation';
-import CountySelector from '@/features/zip-validation/components/CountySelector';
  * FindBestPlan — Health Profile Wizard with AI-Powered Plan Recommendations
  *
  * Design: Bold Civic | Navy #1C3A48 | Teal #1C3A48 | Green #16A34A
  * Flow: ZIP entry → 5-step questionnaire → AI scoring → ranked results + narrative
  */
+import TermTip from '@/features/education/components/TermTip';
+import { useZipValidation } from '@/features/zip-validation/lib/useZipValidation';
+import CountySelector from '@/features/zip-validation/components/CountySelector';
 
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";

@@ -92,6 +92,36 @@ PROHIBITED: "guaranteed coverage" | "you're enrolled" | "best plan" | "this offe
 COMPLIANCE: "We are not affiliated with or endorsed by the U.S. government or the federal Medicare program. Plan availability, benefits, and premiums vary by location."
 `;
 
+// ─── PHI boundary: message sanitization ─────────────────────────────────────
+// Implemented in server/chatBoundary.ts (extracted for testability).
+// The chat system prompt deliberately collects the user's first name and phone
+// number (Steps 6–7) for advisor lead generation. Those values appear in the
+// conversation history and would otherwise be re-sent to the AI on every
+// subsequent turn, which is unnecessary — the AI only needed them to capture
+// them, not to reason about them further.
+//
+// This function applies two defenses before the message array reaches any AI:
+//   1. Phone-number redaction — replaces North-American phone patterns with a
+//      placeholder so raw digits are never re-transmitted to the model.
+//   2. Sliding context window — caps the history at MAX_CHAT_CONTEXT_MESSAGES
+//      so older turns (which may contain names and other PII) are dropped
+//      before sending. The AI needs recent context to continue the conversation,
+//      not the full history.
+//
+// PHI that is NOT redacted here (by design):
+//   - ZIP codes: needed by the AI to look up plans (not a HIPAA identifier alone)
+//   - First name: one-word, no reliable pattern; risk is low and the AI needs it
+//     for a warm, personal tone through the rest of the session
+//   - Health preferences mentioned conversationally: user-volunteered context the
+//     AI legitimately needs for plan recommendations
+
+import {
+  sanitizeMessagesForAI,
+  PHONE_RE,
+  MAX_CHAT_CONTEXT_MESSAGES,
+  type ChatMessage,
+} from "../server/chatBoundary";
+
 function sendSSE(res: VercelResponse, event: string, data: string) {
   res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
@@ -102,11 +132,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const { messages } = req.body || {};
-  if (!messages || !Array.isArray(messages)) {
+  const { messages: rawMessages } = req.body || {};
+  if (!rawMessages || !Array.isArray(rawMessages)) {
     res.status(400).json({ error: 'Missing messages array' });
     return;
   }
+  // PHI boundary: strip phone numbers and cap the context window before any
+  // AI provider receives the message history.
+  const messages = sanitizeMessagesForAI(rawMessages as ChatMessage[]);
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');

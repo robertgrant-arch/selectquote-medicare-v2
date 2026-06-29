@@ -8,6 +8,7 @@
 import { isValidZipFormat } from "@/features/zip-validation/lib/zipValidator";
 import { useState, useEffect, useRef } from "react";
 import { trpc } from "@/lib/trpc";
+import { useQuoteSession } from "@/features/quote-session/hooks/useQuoteSession";
 import { POPULAR_RX_DRUGS } from "@/lib/mockData";
 import type { Doctor } from "@/lib/types";
 import {
@@ -90,6 +91,12 @@ interface Props {
     doctors: Doctor[];
     drugs: DrugEntry[];
   }) => void;
+  /** Pre-populated state for resume flow */
+  initialStep?: Step;
+  initialDoctors?: Doctor[];
+  initialDrugs?: DrugEntry[];
+  initialVerifyResult?: MBIVerifyResult | null;
+  initialHasMA?: boolean;
 }
 
 const COMMON_DRUGS: DrugEntry[] = POPULAR_RX_DRUGS.map(d => ({ name: d.name, dosage: d.dosage }));
@@ -116,22 +123,23 @@ const STEP_TITLES: Record<Step, string> = {
   aiLoading: "Finding Your Best Plan",
 };
 
-export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) {
-  const [step, setStep] = useState<Step>("maQuestion");
-  const [hasMA, setHasMA] = useState<boolean | null>(null);
+export default function GuidedWorkflowModal({ zip, onSkip, onComplete, initialStep, initialDoctors, initialDrugs, initialVerifyResult, initialHasMA }: Props) {
+  const [step, setStep] = useState<Step>(initialStep ?? "maQuestion");
+  const [hasMA, setHasMA] = useState<boolean | null>(initialHasMA ?? null);
+  const quoteSession = useQuoteSession();
   // pVerify state
   const [lookupMode, setLookupMode] = useState<"mbi" | "ssn">("mbi");
   const [mbi, setMbi] = useState("");
   const [ssn, setSsn] = useState("");
-  const [verifyResult, setVerifyResult] = useState<MBIVerifyResult | null>(null);
+  const [verifyResult, setVerifyResult] = useState<MBIVerifyResult | null>(initialVerifyResult ?? null);
   const [verifyError, setVerifyError] = useState("");
   // Doctor/Drug state
   const [doctorSearch, setDoctorSearch] = useState("");
   const [npiResults, setNpiResults] = useState<NpiDoctor[]>([]);
   const [npiLoading, setNpiLoading] = useState(false);
-  const [selectedDoctors, setSelectedDoctors] = useState<Doctor[]>([]);
+  const [selectedDoctors, setSelectedDoctors] = useState<Doctor[]>(initialDoctors ?? []);
   const [drugSearch, setDrugSearch] = useState("");
-  const [selectedDrugs, setSelectedDrugs] = useState<DrugEntry[]>([]);
+  const [selectedDrugs, setSelectedDrugs] = useState<DrugEntry[]>(initialDrugs ?? []);
   const [manualDrugName, setManualDrugName] = useState("");
   const [manualDrugDosage, setManualDrugDosage] = useState("");
   const [showManualDrug, setShowManualDrug] = useState(false);
@@ -149,6 +157,13 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
       if (timerRef.current) clearTimeout(timerRef.current);
       if (npiTimerRef.current) clearTimeout(npiTimerRef.current); if (rxTimerRef.current) clearTimeout(rxTimerRef.current);
     };
+  }, []);
+
+  // Create or touch the quote session when the modal opens with a zip.
+  // Fire-and-forget: session persistence never blocks the user flow.
+  useEffect(() => {
+    if (zip) quoteSession.save({ zip });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // Debounced NPI doctor search - now uses /api/doctors with ZIP
   useEffect(() => {
@@ -173,6 +188,16 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
       const result = data.data as MBIVerifyResult;
       setVerifyResult(result);
       setStep("planFound");
+      // Persist eligibility result — fire-and-forget
+      quoteSession.save({
+        eligibility: {
+          mbi: lookupMode === "mbi" ? mbi.trim() : undefined,
+          eligibilityResultJson: JSON.stringify(result),
+          currentPlanName: result.currentPlan?.planName,
+          currentPlanCarrier: result.currentPlan?.carrier,
+          verifiedAt: new Date().toISOString(),
+        },
+      });
     },
     onError: (err) => {
       setVerifyError(err.message || "Verification failed. You can skip this step.");
@@ -216,6 +241,11 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
   }, [drugSearch, selectedDrugs]);
   const handleFinish = () => {
     setStep("aiLoading");
+    // Persist final state — fire-and-forget
+    quoteSession.save({
+      medications: selectedDrugs.map((d) => ({ name: d.name, dosage: d.dosage })),
+      providers: selectedDoctors.map((d) => ({ name: d.name, npi: d.id.startsWith("manual-") ? undefined : d.id, specialty: d.specialty })),
+    });
     timerRef.current = setTimeout(() => {
       onComplete({ hasMA: hasMA === true, verifyResult, doctors: selectedDoctors, drugs: selectedDrugs });
     }, 1500);
@@ -223,6 +253,7 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
   const addNpiDoctor = (doc: NpiDoctor) => {
     const doctor: Doctor = {
       id: doc.npi,
+      npi: doc.npi,
       name: doc.name,
       specialty: doc.specialty,
       address: doc.address,
@@ -237,6 +268,7 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
     if (!manualDoctorName.trim()) return;
     const doc: Doctor = {
       id: `manual-${Date.now()}`,
+      npi: "",
       name: manualDoctorName.trim(),
       specialty: manualDoctorSpecialty.trim() || "General",
       address: zip,

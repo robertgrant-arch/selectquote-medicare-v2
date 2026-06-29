@@ -13,20 +13,77 @@
  */
 
 import { TRPCError } from "@trpc/server";
-import { publicProcedure, router } from "../_core/trpc";
+import { z } from "zod";
+import { publicProcedure, adminProcedure, router } from "../_core/trpc";
 import { ENV } from "../_core/env";
 import {
   SaveQuoteInput,
   ResumeQuoteInput,
+  type QuoteSessionOutputType,
 } from "./schemas";
 import {
   createSession,
   updateSession,
   loadByTokenHash,
+  loadById,
   markCompleted,
   markAbandoned,
 } from "./repository";
 import { generateResumeToken, hashResumeToken } from "./tokens";
+
+// ── Admin masking helpers ─────────────────────────────────────────────────────
+//
+// These functions produce masked representations of PHI for admin list/search
+// views. Admins see enough to identify which record to act on (masked email,
+// partial name) without raw PHI being exposed in logs, screenshots, or
+// accidental copy-paste.
+//
+// Full decryption is only available through the consumer-facing `resume`
+// procedure which requires the opaque resume token (held only by the consumer).
+// Admins cannot decrypt — this is intentional: PHI access requires the consumer's
+// credential, preventing insider access to raw records.
+
+function maskStr(value: string | undefined, visibleChars = 2): string {
+  if (!value) return "—";
+  if (value.length <= visibleChars) return "*".repeat(value.length);
+  return value.slice(0, visibleChars) + "*".repeat(Math.min(value.length - visibleChars, 6));
+}
+
+function maskEmail(value: string | undefined): string {
+  if (!value) return "—";
+  const [local, domain] = value.split("@");
+  const maskedLocal = maskStr(local, 2);
+  const maskedDomain = domain ? `@${maskStr(domain.split(".")[0], 1)}.***` : "";
+  return `${maskedLocal}${maskedDomain}`;
+}
+
+function maskSessionForAdmin(session: QuoteSessionOutputType) {
+  return {
+    sessionId:   session.sessionId,
+    status:      session.status,
+    zip:         session.zip,           // not PHI — 5-digit postal code
+    county:      session.county,        // not PHI
+    expiresAt:   session.expiresAt,
+    consentNote: "full decryption requires consumer's resume token",
+
+    contact: session.contact ? {
+      firstName:   maskStr(session.contact.firstName, 1),
+      lastName:    maskStr(session.contact.lastName,  1),
+      email:       maskEmail(session.contact.email),
+      phone:       maskStr(session.contact.phone?.replace(/\D/g, ""), 3),
+      dateOfBirth: session.contact.dateOfBirth ? "****-**-**" : undefined,
+    } : undefined,
+
+    eligibility: session.eligibility ? {
+      mbi:             maskStr(session.eligibility.mbi, 3),
+      currentPlanName: session.eligibility.currentPlanName,    // plan name, not PHI
+      verifiedAt:      session.eligibility.verifiedAt,
+    } : undefined,
+
+    medicationCount: session.medications?.length ?? 0,
+    providerCount:   session.providers?.length   ?? 0,
+  };
+}
 
 function clientIp(req: { ip?: string; headers?: Record<string, string | string[] | undefined> }): string | undefined {
   const forwarded = req.headers?.["x-forwarded-for"];
@@ -128,5 +185,25 @@ export const quoteSessionRouter = router({
       }
       await markAbandoned(session.sessionId, ip);
       return { ok: true };
+    }),
+
+  /**
+   * adminGet — admin-only view of a quote session with masked PHI.
+   *
+   * Returns enough context for an admin to identify and act on a session
+   * (status, ZIP, masked contact info) without exposing raw PHI.
+   *
+   * Full decryption is only possible via the `resume` procedure using the
+   * consumer's resume token — admins cannot decrypt PHI fields directly.
+   * This is intentional: consumer data requires consumer consent and credential.
+   */
+  adminGet: adminProcedure
+    .input(z.object({ sessionId: z.string().uuid() }))
+    .query(async ({ input }) => {
+      const session = await loadById(input.sessionId);
+      if (!session) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Quote session not found" });
+      }
+      return maskSessionForAdmin(session);
     }),
 });
