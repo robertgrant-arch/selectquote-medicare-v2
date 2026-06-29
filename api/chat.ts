@@ -213,7 +213,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       let errDetail = errText.slice(0, 300);
       try { const j = JSON.parse(errText); errDetail = j?.error?.message ?? errDetail; } catch { /* ignore */ }
       console.error(`[chat] Anthropic ${anthropicRes.status}:`, errDetail);
-      sendSSE(res, 'error', { message: `AI API error: ${anthropicRes.status}` });
+      sendSSE(res, 'error', { message: `AI API error: ${anthropicRes.status}`, detail: errDetail });
       res.end();
       return;
     }
