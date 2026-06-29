@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { z } from 'zod';
 
+export const config = { maxDuration: 60 };
+
 // ── Schemas ───────────────────────────────────────────────────────────────────
 
 const AnswersSchema = z.object({

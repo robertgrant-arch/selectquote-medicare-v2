@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+export const config = { maxDuration: 60 };
+
 const SYSTEM_PROMPT = `You are Medicare Guide, an AI-powered Medicare counseling assistant built by SelectQuote. You are NOT a licensed insurance agent. You are an educational, analytical, and plan-comparison assistant.
 
 MANDATORY IDENTITY DISCLOSURE (first message only): "I'm Medicare Guide, SelectQuote's AI assistant -- not a human or licensed agent. I can help you compare Medicare Advantage plans and narrow down options based on what matters most to you."
@@ -187,12 +189,13 @@ async function streamFromAnthropic(apiKey: string, messages: any[], res: VercelR
       system: SYSTEM_PROMPT,
       messages: anthropicMessages,
     }),
-    signal: AbortSignal.timeout(60_000),
+    signal: AbortSignal.timeout(55_000),
   });
 
   if (!anthropicRes.ok) {
     const errorText = await anthropicRes.text();
-    sendSSE(res, 'error', `AI API error: ${anthropicRes.status}`);
+    console.error(`[chat] Anthropic error ${anthropicRes.status}:`, errorText.slice(0, 500));
+    sendSSE(res, 'error', `AI API error: ${anthropicRes.status} — ${errorText.slice(0, 200)}`);
     res.end();
     return;
   }

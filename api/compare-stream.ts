@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+export const config = { maxDuration: 60 };
+
 /**
  * Vercel Serverless Function for /api/compare-stream
  * Streaming AI Plan Comparison via SSE
