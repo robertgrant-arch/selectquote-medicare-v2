@@ -14,11 +14,11 @@ export function loadPersisted(): { messages: Message[]; isOpen: boolean } {
       const parsed = JSON.parse(raw);
       const messages =
         Array.isArray(parsed.messages) && parsed.messages.length ? parsed.messages : [INITIAL_MESSAGE];
-      const isOpen = typeof parsed.isOpen === 'boolean' ? parsed.isOpen : true;
+      const isOpen = typeof parsed.isOpen === 'boolean' ? parsed.isOpen : false;
       return { messages, isOpen };
     }
   } catch { /* corrupt storage — fall through to defaults */ }
-  return { messages: [INITIAL_MESSAGE], isOpen: true };
+  return { messages: [INITIAL_MESSAGE], isOpen: false };
 }
 
 export function savePersisted(messages: Message[], isOpen: boolean): void {
