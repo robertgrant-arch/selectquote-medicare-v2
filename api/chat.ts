@@ -22,21 +22,21 @@ STYLE RULES (strict):
 
 CONVERSATION FLOW:
 1. Opening: If you don't have the ZIP yet, ask for it. Nothing else.
-2. Discovery: Once you have ZIP, ask in ONE message about (a) main doctor/clinic, (b) prescriptions, (c) monthly budget comfort.
-3. Recommend: Present ONE best-fit plan in this shape:
-   - Plan name - the single benefit that matches their top need
-   - $X/mo premium, $Y out-of-pocket max
-   - Covers their doctor / drug
-   Then ask: "Want to start enrollment on this plan, or see one backup to compare?"
-4. Close: If they show any interest, move them toward enrollment or a licensed agent. Do not re-explain.
+2. Discovery: Once you have ZIP, ask in ONE message about their main doctor/clinic AND prescriptions AND monthly budget comfort.
+3. Recommend + Handoff (CRITICAL): Once you have ZIP plus any one of (doctor, prescription, or budget), do ALL of the following in ONE reply:
+   a. Give a 2-line plan match: "Based on what you've told me, [Plan Name] looks like your best fit — [key benefit], $X/mo premium."
+   b. Add one sentence on coverage fit (doctor in network / drug covered / $0 premium).
+   c. End with a handoff line like: "Click below to compare all your options side by side and lock in your plan."
+   KEEP IT SHORT. The compare tool does the heavy lifting — your job is to give confidence, not enumerate every plan detail in chat.
+4. Close: If the user wants to talk to someone instead, offer the licensed agent line at 1-800-555-0199.
 
 SAFETY:
 - Never give medical advice.
 - If the user asks something you don't know, offer to connect them with a licensed agent at 1-800-555-0199.
 
-REMEMBER: You are selling. Be confident, concise, and always moving toward the next step.
+REMEMBER: Your goal is to get the user into the compare tool, not to complete a full recommendation inside chat. Be warm, be brief, get them clicking.
 
-UI NOTE: When you recommend a plan or tell the user to compare plans, do NOT include a raw URL or link in your text. The app will automatically show a "Compare Plans Near You" button below your message. Simply say something like "Ready to see your options?" or "Here's the plan I'd recommend — click below to compare."`;
+UI NOTE: Do NOT include a raw URL or link in your text — the app shows a "Compare Plans Near You" button automatically below your message when you reach step 3. Just end with a natural handoff line and let the button do the work.`;
 
 
 const COVERAGE_FLOW_INSTRUCTIONS = `
@@ -121,9 +121,13 @@ function determinePhase(userMsg: string, currentPhase?: string): Phase {
   const msg = userMsg.toLowerCase();
   if (msg.includes('enroll') || msg.includes('sign up') || msg.includes('apply')) return 'enrollment';
   if (msg.includes('compare') || msg.includes('side by side') || msg.includes('difference')) return 'comparison';
-  if (msg.includes('find plan') || msg.includes('search') || msg.includes('show me plans')) return 'plan_search';
-  if (msg.includes('zip') || msg.includes('medication') || msg.includes('doctor') || msg.includes('budget')) return 'discovery';
+  if (msg.includes('find plan') || msg.includes('search') || msg.includes('show me plans') ||
+      msg.includes('what plan') || msg.includes('best plan') || msg.includes('recommend')) return 'plan_search';
+  if (msg.includes('zip') || msg.includes('medication') || msg.includes('doctor') ||
+      msg.includes('budget') || msg.includes('prescription') || msg.includes('afford')) return 'discovery';
   if (msg.includes('tell me more') || msg.includes('details') || msg.includes('coverage')) return 'deep_dive';
+  // Advance from discovery to plan_search once the user is actively answering qualifying questions
+  if (currentPhase === 'discovery') return 'plan_search';
   return (currentPhase as Phase) ?? 'welcome';
 }
 
@@ -131,6 +135,15 @@ function extractProfileData(userMsg: string): Record<string, string> {
   const profile: Record<string, string> = {};
   const zipMatch = userMsg.match(/\b\d{5}\b/);
   if (zipMatch) profile.zipCode = zipMatch[0];
+
+  const lower = userMsg.toLowerCase();
+  if (/\b(doctor|dr\.|physician|specialist|hospital|clinic|pcp|provider|practice)\b/.test(lower))
+    profile.hasDoctor = '1';
+  if (/\b(medication|prescription|drug|pill|tablet|capsule|\bmg\b)\b/.test(lower))
+    profile.hasMedication = '1';
+  if (/\b(budget|afford|premium|cost|price|monthly|pay|spend|zero|free)\b/.test(lower))
+    profile.hasBudget = '1';
+
   return profile;
 }
 
@@ -140,12 +153,28 @@ function buildCta(
   phase: string,
   profileUpdate: Record<string, string>,
   userProfile?: Record<string, unknown>,
+  historyLength?: number,
 ): { label: string; href: string } | undefined {
-  if (!CTA_PHASES.has(phase)) return undefined;
-  const zip = (profileUpdate.zipCode) || (userProfile?.zipCode as string | undefined);
+  const zip = profileUpdate.zipCode || (userProfile?.zipCode as string | undefined);
+
+  // Must have ZIP to build a useful compare link
+  if (!zip && !CTA_PHASES.has(phase)) return undefined;
+
+  const hasSecondary =
+    profileUpdate.hasDoctor || profileUpdate.hasMedication || profileUpdate.hasBudget ||
+    userProfile?.hasDoctor || userProfile?.hasMedication || userProfile?.hasBudget ||
+    (userProfile?.doctors as unknown[] | undefined)?.length ||
+    (userProfile?.medications as unknown[] | undefined)?.length ||
+    userProfile?.budget;
+
+  const enoughTurns = (historyLength ?? 0) >= 6;
+  const ready = CTA_PHASES.has(phase) || hasSecondary || enoughTurns;
+
+  if (!ready) return undefined;
+
   return {
     label: 'Compare Plans Near You',
-    href: zip ? `/plans?zip=${zip}` : '/plans',
+    href: zip ? `/plans?zip=${zip}&from=chat` : '/plans?from=chat',
   };
 }
 
@@ -274,7 +303,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Send phase / chips / profileUpdate / cta as a single meta event
     const nextPhase = determinePhase(message, phase);
     const profileUpdate = extractProfileData(message);
-    const cta = buildCta(nextPhase, profileUpdate, userProfile as Record<string, unknown> | undefined);
+    const cta = buildCta(nextPhase, profileUpdate, userProfile as Record<string, unknown> | undefined, cleanHistory.length);
     sendSSE(res, 'meta', {
       chips: extractChips(nextPhase),
       phase: nextPhase,
