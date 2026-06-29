@@ -3,9 +3,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
-import ChatWidget from "./components/ChatWidget";
+import { MedicareGuideChat } from "@/features/medicare-guide-chat";
 import VoiceWidget from "./components/VoiceWidget";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { QuoteHandoffProvider } from "./contexts/QuoteHandoffContext";
 import Home from "./pages/Home";
 import Plans from "./pages/Plans";
 import AICompare from "./pages/AICompare";
@@ -112,12 +113,14 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
+        <QuoteHandoffProvider>
         <TooltipProvider>
           <Toaster position="top-right" richColors />
           <main id="main-content" tabIndex={-1} style={{ outline: "none" }}><Router /></main>
-          <ChatWidget />
+          <MedicareGuideChat />
                       <VoiceWidget />
         </TooltipProvider>
+        </QuoteHandoffProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

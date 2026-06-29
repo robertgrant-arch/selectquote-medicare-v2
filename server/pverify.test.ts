@@ -90,12 +90,14 @@ describe("pverify.lookup", () => {
 });
 
 describe("pverify.eligibilityCheck", () => {
-  it("returns a successful result with firstName, lastName, and dob", async () => {
+  // After PHI minimization (Task 3), eligibilityCheck requires MBI or SSN only.
+  // Name and DOB are no longer accepted — they were removed to minimize what
+  // the router receives. The pVerify API itself only needs the MBI/SSN.
+
+  it("returns a successful result with MBI", async () => {
     const caller = appRouter.createCaller(createPublicContext());
     const result = await caller.pverify.eligibilityCheck({
-      firstName: "John",
-      lastName: "Smith",
-      dob: "01/15/1950",
+      mbi: "1EG4-A22-AA11",
     });
 
     expect(result.success).toBe(true);
@@ -106,26 +108,21 @@ describe("pverify.eligibilityCheck", () => {
     expect(typeof result.data.isMockData).toBe("boolean");
   }, 15000);
 
-  it("validates dob format — rejects invalid date format", async () => {
+  it("COMPLIANCE: rejects input with neither MBI nor SSN — no identifier, no request", async () => {
     const caller = appRouter.createCaller(createPublicContext());
+    // After minimization, the router enforces that at least one lookup key is present.
+    // Providing no identifier is rejected at the schema layer, preventing a
+    // vacuous API call and making the boundary explicit.
     await expect(
-      caller.pverify.eligibilityCheck({
-        firstName: "Jane",
-        lastName: "Doe",
-        dob: "1950-01-15", // wrong format (YYYY-MM-DD instead of MM/DD/YYYY)
-      })
+      caller.pverify.eligibilityCheck({} as any)
     ).rejects.toThrow();
   }, 10000);
 
-  it("accepts optional MBI field", async () => {
+  it("accepts SSN when MBI is absent", async () => {
     const caller = appRouter.createCaller(createPublicContext());
     const result = await caller.pverify.eligibilityCheck({
-      firstName: "Mary",
-      lastName: "Johnson",
-      dob: "03/22/1948",
-      mbi: "1EG4TE5MK72",
+      ssn: "123456789", // 9-digit synthetic SSN
     });
-
     expect(result.success).toBe(true);
     expect(result.data.isMockData).toBeDefined();
   }, 15000);

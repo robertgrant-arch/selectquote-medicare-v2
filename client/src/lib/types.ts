@@ -124,6 +124,8 @@ export interface Doctor {
   specialty: string;
   npi: string;
   address: string;
+  phone?: string;
+  acceptingPatients?: boolean;
 }
 
 // Eligibility flags for SNP plan filtering

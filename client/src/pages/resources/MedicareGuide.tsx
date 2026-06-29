@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 
-const ACCENT = "#0369A1";
+const ACCENT = "#1C3A48";
 
 // ── Shared accordion section component ───────────────────────────────────────
 interface AccordionSectionProps {
@@ -38,10 +38,10 @@ function AccordionSection({ title, isOpen, onToggle, children, icon, badge }: Ac
       <button
         type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-6 py-5 text-left transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        className="w-full flex items-center justify-between px-6 py-5 text-left transition-colors focus:outline-none"
         style={{
-          backgroundColor: isOpen ? "#EFF6FF" : "#FFFFFF",
-          borderBottom: isOpen ? "1px solid #BFDBFE" : "none",
+          backgroundColor: isOpen ? "#EEF5F7" : "#FFFFFF",
+          borderBottom: isOpen ? "1px solid #C6DAE0" : "none",
         }}
         aria-expanded={isOpen}
       >
@@ -110,17 +110,17 @@ function CompleteMedicareGuideContent() {
         </p>
         <div className="grid sm:grid-cols-2 gap-3">
           {[
-            { part: "Part A", label: "Hospital Insurance", color: "bg-blue-50 border-blue-200", badge: "bg-blue-600", desc: "Inpatient hospital stays, skilled nursing, hospice, some home health care. Most people pay $0 premium." },
-            { part: "Part B", label: "Medical Insurance", color: "bg-green-50 border-[#C8D8F5]", badge: "bg-green-600", desc: "Doctor visits, outpatient care, preventive services, durable medical equipment. $185/month premium in 2025." },
-            { part: "Part C", label: "Medicare Advantage", color: "bg-orange-50 border-orange-200", badge: "bg-orange-600", desc: "Private plans that bundle Parts A, B, and usually D. Often include dental, vision, hearing. Many $0 premium options." },
-            { part: "Part D", label: "Prescription Drugs", color: "bg-purple-50 border-purple-200", badge: "bg-purple-600", desc: "Prescription drug coverage offered by private insurers. New $2,000 annual out-of-pocket cap in 2025." },
+            { part: "Part A", label: "Hospital Insurance", desc: "Inpatient hospital stays, skilled nursing, hospice, some home health care. Most people pay $0 premium." },
+            { part: "Part B", label: "Medical Insurance", desc: "Doctor visits, outpatient care, preventive services, durable medical equipment. $185/month premium in 2025." },
+            { part: "Part C", label: "Medicare Advantage", desc: "Private plans that bundle Parts A, B, and usually D. Often include dental, vision, hearing. Many $0 premium options." },
+            { part: "Part D", label: "Prescription Drugs", desc: "Prescription drug coverage offered by private insurers. New $2,000 annual out-of-pocket cap in 2025." },
           ].map((item) => (
-            <div key={item.part} className={`rounded-xl p-4 border ${item.color}`}>
+            <div key={item.part} className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className={`text-white text-xs font-bold px-2 py-0.5 rounded-full ${item.badge}`}>{item.part}</span>
-                <span className="text-sm font-semibold text-gray-800">{item.label}</span>
+                <span className="text-white text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#1C3A48" }}>{item.part}</span>
+                <span className="text-sm font-semibold" style={{ color: "#1C3A48" }}>{item.label}</span>
               </div>
-              <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
+              <p className="text-xs leading-relaxed" style={{ color: "#3E5560" }}>{item.desc}</p>
             </div>
           ))}
         </div>
@@ -139,7 +139,7 @@ function CompleteMedicareGuideContent() {
             { group: "ALS (Lou Gehrig's disease)", detail: "Medicare begins the same month SSDI starts — no 24-month waiting period." },
           ].map((item) => (
             <div key={item.group} className="flex gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-              <CheckCircle2 size={15} className="shrink-0 mt-0.5" style={{ color: "#1B365D" }} />
+              <CheckCircle2 size={15} className="shrink-0 mt-0.5" style={{ color: "#1C3A48" }} />
               <div>
                 <div className="text-sm font-semibold text-gray-800">{item.group}</div>
                 <div className="text-xs text-gray-500 leading-relaxed">{item.detail}</div>
@@ -157,7 +157,7 @@ function CompleteMedicareGuideContent() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ backgroundColor: "#EFF6FF" }}>
+              <tr style={{ backgroundColor: "#EEF5F7" }}>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Cost Item</th>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">2025 Amount</th>
               </tr>
@@ -192,29 +192,25 @@ function CompleteMedicareGuideContent() {
             {
               name: "Initial Enrollment Period (IEP)",
               dates: "7-month window around your 65th birthday",
-              color: "border-green-300 bg-green-50",
               desc: "The 3 months before, the month of, and 3 months after your 65th birthday. Enroll in the first 3 months for coverage starting on your birthday.",
             },
             {
               name: "Annual Enrollment Period (AEP)",
               dates: "October 15 – December 7",
-              color: "border-orange-300 bg-orange-50",
               desc: "Switch Medicare Advantage or Part D plans. Changes take effect January 1. Review your plan's Annual Notice of Change (ANOC) each fall.",
             },
             {
               name: "Medicare Advantage OEP",
               dates: "January 1 – March 31",
-              color: "border-blue-300 bg-blue-50",
               desc: "If enrolled in a Medicare Advantage plan, switch to a different MA plan or return to Original Medicare. One change allowed.",
             },
             {
               name: "General Enrollment Period (GEP)",
               dates: "January 1 – March 31",
-              color: "border-purple-300 bg-purple-50",
               desc: "Enroll in Part A and/or Part B if you missed your IEP. Coverage begins July 1. Late enrollment penalties may apply.",
             },
           ].map((period) => (
-            <div key={period.name} className={`rounded-xl p-4 border ${period.color}`}>
+            <div key={period.name} className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
               <div className="flex items-start justify-between gap-2 mb-1">
                 <div className="text-sm font-bold text-gray-800">{period.name}</div>
                 <div className="text-xs font-semibold text-gray-500 shrink-0 flex items-center gap-1">
@@ -234,8 +230,8 @@ function CompleteMedicareGuideContent() {
           Original Medicare vs. Medicare Advantage
         </h3>
         <div className="grid sm:grid-cols-2 gap-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <div className="text-sm font-bold text-blue-800 mb-2">Original Medicare (Parts A + B)</div>
+          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
+            <div className="text-sm font-bold mb-2" style={{ color: "#1C3A48" }}>Original Medicare (Parts A + B)</div>
             <ul className="space-y-1.5">
               {[
                 "Administered by the federal government",
@@ -246,15 +242,15 @@ function CompleteMedicareGuideContent() {
                 "Add Medigap to limit cost-sharing",
                 "Add standalone Part D for drugs",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs text-blue-900">
-                  <span className="mt-1.5 w-1 h-1 rounded-full bg-blue-500 shrink-0" />
+                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
+                  <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#7A9BA6" }} />
                   {item}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-            <div className="text-sm font-bold text-orange-800 mb-2">Medicare Advantage (Part C)</div>
+          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
+            <div className="text-sm font-bold mb-2" style={{ color: "#1C3A48" }}>Medicare Advantage (Part C)</div>
             <ul className="space-y-1.5">
               {[
                 "Managed by private insurers approved by CMS",
@@ -265,8 +261,8 @@ function CompleteMedicareGuideContent() {
                 "Often $0 premium (still pay Part B)",
                 "Care coordination through PCP (HMO) or direct (PPO)",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs text-orange-900">
-                  <span className="mt-1.5 w-1 h-1 rounded-full bg-orange-500 shrink-0" />
+                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
+                  <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#237A92" }} />
                   {item}
                 </li>
               ))}
@@ -280,9 +276,9 @@ function CompleteMedicareGuideContent() {
         <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Inter', serif" }}>
           Late Enrollment Penalties
         </h3>
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-3 flex gap-2">
-          <AlertCircle size={15} className="shrink-0 mt-0.5 text-red-500" />
-          <p className="text-xs text-red-800 leading-relaxed">
+        <div className="rounded-xl p-4 mb-3 flex gap-2 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
+          <AlertCircle size={15} className="shrink-0 mt-0.5" style={{ color: "#1C3A48" }} />
+          <p className="text-xs leading-relaxed" style={{ color: "#3E5560" }}>
             Late enrollment penalties are <strong>permanent</strong> for Part B and Part D — they stay
             with you for life. Avoid them by enrolling during your IEP or maintaining creditable coverage.
           </p>
@@ -318,7 +314,7 @@ function CompleteMedicareGuideContent() {
         <Link href="/resources/enrollment-periods" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white" style={{ backgroundColor: ACCENT }}>
           Enrollment Periods Guide <ArrowRight size={14} />
         </Link>
-        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1B365D", borderColor: "#1B365D" }}>
+        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1C3A48", borderColor: "#1C3A48" }}>
           Compare Plans Near You
         </Link>
       </div>
@@ -341,9 +337,9 @@ function ExtraHelpContent() {
           Part D prescription drug costs. In 2025, approximately 14 million Medicare beneficiaries
           receive Extra Help, but millions more are eligible and not enrolled.
         </p>
-        <div className="bg-green-50 border border-[#C8D8F5] rounded-xl p-4 flex gap-2">
-          <DollarSign size={15} className="shrink-0 mt-0.5 text-[#1B365D]" />
-          <p className="text-sm text-green-800 leading-relaxed">
+        <div className="rounded-xl p-4 flex gap-2 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
+          <DollarSign size={15} className="shrink-0 mt-0.5" style={{ color: "#1C3A48" }} />
+          <p className="text-sm leading-relaxed" style={{ color: "#3E5560" }}>
             If you qualify, Extra Help can save you <strong>$5,000 or more per year</strong> on
             prescription drug costs — covering premiums, deductibles, copays, and coinsurance.
           </p>
@@ -358,7 +354,7 @@ function ExtraHelpContent() {
         <div className="overflow-x-auto mb-3">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ backgroundColor: "#EFF6FF" }}>
+              <tr style={{ backgroundColor: "#EEF5F7" }}>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Requirement</th>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Full Extra Help</th>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Partial Extra Help</th>
@@ -374,16 +370,16 @@ function ExtraHelpContent() {
               ].map((row, i) => (
                 <tr key={row.req} className={`border border-gray-200 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
                   <td className="p-3 text-gray-700">{row.req}</td>
-                  <td className="p-3 font-semibold text-[#1B365D]">{row.full}</td>
-                  <td className="p-3 font-semibold text-blue-700">{row.partial}</td>
+                  <td className="p-3 font-semibold text-[#1C3A48]">{row.full}</td>
+                  <td className="p-3 font-semibold" style={{ color: "#237A92" }}>{row.partial}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 flex gap-2">
-          <Info size={14} className="shrink-0 mt-0.5 text-blue-600" />
-          <p className="text-xs text-blue-800 leading-relaxed">
+        <div className="rounded-xl p-3 flex gap-2 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
+          <Info size={14} className="shrink-0 mt-0.5" style={{ color: "#7A9BA6" }} />
+          <p className="text-xs leading-relaxed" style={{ color: "#3E5560" }}>
             Resources include bank accounts, stocks, and bonds — but <strong>NOT</strong> your home,
             car, personal belongings, or life insurance. Income limits are adjusted annually.
           </p>
@@ -396,8 +392,8 @@ function ExtraHelpContent() {
           What Extra Help Pays For
         </h3>
         <div className="grid sm:grid-cols-2 gap-4">
-          <div className="bg-green-50 border border-[#C8D8F5] rounded-xl p-4">
-            <div className="text-sm font-bold text-green-800 mb-2">Full Extra Help (Level 1)</div>
+          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
+            <div className="text-sm font-bold mb-2" style={{ color: "#1C3A48" }}>Full Extra Help (Level 1)</div>
             <ul className="space-y-1.5">
               {[
                 "$0 Part D premium (benchmark plan)",
@@ -407,15 +403,15 @@ function ExtraHelpContent() {
                 "$0 copay at catastrophic coverage",
                 "No coverage gap",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs text-green-900">
-                  <CheckCircle2 size={11} className="shrink-0 mt-0.5 text-green-600" />
+                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
+                  <CheckCircle2 size={11} className="shrink-0 mt-0.5" style={{ color: "#237A92" }} />
                   {item}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <div className="text-sm font-bold text-blue-800 mb-2">Partial Extra Help (Level 2)</div>
+          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
+            <div className="text-sm font-bold mb-2" style={{ color: "#1C3A48" }}>Partial Extra Help (Level 2)</div>
             <ul className="space-y-1.5">
               {[
                 "Reduced Part D premium (sliding scale)",
@@ -425,8 +421,8 @@ function ExtraHelpContent() {
                 "Reduced catastrophic coverage copays",
                 "Special Enrollment Period monthly",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs text-blue-900">
-                  <CheckCircle2 size={11} className="shrink-0 mt-0.5 text-blue-600" />
+                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
+                  <CheckCircle2 size={11} className="shrink-0 mt-0.5" style={{ color: "#7A9BA6" }} />
                   {item}
                 </li>
               ))}
@@ -450,8 +446,8 @@ function ExtraHelpContent() {
             { label: "Medicare Savings Program (QMB, SLMB, QI, or QDWI)", icon: FileText },
           ].map(({ label, icon: Icon }) => (
             <div key={label} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#E8F0FE] shrink-0">
-                <Icon size={13} className="text-[#1B365D]" />
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#E8F2F5] shrink-0">
+                <Icon size={13} className="text-[#1C3A48]" />
               </div>
               <span className="text-sm text-gray-700">{label}</span>
             </div>
@@ -534,7 +530,7 @@ function ExtraHelpContent() {
         >
           Apply at SSA.gov <ArrowRight size={14} />
         </a>
-        <Link href="/part-d/extra-help" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1B365D", borderColor: "#1B365D" }}>
+        <Link href="/part-d/extra-help" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1C3A48", borderColor: "#1C3A48" }}>
           Full Extra Help Guide
         </Link>
       </div>
@@ -618,7 +614,7 @@ export default function MedicareGuide() {
             title="Extra Help (Low Income Subsidy)"
             isOpen={extraHelpOpen}
             onToggle={() => setExtraHelpOpen((prev) => !prev)}
-            icon={<DollarSign size={16} style={{ color: "#1B365D" }} />}
+            icon={<DollarSign size={16} style={{ color: "#1C3A48" }} />}
             badge="Free Program"
           >
             <ExtraHelpContent />
@@ -627,7 +623,7 @@ export default function MedicareGuide() {
           {/* Bottom CTA */}
           <div
             className="mt-6 rounded-2xl p-8 text-white text-center"
-            style={{ background: "linear-gradient(135deg, #004D2C 0%, #1B365D 100%)" }}
+            style={{ background: "linear-gradient(135deg, #004D2C 0%, #1C3A48 100%)" }}
           >
             <h2
               className="text-2xl font-bold mb-2"
@@ -641,7 +637,7 @@ export default function MedicareGuide() {
             <Link
               href="/plans?zip=64106"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-bold no-underline transition-all"
-              style={{ backgroundColor: "#C41E3A", color: "white" }}
+              style={{ backgroundColor: "#1C3A48", color: "white" }}
             >
               See Plans Near You
               <ChevronRight size={16} />

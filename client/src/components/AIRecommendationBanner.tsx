@@ -33,21 +33,21 @@ export default function AIRecommendationBanner({ plan, score, model, onViewPlan 
   return (
     <div
       style={{
-        background: 'linear-gradient(135deg, #1B365D 0%, #2a4a7a 100%)',
-        borderRadius: '16px',
+        backgroundColor: '#1C3A48',
+        borderRadius: '10px',
         marginBottom: '24px',
         overflow: 'hidden',
-        boxShadow: '0 4px 24px rgba(27,54,93,0.18)',
-        border: '1px solid rgba(255,255,255,0.12)',
+        boxShadow: '0 2px 12px rgba(11,27,36,0.12)',
+        border: '1px solid rgba(255,255,255,0.08)',
       }}
     >
       {/* Header bar */}
       <div style={{ background: 'rgba(255,255,255,0.08)', padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        <Sparkles size={14} style={{ color: '#FCD34D' }} />
-        <span style={{ color: '#FCD34D', fontSize: '11px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
+        <Sparkles size={14} style={{ color: 'rgba(255,255,255,0.55)' }} />
+        <span style={{ color: '#fff', fontSize: '11px', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', fontFamily: "'DM Sans', sans-serif" }}>
           AI Recommended Plan
         </span>
-        <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', marginLeft: 'auto', fontFamily: "'DM Sans', sans-serif" }}>
+        <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', marginLeft: 'auto', fontFamily: "'DM Sans', sans-serif" }}>
           Powered by {model.name} Model &middot; Score {score.score.toFixed(1)}/100
         </span>
       </div>
@@ -56,7 +56,7 @@ export default function AIRecommendationBanner({ plan, score, model, onViewPlan 
       <div style={{ padding: '20px', display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
         {/* Carrier logo */}
         <div style={{ width: '56px', height: '56px', borderRadius: '14px', background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid rgba(255,255,255,0.1)' }}>
-          <span style={{ color: 'white', fontWeight: 800, fontSize: '16px', fontFamily: "'DM Sans', sans-serif" }}>{carrierInitials}</span>
+          <span style={{ color: 'white', fontWeight: 700, fontSize: '16px', fontFamily: "'DM Sans', sans-serif" }}>{carrierInitials}</span>
         </div>
 
         {/* Plan info */}
@@ -77,7 +77,7 @@ export default function AIRecommendationBanner({ plan, score, model, onViewPlan 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '16px' }}>
             {score.reasons.map((reason, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <CheckCircle2 size={13} style={{ color: '#34D399', flexShrink: 0 }} />
+                <CheckCircle2 size={13} style={{ color: 'rgba(255,255,255,0.6)', flexShrink: 0 }} />
                 <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '12px', fontFamily: "'DM Sans', sans-serif" }}>{reason}</span>
               </div>
             ))}
@@ -102,13 +102,13 @@ export default function AIRecommendationBanner({ plan, score, model, onViewPlan 
           {/* CTA */}
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             {onViewPlan && (
-              <button onClick={onViewPlan} style={{ background: '#FCD34D', color: '#1B365D', border: 'none', borderRadius: '10px', padding: '10px 20px', fontWeight: 700, fontSize: '13px', fontFamily: "'DM Sans', sans-serif", cursor: 'pointer' }}>
+              <button onClick={onViewPlan} style={{ background: 'rgba(255,255,255,0.95)', color: '#1C3A48', border: 'none', borderRadius: '8px', padding: '10px 20px', fontWeight: 700, fontSize: '13px', fontFamily: "'DM Sans', sans-serif", cursor: 'pointer' }}>
                 View Plan
               </button>
             )}
             <button
               onClick={() => setExpanded(!expanded)}
-              style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '10px', padding: '10px 16px', fontWeight: 600, fontSize: '12px', fontFamily: "'DM Sans', sans-serif", cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}
+              style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.8)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', padding: '10px 16px', fontWeight: 600, fontSize: '12px', fontFamily: "'DM Sans', sans-serif", cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}
             >
               {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               {expanded ? 'Hide' : 'Why this plan?'}
@@ -117,8 +117,8 @@ export default function AIRecommendationBanner({ plan, score, model, onViewPlan 
 
           {/* Score breakdown (expanded) */}
           {expanded && (
-            <div style={{ marginTop: '16px', background: 'rgba(0,0,0,0.15)', borderRadius: '12px', padding: '16px', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px', fontFamily: "'DM Sans', sans-serif" }}>
+            <div style={{ marginTop: '16px', background: 'rgba(11,27,36,0.25)', borderRadius: '10px', padding: '16px', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px', fontFamily: "'DM Sans', sans-serif" }}>
                 AI Score Breakdown &mdash; {model.name} Model
               </div>
               {breakdownItems.map(b => {
@@ -130,7 +130,7 @@ export default function AIRecommendationBanner({ plan, score, model, onViewPlan 
                       <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', fontFamily: "'DM Sans', sans-serif" }}>{b.weight}% weight</span>
                     </div>
                     <div style={{ height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', background: pct >= 70 ? '#34D399' : pct >= 40 ? '#FCD34D' : '#F87171', borderRadius: '2px', width: `${Math.min(100, pct)}%`, transition: 'width 0.4s ease' }} />
+                      <div style={{ height: '100%', background: pct >= 70 ? 'rgba(255,255,255,0.55)' : pct >= 40 ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.15)', borderRadius: '2px', width: `${Math.min(100, pct)}%`, transition: 'width 0.4s ease' }} />
                     </div>
                   </div>
                 );
@@ -145,7 +145,7 @@ export default function AIRecommendationBanner({ plan, score, model, onViewPlan 
 
               {sources.length > 0 && (
                 <div style={{ marginTop: '10px', color: 'rgba(255,255,255,0.3)', fontSize: '10px', fontFamily: "'DM Sans', sans-serif" }}>
-                  Research sources: {sources.slice(0, 3).join(' \u00b7 ')}
+                  Research sources: {sources.slice(0, 3).join(' · ')}
                 </div>
               )}
             </div>

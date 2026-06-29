@@ -115,7 +115,7 @@ export default function MAPPOPlans() {
             ].map((row) => (
               <tr key={row.item} className="border border-gray-200 hover:bg-gray-50">
                 <td className="p-3 font-medium text-gray-800">{row.item}</td>
-                <td className="p-3 text-center text-[#1B365D] font-medium">{row.in}</td>
+                <td className="p-3 text-center text-[#1C3A48] font-medium">{row.in}</td>
                 <td className="p-3 text-center text-orange-700">{row.out}</td>
               </tr>
             ))}
@@ -204,14 +204,14 @@ export default function MAPPOPlans() {
         <Link
           href="/plans?zip=64106"
           className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white"
-          style={{ backgroundColor: "#1B365D" }}
+          style={{ backgroundColor: "#1C3A48" }}
         >
           Browse PPO Plans in Your Area <ArrowRight size={14} />
         </Link>
         <Link
           href="/medicare-advantage/hmo"
           className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border"
-          style={{ color: "#1B365D", borderColor: "#1B365D" }}
+          style={{ color: "#1C3A48", borderColor: "#1C3A48" }}
         >
           Compare with HMO Plans
         </Link>

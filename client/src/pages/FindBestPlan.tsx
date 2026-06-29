@@ -1,12 +1,12 @@
 /**
+ * FindBestPlan — Health Profile Wizard with AI-Powered Plan Recommendations
+ *
+ * Design: Bold Civic | Navy #1C3A48 | Teal #1C3A48 | Green #16A34A
+ * Flow: ZIP entry → 5-step questionnaire → AI scoring → ranked results + narrative
+ */
 import TermTip from '@/features/education/components/TermTip';
 import { useZipValidation } from '@/features/zip-validation/lib/useZipValidation';
 import CountySelector from '@/features/zip-validation/components/CountySelector';
- * FindBestPlan — Health Profile Wizard with AI-Powered Plan Recommendations
- *
- * Design: Bold Civic | Navy #1B365D | Red #C41E3A | Green #16A34A
- * Flow: ZIP entry → 5-step questionnaire → AI scoring → ranked results + narrative
- */
 
 import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
@@ -125,11 +125,11 @@ interface RankedPlan {
 // ── Step definitions ──────────────────────────────────────────────────────────
 
 const STEPS = [
-  { id: 1, label: "Health Status", icon: Heart, color: "#C41E3A" },
-  { id: 2, label: "Utilization", icon: Stethoscope, color: "#1B365D" },
-  { id: 3, label: "Medications", icon: Pill, color: "#7C3AED" },
-  { id: 4, label: "Benefits", icon: Award, color: "#D97706" },
-  { id: 5, label: "Preferences", icon: Users, color: "#16A34A" },
+  { id: 1, label: "Health Status", icon: Heart, color: "#1C3A48" },
+  { id: 2, label: "Utilization", icon: Stethoscope, color: "#1C3A48" },
+  { id: 3, label: "Medications", icon: Pill, color: "#1C3A48" },
+  { id: 4, label: "Benefits", icon: Award, color: "#1C3A48" },
+  { id: 5, label: "Preferences", icon: Users, color: "#1C3A48" },
 ];
 
 // ── Option button ─────────────────────────────────────────────────────────────
@@ -140,7 +140,7 @@ function OptionBtn<T extends string>({
   label,
   sublabel,
   onSelect,
-  accent = "#1B365D",
+  accent = "#1C3A48",
 }: {
   value: T;
   selected: boolean;
@@ -154,7 +154,7 @@ function OptionBtn<T extends string>({
       onClick={() => onSelect(value)}
       className="relative flex items-start gap-3 w-full text-left px-4 py-3.5 rounded-xl border-2 transition-all"
       style={{
-        borderColor: selected ? accent : "#E5E7EB",
+        borderColor: selected ? accent : "#E2EAED",
         backgroundColor: selected ? `${accent}10` : "white",
         boxShadow: selected ? `0 0 0 1px ${accent}30` : "none",
       }}
@@ -169,7 +169,7 @@ function OptionBtn<T extends string>({
         {selected && <div className="w-2 h-2 rounded-full bg-white" />}
       </div>
       <div>
-        <div className="text-sm font-semibold" style={{ color: selected ? accent : "#374151" }}>
+        <div className="text-sm font-semibold" style={{ color: selected ? accent : "#3E5560" }}>
           {label}
         </div>
         {sublabel && <div className="text-xs text-gray-400 mt-0.5">{sublabel}</div>}
@@ -183,7 +183,7 @@ function OptionBtn<T extends string>({
 function SectionQ({ question, hint }: { question: string; hint?: string }) {
   return (
     <div className="mb-4">
-      <h3 className="text-base font-bold" style={{ color: "#1B365D" }}>
+      <h3 className="text-base font-bold" style={{ color: "#1C3A48" }}>
         {question}
       </h3>
       {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
@@ -339,7 +339,7 @@ export default function FindBestPlan() {
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F7F8FA" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#FAF9F5" }}>
       <Header />
 
       <div className="container py-8 max-w-2xl mx-auto">
@@ -348,14 +348,14 @@ export default function FindBestPlan() {
           <div className="text-center mb-8">
             <div
               className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-full mb-4"
-              style={{ backgroundColor: "#FDEEF1", color: "#C41E3A" }}
+              style={{ backgroundColor: "#E8F2F5", color: "#1C3A48" }}
             >
               <Sparkles size={12} />
               AI-Powered Plan Matching
             </div>
             <h1
-              className="text-3xl font-extrabold mb-2"
-              style={{ color: "#1B365D", fontFamily: "'Inter', sans-serif" }}
+              className="text-3xl font-bold mb-2"
+              style={{ color: "#1C3A48", fontFamily: "'DM Sans', sans-serif" }}
             >
               Find Your Best Plan
             </h1>
@@ -367,16 +367,16 @@ export default function FindBestPlan() {
 
         {/* ── ZIP step ────────────────────────────────────────────────────── */}
         {step === "zip" && (
-          <div className="bg-white rounded-2xl p-8 shadow-sm" style={{ border: "1px solid #E8F0FE" }}>
+          <div className="bg-white rounded-xl p-8 shadow-sm" style={{ border: "1px solid #E8F2F5" }}>
             <div className="flex items-center gap-3 mb-6">
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: "#E8F0FE" }}
+                style={{ backgroundColor: "#E8F2F5" }}
               >
-                <MapPin size={20} style={{ color: "#1B365D" }} />
+                <MapPin size={20} style={{ color: "#1C3A48" }} />
               </div>
               <div>
-                <h2 className="text-lg font-bold" style={{ color: "#1B365D" }}>
+                <h2 className="text-lg font-bold" style={{ color: "#1C3A48" }}>
                   Where do you live?
                 </h2>
                 <p className="text-xs text-gray-400">We'll find plans available in your area</p>
@@ -393,22 +393,22 @@ export default function FindBestPlan() {
                 onChange={(e) => { setZip(e.target.value.replace(/\D/g, "")); setZipError(""); }}
                 onKeyDown={(e) => e.key === "Enter" && handleZipSubmit()}
                 className="flex-1 px-4 py-3.5 text-lg font-semibold border-2 rounded-xl outline-none transition-all"
-                style={{ borderColor: zipError ? "#C41E3A" : "#E5E7EB", color: "#1B365D" }}
-                onFocus={(e) => { if (!zipError) e.currentTarget.style.borderColor = "#1B365D"; }}
-                onBlur={(e) => { if (!zipError) e.currentTarget.style.borderColor = "#E5E7EB"; }}
+                style={{ borderColor: zipError ? "#1C3A48" : "#E2EAED", color: "#1C3A48" }}
+                onFocus={(e) => { if (!zipError) e.currentTarget.style.borderColor = "#1C3A48"; }}
+                onBlur={(e) => { if (!zipError) e.currentTarget.style.borderColor = "#E2EAED"; }}
               />
               <button
                 onClick={handleZipSubmit}
                 disabled={plansLoading}
                 className="px-6 py-3.5 rounded-xl font-bold text-white flex items-center gap-2 transition-all"
-                style={{ backgroundColor: plansLoading ? "#9CA3AF" : "#C41E3A" }}
+                style={{ backgroundColor: plansLoading ? "#9CA3AF" : "#1C3A48" }}
               >
                 {plansLoading ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
                 {plansLoading ? "Loading…" : "Start"}
               </button>
             </div>
             {zipError && (
-              <p className="text-sm mt-2 flex items-center gap-1" style={{ color: "#C41E3A" }}>
+              <p className="text-sm mt-2 flex items-center gap-1" style={{ color: "#1C3A48" }}>
                 <AlertCircle size={13} /> {zipError}
               </p>
             )}
@@ -425,7 +425,7 @@ export default function FindBestPlan() {
                 { icon: CheckCircle2, text: "Free, no obligation" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2 text-xs text-gray-500">
-                  <Icon size={13} style={{ color: "#1B365D" }} />
+                  <Icon size={13} style={{ color: "#1C3A48" }} />
                   {text}
                 </div>
               ))}
@@ -448,7 +448,7 @@ export default function FindBestPlan() {
                       <div
                         className="w-9 h-9 rounded-full flex items-center justify-center transition-all"
                         style={{
-                          backgroundColor: isDone ? "#16A34A" : isActive ? s.color : "#E5E7EB",
+                          backgroundColor: isDone ? "#237A92" : isActive ? s.color : "#E2EAED",
                           boxShadow: isActive ? `0 0 0 3px ${s.color}30` : "none",
                         }}
                       >
@@ -460,7 +460,7 @@ export default function FindBestPlan() {
                       </div>
                       <span
                         className="text-[10px] font-semibold mt-1 hidden sm:block"
-                        style={{ color: isActive ? s.color : isDone ? "#16A34A" : "#9CA3AF" }}
+                        style={{ color: isActive ? s.color : isDone ? "#237A92" : "#9CA3AF" }}
                       >
                         {s.label}
                       </span>
@@ -468,7 +468,7 @@ export default function FindBestPlan() {
                     {i < STEPS.length - 1 && (
                       <div
                         className="h-0.5 w-8 sm:w-12 mx-1 mt-[-18px] sm:mt-[-18px] transition-all"
-                        style={{ backgroundColor: step > s.id ? "#16A34A" : "#E5E7EB" }}
+                        style={{ backgroundColor: step > s.id ? "#237A92" : "#E2EAED" }}
                       />
                     )}
                   </div>
@@ -477,21 +477,21 @@ export default function FindBestPlan() {
             </div>
 
             {/* Step card */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm mb-4" style={{ border: "1px solid #E8F0FE" }}>
+            <div className="bg-white rounded-xl p-6 shadow-sm mb-4" style={{ border: "1px solid #E8F2F5" }}>
               {/* Step 1: Health Status */}
               {step === 1 && (
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-5">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#FDEEF1" }}>
-                        <Heart size={14} style={{ color: "#C41E3A" }} />
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F2F5" }}>
+                        <Heart size={14} style={{ color: "#1C3A48" }} />
                       </div>
-                      <h2 className="text-lg font-bold" style={{ color: "#1B365D" }}>Health Status</h2>
+                      <h2 className="text-lg font-bold" style={{ color: "#1C3A48" }}>Health Status</h2>
                     </div>
                     <button
                       onClick={() => navigate(`/plans?zip=${zip.trim()}&extraHelp=skip`)}
                       className="text-xs font-semibold px-3 py-1.5 rounded-full border transition-all hover:bg-gray-50 flex items-center gap-1"
-                      style={{ borderColor: "#D1D5DB", color: "#6B7280" }}
+                      style={{ borderColor: "#D1D5DB", color: "#7A9BA6" }}
                     >
                       Skip to View All Plans
                       <ChevronRight size={12} />
@@ -513,7 +513,7 @@ export default function FindBestPlan() {
                         label={o.label}
                         sublabel={o.sublabel}
                         onSelect={(v) => set("healthStatus", v)}
-                        accent="#C41E3A"
+                        accent="#1C3A48"
                       />
                     ))}
                   </div>
@@ -525,14 +525,14 @@ export default function FindBestPlan() {
                       { value: "1-2" as const, label: "1–2" },
                       { value: "3+" as const, label: "3 or more" },
                     ] as const).map((o) => (
-                      <OptionBtn key={o.value} value={o.value} selected={profile.chronicConditions === o.value} label={o.label} onSelect={(v) => set("chronicConditions", v)} accent="#C41E3A" />
+                      <OptionBtn key={o.value} value={o.value} selected={profile.chronicConditions === o.value} label={o.label} onSelect={(v) => set("chronicConditions", v)} accent="#1C3A48" />
                     ))}
                   </div>
 
                   <SectionQ question="Do you have a planned surgery or hospitalization in the next 12 months?" />
                   <div className="grid grid-cols-2 gap-2 mb-5">
-                    <OptionBtn value="yes" selected={profile.plannedSurgery === "yes"} label="Yes" sublabel="I have a procedure planned" onSelect={(v) => set("plannedSurgery", v)} accent="#C41E3A" />
-                    <OptionBtn value="no" selected={profile.plannedSurgery === "no"} label="No" sublabel="No planned procedures" onSelect={(v) => set("plannedSurgery", v)} accent="#C41E3A" />
+                    <OptionBtn value="yes" selected={profile.plannedSurgery === "yes"} label="Yes" sublabel="I have a procedure planned" onSelect={(v) => set("plannedSurgery", v)} accent="#1C3A48" />
+                    <OptionBtn value="no" selected={profile.plannedSurgery === "no"} label="No" sublabel="No planned procedures" onSelect={(v) => set("plannedSurgery", v)} accent="#1C3A48" />
                   </div>
 
                   {/* Extra Help / LIS question */}
@@ -551,15 +551,15 @@ export default function FindBestPlan() {
                         label={o.label}
                         sublabel={o.sublabel}
                         onSelect={(v) => set("extraHelp", v)}
-                        accent="#C41E3A"
+                        accent="#1C3A48"
                       />
                     ))}
                   </div>
                   <div
                     className="flex items-start gap-2 px-3 py-2.5 rounded-lg text-xs text-gray-500 mb-1"
-                    style={{ backgroundColor: "#F0FDF4", border: "1px solid #BBF7D0" }}
+                    style={{ backgroundColor: "#EEF5F7", border: "1px solid #C6DAE0" }}
                   >
-                    <Shield size={12} className="shrink-0 mt-0.5" style={{ color: "#16A34A" }} />
+                    <Shield size={12} className="shrink-0 mt-0.5" style={{ color: "#237A92" }} />
                     <span>
                       Extra Help is a Medicare program that helps pay Part D prescription drug costs. If you're unsure, select "Not Sure" and all plans will be shown.
                     </span>
@@ -571,10 +571,10 @@ export default function FindBestPlan() {
               {step === 2 && (
                 <div>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F0FE" }}>
-                      <Stethoscope size={14} style={{ color: "#1B365D" }} />
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F2F5" }}>
+                      <Stethoscope size={14} style={{ color: "#1C3A48" }} />
                     </div>
-                    <h2 className="text-lg font-bold" style={{ color: "#1B365D" }}>Healthcare Utilization</h2>
+                    <h2 className="text-lg font-bold" style={{ color: "#1C3A48" }}>Healthcare Utilization</h2>
                   </div>
 
                   <SectionQ question="How many times do you visit your primary care doctor per year?" />
@@ -635,10 +635,10 @@ export default function FindBestPlan() {
               {step === 3 && (
                 <div>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#EDE9FE" }}>
-                      <Pill size={14} style={{ color: "#7C3AED" }} />
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#EEF5F7" }}>
+                      <Pill size={14} style={{ color: "#237A92" }} />
                     </div>
-                    <h2 className="text-lg font-bold" style={{ color: "#1B365D" }}>Prescription Medications</h2>
+                    <h2 className="text-lg font-bold" style={{ color: "#1C3A48" }}>Prescription Medications</h2>
                   </div>
 
                   <SectionQ question="How many prescription medications do you take monthly?" />
@@ -649,20 +649,20 @@ export default function FindBestPlan() {
                       { value: "4-7" as const, label: "4–7 medications" },
                       { value: "8+" as const, label: "8+ medications" },
                     ] as const).map((o) => (
-                      <OptionBtn key={o.value} value={o.value} selected={profile.monthlyRxCount === o.value} label={o.label} onSelect={(v) => set("monthlyRxCount", v)} accent="#7C3AED" />
+                      <OptionBtn key={o.value} value={o.value} selected={profile.monthlyRxCount === o.value} label={o.label} onSelect={(v) => set("monthlyRxCount", v)} accent="#1C3A48" />
                     ))}
                   </div>
 
                   <SectionQ question="Do you take any brand-name drugs (not generic)?" />
                   <div className="grid grid-cols-2 gap-2 mb-5">
-                    <OptionBtn value="yes" selected={profile.brandNameDrugs === "yes"} label="Yes" onSelect={(v) => set("brandNameDrugs", v)} accent="#7C3AED" />
-                    <OptionBtn value="no" selected={profile.brandNameDrugs === "no"} label="No" onSelect={(v) => set("brandNameDrugs", v)} accent="#7C3AED" />
+                    <OptionBtn value="yes" selected={profile.brandNameDrugs === "yes"} label="Yes" onSelect={(v) => set("brandNameDrugs", v)} accent="#1C3A48" />
+                    <OptionBtn value="no" selected={profile.brandNameDrugs === "no"} label="No" onSelect={(v) => set("brandNameDrugs", v)} accent="#1C3A48" />
                   </div>
 
                   <SectionQ question="Do you take specialty or high-tier drugs?" hint="e.g., biologics, cancer drugs, MS medications" />
                   <div className="grid grid-cols-2 gap-2 mb-5">
-                    <OptionBtn value="yes" selected={profile.specialtyDrugs === "yes"} label="Yes" onSelect={(v) => set("specialtyDrugs", v)} accent="#7C3AED" />
-                    <OptionBtn value="no" selected={profile.specialtyDrugs === "no"} label="No" onSelect={(v) => set("specialtyDrugs", v)} accent="#7C3AED" />
+                    <OptionBtn value="yes" selected={profile.specialtyDrugs === "yes"} label="Yes" onSelect={(v) => set("specialtyDrugs", v)} accent="#1C3A48" />
+                    <OptionBtn value="no" selected={profile.specialtyDrugs === "no"} label="No" onSelect={(v) => set("specialtyDrugs", v)} accent="#1C3A48" />
                   </div>
 
                   <SectionQ question="What do you currently spend on drugs per month (without insurance)?" />
@@ -673,7 +673,7 @@ export default function FindBestPlan() {
                       { value: "100-500" as const, label: "$100–$500", sublabel: undefined as string | undefined },
                       { value: "500+" as const, label: "$500+", sublabel: undefined as string | undefined },
                     ] as const).map((o) => (
-                      <OptionBtn key={o.value} value={o.value} selected={profile.monthlyDrugSpend === o.value} label={o.label} sublabel={o.sublabel} onSelect={(v) => set("monthlyDrugSpend", v)} accent="#7C3AED" />
+                      <OptionBtn key={o.value} value={o.value} selected={profile.monthlyDrugSpend === o.value} label={o.label} sublabel={o.sublabel} onSelect={(v) => set("monthlyDrugSpend", v)} accent="#1C3A48" />
                     ))}
                   </div>
                 </div>
@@ -683,10 +683,10 @@ export default function FindBestPlan() {
               {step === 4 && (
                 <div>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#FEF3C7" }}>
-                      <Award size={14} style={{ color: "#D97706" }} />
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#EEF5F7" }}>
+                      <Award size={14} style={{ color: "#237A92" }} />
                     </div>
-                    <h2 className="text-lg font-bold" style={{ color: "#1B365D" }}>Extra Benefits</h2>
+                    <h2 className="text-lg font-bold" style={{ color: "#1C3A48" }}>Extra Benefits</h2>
                   </div>
 
                   <SectionQ question="How important is dental coverage to you?" />
@@ -696,7 +696,7 @@ export default function FindBestPlan() {
                       { value: "somewhat" as const, label: "Somewhat" },
                       { value: "very" as const, label: "Very important" },
                     ] as const).map((o) => (
-                      <OptionBtn key={o.value} value={o.value} selected={profile.dentalImportance === o.value} label={o.label} onSelect={(v) => set("dentalImportance", v)} accent="#D97706" />
+                      <OptionBtn key={o.value} value={o.value} selected={profile.dentalImportance === o.value} label={o.label} onSelect={(v) => set("dentalImportance", v)} accent="#1C3A48" />
                     ))}
                   </div>
 
@@ -709,7 +709,7 @@ export default function FindBestPlan() {
                           { value: "somewhat" as const, label: "Somewhat" },
                           { value: "very" as const, label: "Very important" },
                         ] as const).map((o) => (
-                          <OptionBtn key={o.value} value={o.value} selected={profile.visionImportance === o.value} label={o.label} onSelect={(v) => set("visionImportance", v)} accent="#D97706" />
+                          <OptionBtn key={o.value} value={o.value} selected={profile.visionImportance === o.value} label={o.label} onSelect={(v) => set("visionImportance", v)} accent="#1C3A48" />
                         ))}
                       </div>
                     </div>
@@ -721,7 +721,7 @@ export default function FindBestPlan() {
                           { value: "somewhat" as const, label: "Somewhat" },
                           { value: "very" as const, label: "Very important" },
                         ] as const).map((o) => (
-                          <OptionBtn key={o.value} value={o.value} selected={profile.hearingImportance === o.value} label={o.label} onSelect={(v) => set("hearingImportance", v)} accent="#D97706" />
+                          <OptionBtn key={o.value} value={o.value} selected={profile.hearingImportance === o.value} label={o.label} onSelect={(v) => set("hearingImportance", v)} accent="#1C3A48" />
                         ))}
                       </div>
                     </div>
@@ -739,8 +739,8 @@ export default function FindBestPlan() {
                           <Icon size={12} />
                           {label}
                         </div>
-                        <OptionBtn value="yes" selected={profile[key] === "yes"} label="Yes" onSelect={(v) => set(key, v)} accent="#D97706" />
-                        <OptionBtn value="no" selected={profile[key] === "no"} label="No" onSelect={(v) => set(key, v)} accent="#D97706" />
+                        <OptionBtn value="yes" selected={profile[key] === "yes"} label="Yes" onSelect={(v) => set(key, v)} accent="#1C3A48" />
+                        <OptionBtn value="no" selected={profile[key] === "no"} label="No" onSelect={(v) => set(key, v)} accent="#1C3A48" />
                       </div>
                     ))}
                   </div>
@@ -751,16 +751,16 @@ export default function FindBestPlan() {
               {step === 5 && (
                 <div>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#DCFCE7" }}>
-                      <Users size={14} style={{ color: "#16A34A" }} />
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#EEF5F7" }}>
+                      <Users size={14} style={{ color: "#237A92" }} />
                     </div>
-                    <h2 className="text-lg font-bold" style={{ color: "#1B365D" }}>Provider & Plan Preferences</h2>
+                    <h2 className="text-lg font-bold" style={{ color: "#1C3A48" }}>Provider & Plan Preferences</h2>
                   </div>
 
                   <SectionQ question="Do you have specific doctors you want to keep seeing?" />
                   <div className="grid grid-cols-2 gap-2 mb-5">
-                    <OptionBtn value="yes" selected={profile.hasSpecificDoctors === "yes"} label="Yes" sublabel="I want to keep my current doctors" onSelect={(v) => set("hasSpecificDoctors", v)} accent="#16A34A" />
-                    <OptionBtn value="no" selected={profile.hasSpecificDoctors === "no"} label="No" sublabel="I'm open to any in-network doctors" onSelect={(v) => set("hasSpecificDoctors", v)} accent="#16A34A" />
+                    <OptionBtn value="yes" selected={profile.hasSpecificDoctors === "yes"} label="Yes" sublabel="I want to keep my current doctors" onSelect={(v) => set("hasSpecificDoctors", v)} accent="#1C3A48" />
+                    <OptionBtn value="no" selected={profile.hasSpecificDoctors === "no"} label="No" sublabel="I'm open to any in-network doctors" onSelect={(v) => set("hasSpecificDoctors", v)} accent="#1C3A48" />
                   </div>
 
                   <SectionQ question="Do you prefer a specific plan type?" />
@@ -770,7 +770,7 @@ export default function FindBestPlan() {
                       { value: "ppo" as const, label: "PPO", sublabel: "More flexibility, can see out-of-network doctors" },
                       { value: "no-preference" as const, label: "No preference", sublabel: "Show me the best options regardless of type" },
                     ] as const).map((o) => (
-                      <OptionBtn key={o.value} value={o.value} selected={profile.planTypePreference === o.value} label={o.label} sublabel={o.sublabel} onSelect={(v) => set("planTypePreference", v)} accent="#16A34A" />
+                      <OptionBtn key={o.value} value={o.value} selected={profile.planTypePreference === o.value} label={o.label} sublabel={o.sublabel} onSelect={(v) => set("planTypePreference", v)} accent="#1C3A48" />
                     ))}
                   </div>
 
@@ -782,7 +782,7 @@ export default function FindBestPlan() {
                       { value: "best-benefits" as const, label: "Best extra benefits", sublabel: "Dental, vision, OTC, fitness, etc.", icon: Award },
                       { value: "largest-network" as const, label: "Largest doctor network", sublabel: "Maximum flexibility in providers", icon: Users },
                     ] as const).map((o) => (
-                      <OptionBtn key={o.value} value={o.value} selected={profile.topPriority === o.value} label={o.label} sublabel={o.sublabel} onSelect={(v) => set("topPriority", v)} accent="#16A34A" />
+                      <OptionBtn key={o.value} value={o.value} selected={profile.topPriority === o.value} label={o.label} sublabel={o.sublabel} onSelect={(v) => set("topPriority", v)} accent="#1C3A48" />
                     ))}
                   </div>
                 </div>
@@ -794,7 +794,7 @@ export default function FindBestPlan() {
               <button
                 onClick={handleBack}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all"
-                style={{ borderColor: "#E5E7EB", color: "#374151" }}
+                style={{ borderColor: "#E2EAED", color: "#3E5560" }}
               >
                 <ArrowLeft size={15} />
                 Back
@@ -809,7 +809,7 @@ export default function FindBestPlan() {
                 disabled={!stepComplete || recommendMutation.isPending}
                 className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all"
                 style={{
-                  backgroundColor: !stepComplete || recommendMutation.isPending ? "#9CA3AF" : step === 5 ? "#C41E3A" : "#1B365D",
+                  backgroundColor: !stepComplete || recommendMutation.isPending ? "#9CA3AF" : step === 5 ? "#1C3A48" : "#1C3A48",
                 }}
               >
                 {recommendMutation.isPending ? (
@@ -832,7 +832,7 @@ export default function FindBestPlan() {
             </div>
 
             {recommendMutation.isError && (
-              <div className="mt-3 flex items-center gap-2 text-red-600 text-xs bg-red-50 px-3 py-2 rounded-lg">
+              <div className="mt-3 flex items-center gap-2 text-xs px-3 py-2 rounded-lg" style={{ color: "#1C3A48", backgroundColor: "#EEF5F7" }}>
                 <AlertCircle size={13} />
                 {recommendMutation.error.message || "Failed to get recommendations. Please try again."}
               </div>
@@ -846,7 +846,7 @@ export default function FindBestPlan() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-2xl font-extrabold" style={{ color: "#1B365D" }}>
+                <h1 className="text-2xl font-bold" style={{ color: "#1C3A48" }}>
                   Your Personalized Results
                 </h1>
                 <p className="text-sm text-gray-500 mt-0.5">
@@ -856,7 +856,7 @@ export default function FindBestPlan() {
               <button
                 onClick={() => { setStep("zip"); setProfile(EMPTY_PROFILE); setResults(null); }}
                 className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg border transition-all"
-                style={{ borderColor: "#E5E7EB", color: "#374151" }}
+                style={{ borderColor: "#E2EAED", color: "#3E5560" }}
               >
                 <RotateCcw size={12} />
                 Start Over
@@ -866,17 +866,17 @@ export default function FindBestPlan() {
             {/* AI Narrative */}
             {results.aiNarrative && (
               <div
-                className="rounded-2xl p-5 mb-6 border"
-                style={{ backgroundColor: "#F0F4FF", borderColor: "#C8D8F5" }}
+                className="rounded-xl p-5 mb-6 border"
+                style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}
               >
                 <div className="flex items-center gap-2 mb-3">
                   <div
                     className="w-7 h-7 rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: "#1B365D" }}
+                    style={{ backgroundColor: "#1C3A48" }}
                   >
                     <Sparkles size={14} className="text-white" />
                   </div>
-                  <span className="text-sm font-bold" style={{ color: "#1B365D" }}>
+                  <span className="text-sm font-bold" style={{ color: "#1C3A48" }}>
                     AI Advisor Analysis
                   </span>
                 </div>
@@ -891,31 +891,31 @@ export default function FindBestPlan() {
               {results.rankedPlans.map((plan, i) => (
                 <div
                   key={plan.id}
-                  className="bg-white rounded-2xl p-5 border-2 transition-all"
+                  className="bg-white rounded-xl p-5 border-2 transition-all"
                   style={{
-                    borderColor: i === 0 ? "#C41E3A" : "#E8F0FE",
-                    boxShadow: i === 0 ? "0 4px 20px rgba(196,30,58,0.1)" : "0 1px 4px rgba(27,54,93,0.06)",
+                    borderColor: i === 0 ? "#1C3A48" : "#E8F2F5",
+                    boxShadow: i === 0 ? "0 4px 20px rgba(28,58,72,0.1)" : "0 1px 4px rgba(28,58,72,0.06)",
                   }}
                 >
                   {/* Rank badge */}
                   <div className="flex items-start justify-between gap-3 mb-4">
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-lg shrink-0"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg shrink-0"
                         style={{
-                          backgroundColor: i === 0 ? "#C41E3A" : i === 1 ? "#1B365D" : "#E8F0FE",
-                          color: i < 2 ? "white" : "#1B365D",
+                          backgroundColor: i === 0 ? "#1C3A48" : i === 1 ? "#1C3A48" : "#E8F2F5",
+                          color: i < 2 ? "white" : "#1C3A48",
                         }}
                       >
                         #{i + 1}
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{plan.carrier}</div>
-                        <h3 className="text-base font-bold leading-snug" style={{ color: "#1B365D" }}>
+                        <h3 className="text-base font-bold leading-snug" style={{ color: "#1C3A48" }}>
                           {plan.planName}
                         </h3>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs font-bold px-2 py-0.5 rounded" style={{ backgroundColor: "#E8F0FE", color: "#1B365D" }}>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded" style={{ backgroundColor: "#E8F2F5", color: "#1C3A48" }}>
                             {plan.planType}
                           </span>
                           <StarRating rating={plan.starRating} size={11} />
@@ -926,8 +926,8 @@ export default function FindBestPlan() {
                     {/* Match score */}
                     <div className="text-center shrink-0">
                       <div
-                        className="text-2xl font-extrabold"
-                        style={{ color: plan.matchScore >= 75 ? "#16A34A" : plan.matchScore >= 55 ? "#D97706" : "#C41E3A" }}
+                        className="text-2xl font-bold"
+                        style={{ color: plan.matchScore >= 75 ? "#237A92" : plan.matchScore >= 55 ? "#3E5560" : "#1C3A48" }}
                       >
                         {plan.matchScore}%
                       </div>
@@ -936,21 +936,21 @@ export default function FindBestPlan() {
                   </div>
 
                   {/* Cost row */}
-                  <div className="grid grid-cols-3 gap-3 p-3 rounded-xl mb-4" style={{ backgroundColor: "#F7F8FA" }}>
+                  <div className="grid grid-cols-3 gap-3 p-3 rounded-xl mb-4" style={{ backgroundColor: "#FAF9F5" }}>
                     <div className="text-center">
-                      <div className="text-xl font-bold" style={{ color: plan.premium === 0 ? "#C41E3A" : "#1B365D" }}>
+                      <div className="text-xl font-bold" style={{ color: plan.premium === 0 ? "#1C3A48" : "#1C3A48" }}>
                         {plan.premium === 0 ? "$0" : `$${plan.premium}`}
                       </div>
                       <div className="text-[10px] text-gray-500">/mo premium</div>
                     </div>
                     <div className="text-center border-x border-gray-200">
-                      <div className="text-lg font-bold" style={{ color: "#1B365D" }}>
+                      <div className="text-lg font-bold" style={{ color: "#1C3A48" }}>
                         ${plan.maxOutOfPocket.toLocaleString()}
                       </div>
                       <div className="text-[10px] text-gray-500">max OOP</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold" style={{ color: "#1B365D" }}>
+                      <div className="text-lg font-bold" style={{ color: "#1C3A48" }}>
                         ${plan.estimatedAnnualCost.toLocaleString()}
                       </div>
                       <div className="text-[10px] text-gray-500">est. annual</div>
@@ -964,7 +964,7 @@ export default function FindBestPlan() {
                       <div className="space-y-1">
                         {plan.matchReasons.map((r) => (
                           <div key={r} className="flex items-start gap-1.5 text-xs text-gray-600">
-                            <CheckCircle2 size={11} className="mt-0.5 shrink-0" style={{ color: "#16A34A" }} />
+                            <CheckCircle2 size={11} className="mt-0.5 shrink-0" style={{ color: "#237A92" }} />
                             {r}
                           </div>
                         ))}
@@ -978,7 +978,7 @@ export default function FindBestPlan() {
                       <p className="text-xs font-semibold text-gray-500 mb-1.5">Things to consider:</p>
                       <div className="space-y-1">
                         {plan.watchOuts.map((w) => (
-                          <div key={w} className="flex items-start gap-1.5 text-xs text-amber-700">
+                          <div key={w} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
                             <AlertCircle size={11} className="mt-0.5 shrink-0" />
                             {w}
                           </div>
@@ -992,13 +992,13 @@ export default function FindBestPlan() {
                     <button
                       onClick={() => navigate(`/plans?zip=${zip}&extraHelp=${profile.extraHelp || 'not-sure'}`)}
                       className="flex-1 py-2.5 text-sm font-bold rounded-xl border-2 transition-all"
-                      style={{ borderColor: "#1B365D", color: "#1B365D" }}
+                      style={{ borderColor: "#1C3A48", color: "#1C3A48" }}
                     >
                       View All Plans
                     </button>
                     <button
                       className="flex-1 py-2.5 text-sm font-bold rounded-xl text-white flex items-center justify-center gap-1.5 transition-all"
-                      style={{ backgroundColor: i === 0 ? "#C41E3A" : "#1B365D" }}
+                      style={{ backgroundColor: i === 0 ? "#1C3A48" : "#1C3A48" }}
                     >
                       Enroll Now
                       <ChevronRight size={14} />
@@ -1009,7 +1009,7 @@ export default function FindBestPlan() {
             </div>
 
             {/* Disclaimer */}
-            <div className="mt-6 p-4 rounded-xl bg-white text-xs text-gray-400" style={{ border: "1px solid #E8F0FE" }}>
+            <div className="mt-6 p-4 rounded-xl bg-white text-xs text-gray-400" style={{ border: "1px solid #E8F2F5" }}>
               <strong className="text-gray-500">Disclaimer:</strong> Match scores are calculated using your health profile and CMS 2026 plan data. Estimated annual costs are projections based on typical utilization. Always verify plan details with the carrier before enrolling.
             </div>
           </div>

@@ -12,11 +12,11 @@ export default function CountySelector({ zip, counties, onSelect }: Props) {
       role="group"
       aria-labelledby="county-selector-label"
       data-testid="county-selector"
-      style={{ marginTop:'10px', padding:'12px 14px', borderRadius:'10px', backgroundColor:'#EFF6FF', border:'1px solid #BFDBFE' }}
+      style={{ marginTop:'10px', padding:'12px 14px', borderRadius:'10px', backgroundColor:'#EEF5F7', border:'1px solid #C6DAE0' }}
     >
       <p
         id="county-selector-label"
-        style={{ fontSize:'12px', fontWeight:700, color:'#1B365D', margin:'0 0 8px' }}
+        style={{ fontSize:'12px', fontWeight:700, color:'#1C3A48', margin:'0 0 8px' }}
       >
         ZIP {zip} covers multiple counties. Which county are you in?
       </p>
@@ -27,16 +27,16 @@ export default function CountySelector({ zip, counties, onSelect }: Props) {
             onClick={() => onSelect(county)}
             aria-label={`Select ${county.name}, ${county.state}`}
             style={{
-              padding:'9px 14px', borderRadius:'8px', border:'1px solid #BFDBFE',
+              padding:'9px 14px', borderRadius:'8px', border:'1px solid #C6DAE0',
               backgroundColor:'#fff', cursor:'pointer', textAlign:'left',
-              fontSize:'13px', fontWeight:600, color:'#1B365D',
+              fontSize:'13px', fontWeight:600, color:'#1C3A48',
               display:'flex', alignItems:'center', justifyContent:'space-between',
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor='#DBEAFE'; }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor='#E8F2F5'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor='#fff'; }}
           >
             <span>{county.name}, {county.state}</span>
-            <span style={{ fontSize:'11px', color:'#6B7280' }}>→</span>
+            <span style={{ fontSize:'11px', color:'#7A9BA6' }}>→</span>
           </button>
         ))}
       </div>

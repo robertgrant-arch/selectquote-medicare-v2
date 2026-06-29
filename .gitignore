@@ -110,3 +110,4 @@ temp/
 .webdev/
 server/cms-landscape.csv
 server/cms-landscape-cache.csv
+.vercel

@@ -11,23 +11,25 @@ export default function NotFound() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-      <Card className="w-full max-w-lg mx-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+    <div className="min-h-screen w-full flex items-center justify-center" style={{ backgroundColor: "#FAF9F5" }}>
+      <Card className="w-full max-w-lg mx-4 border" style={{ boxShadow: "0 4px 20px rgba(11,27,36,0.08)", borderColor: "#E2EAED" }}>
         <CardContent className="pt-8 pb-8 text-center">
           <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-red-100 rounded-full animate-pulse" />
-              <AlertCircle className="relative h-16 w-16 text-red-500" />
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: "#EEF5F7" }}
+            >
+              <AlertCircle className="h-8 w-8" style={{ color: "#1C3A48" }} />
             </div>
           </div>
 
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">404</h1>
+          <h1 className="text-4xl font-bold mb-2" style={{ color: "#1C3A48" }}>404</h1>
 
-          <h2 className="text-xl font-semibold text-slate-700 mb-4">
+          <h2 className="text-xl font-semibold mb-4" style={{ color: "#3E5560" }}>
             Page Not Found
           </h2>
 
-          <p className="text-slate-600 mb-8 leading-relaxed">
+          <p className="mb-8 leading-relaxed" style={{ color: "#7A9BA6" }}>
             Sorry, the page you are looking for doesn't exist.
             <br />
             It may have been moved or deleted.
@@ -39,7 +41,8 @@ export default function NotFound() {
           >
             <Button
               onClick={handleGoHome}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+              className="text-white px-6 py-2.5 rounded-lg transition-all duration-200"
+              style={{ backgroundColor: "#1C3A48" }}
             >
               <Home className="w-4 h-4 mr-2" />
               Go Home

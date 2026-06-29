@@ -81,7 +81,7 @@ function CompareCell({
   const potentialNum = typeof potential === "number" ? potential : parseFloat(String(potential).replace(/[^0-9.]/g, ""));
   const isNumeric = !isNaN(currentNum) && !isNaN(potentialNum);
 
-  let potentialColor = "#374151";
+  let potentialColor = "#3E5560";
   let potentialBg = "transparent";
   let Icon = Minus;
 
@@ -120,7 +120,9 @@ function CompareCell({
   );
 }
 
-// ── localStorage cache helpers ───────────────────────────────────────────────
+// ── sessionStorage cache helpers ─────────────────────────────────────────────
+// sessionStorage is tab-scoped and cleared on close; safer than localStorage
+// for AI narratives that may be informed by plan selection patterns.
 const CACHE_PREFIX = "medicare-compare-v1-";
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
@@ -138,11 +140,11 @@ function getCacheKey(currentPlanId: string, newPlanId: string): string {
 
 function readCache(key: string): CacheEntry | null {
   try {
-    const raw = localStorage.getItem(key);
+    const raw = sessionStorage.getItem(key);
     if (!raw) return null;
     const entry: CacheEntry = JSON.parse(raw);
     if (Date.now() - entry.savedAt > CACHE_TTL_MS) {
-      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
       return null;
     }
     return entry;
@@ -153,7 +155,7 @@ function readCache(key: string): CacheEntry | null {
 
 function writeCache(key: string, entry: CacheEntry): void {
   try {
-    localStorage.setItem(key, JSON.stringify(entry));
+    sessionStorage.setItem(key, JSON.stringify(entry));
   } catch {
     // ignore storage errors (private mode, quota exceeded)
   }
@@ -569,13 +571,13 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
       {/* ── Checkbox trigger ─────────────────────────────────────────────── */}
       <label
         className="flex items-center gap-2.5 px-5 py-3 cursor-pointer select-none group"
-        style={{ backgroundColor: isActive ? "#F0FAF5" : "transparent" }}
+        style={{ backgroundColor: isActive ? "#EEF5F7" : "transparent" }}
       >
         <div
           className="w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-all"
           style={{
-            borderColor: isActive ? "#1B365D" : "#D1D5DB",
-            backgroundColor: isActive ? "#1B365D" : "white",
+            borderColor: isActive ? "#1C3A48" : "#D1D5DB",
+            backgroundColor: isActive ? "#1C3A48" : "white",
           }}
         >
           {isActive && (
@@ -590,13 +592,13 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
           checked={isActive}
           onChange={(e) => handleCheckboxChange(e.target.checked)}
         />
-        <span className="text-xs font-semibold" style={{ color: isActive ? "#1B365D" : "#6B7280" }}>
+        <span className="text-xs font-semibold" style={{ color: isActive ? "#1C3A48" : "#7A9BA6" }}>
           Compare to my current plan
         </span>
         {isActive && (
           <span
             className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-            style={{ backgroundColor: "#1B365D", color: "white" }}
+            style={{ backgroundColor: "#1C3A48", color: "white" }}
           >
             Active
           </span>
@@ -607,21 +609,21 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
       {isActive && !showTable && (
         <div
           className="animate-slide-down mx-4 mb-4 rounded-xl border overflow-hidden"
-          style={{ borderColor: "#C8D8F5", backgroundColor: "#F0FAF5" }}
+          style={{ borderColor: "#C6DAE0", backgroundColor: "#EEF5F7" }}
         >
           {/* Panel header */}
           <div
             className="flex items-center gap-2.5 px-4 py-3 border-b"
-            style={{ borderColor: "#C8D8F5", backgroundColor: "#E8F0FE" }}
+            style={{ borderColor: "#C6DAE0", backgroundColor: "#E8F2F5" }}
           >
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-              style={{ backgroundColor: "#1B365D" }}
+              style={{ backgroundColor: "#1C3A48" }}
             >
               <Lock size={13} color="white" />
             </div>
             <div>
-              <div className="text-sm font-bold" style={{ color: "#004D2C" }}>
+              <div className="text-sm font-bold" style={{ color: "#1C3A48" }}>
                 Enter Your Medicare ID to Compare
               </div>
               <div className="text-[11px] text-gray-500">
@@ -648,11 +650,11 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
                     maxLength={20}
                     className="w-full px-3 py-2.5 text-sm font-semibold border-2 rounded-lg outline-none transition-all"
                     style={{
-                      borderColor: medicareId.length >= 4 ? "#1B365D" : "#D1D5DB",
+                      borderColor: medicareId.length >= 4 ? "#1C3A48" : "#D1D5DB",
                       backgroundColor: "white",
                       fontFamily: "'DM Sans', sans-serif",
                     }}
-                    onFocus={(e) => { e.currentTarget.style.borderColor = "#1B365D"; }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = "#1C3A48"; }}
                     onBlur={(e) => {
                       if (medicareId.length < 4) e.currentTarget.style.borderColor = "#D1D5DB";
                     }}
@@ -673,7 +675,7 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
                     type="checkbox"
                     checked={consent}
                     onChange={(e) => setConsent(e.target.checked)}
-                    className="mt-0.5 w-3.5 h-3.5 accent-[#1B365D] shrink-0"
+                    className="mt-0.5 w-3.5 h-3.5 accent-[#1C3A48] shrink-0"
                   />
                   <span className="text-[11px] text-gray-600 leading-relaxed">
                     I consent to a one-time eligibility lookup. I understand this is a simulated
@@ -695,14 +697,14 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
                   disabled={!canRun}
                   className="w-full py-2.5 rounded-lg text-sm font-bold text-white transition-all"
                   style={{
-                    backgroundColor: canRun ? "#C41E3A" : "#D1D5DB",
+                    backgroundColor: canRun ? "#1C3A48" : "#D1D5DB",
                     cursor: canRun ? "pointer" : "not-allowed",
                   }}
                   onMouseEnter={(e) => {
-                    if (canRun) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#A01830";
+                    if (canRun) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#112333";
                   }}
                   onMouseLeave={(e) => {
-                    if (canRun) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#C41E3A";
+                    if (canRun) (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#1C3A48";
                   }}
                 >
                   Run Plan Comparison
@@ -715,9 +717,9 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
               <div className="py-6 flex flex-col items-center gap-3">
                 <div
                   className="w-12 h-12 rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: "#E8F0FE" }}
+                  style={{ backgroundColor: "#E8F2F5" }}
                 >
-                  <Loader2 size={22} className="animate-spin" style={{ color: "#1B365D" }} />
+                  <Loader2 size={22} className="animate-spin" style={{ color: "#1C3A48" }} />
                 </div>
                 <div className="text-center">
                   <div className="text-sm font-bold text-gray-800">Looking up your plan...</div>
@@ -735,11 +737,11 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
 
       {/* ── Inline comparison result (shows instantly after lookup) ─────── */}
       {isActive && showTable && currentPlan && (
-        <div className="mx-4 mb-4 rounded-xl border overflow-hidden" style={{ borderColor: "#C8D8F5" }}>
+        <div className="mx-4 mb-4 rounded-xl border overflow-hidden" style={{ borderColor: "#C6DAE0" }}>
           {/* ── Result header ──────────────────────────────────────────────── */}
           <div
             className="flex items-center justify-between px-4 py-3"
-            style={{ backgroundColor: "#1B365D" }}
+            style={{ backgroundColor: "#1C3A48" }}
           >
             <div className="flex items-center gap-2.5">
               <CheckCircle2 size={18} color="white" />
@@ -758,14 +760,14 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
             </button>
           </div>
 
-          <div className="p-4 space-y-4" style={{ backgroundColor: "#F7F8FA" }}>
+          <div className="p-4 space-y-4" style={{ backgroundColor: "#FAF9F5" }}>
             {/* ── Side-by-side comparison table (INSTANT) ──────────────────── */}
             <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
               <div className="grid grid-cols-3 text-center text-[10px] font-bold uppercase tracking-wide py-2 border-b border-gray-100"
-                style={{ backgroundColor: "#F7F8FA" }}>
+                style={{ backgroundColor: "#FAF9F5" }}>
                 <div className="px-3 text-left text-gray-500">Benefit</div>
                 <div className="text-gray-600">Your Current Plan</div>
-                <div style={{ color: "#1B365D" }}>{plan.carrier} Plan</div>
+                <div style={{ color: "#1C3A48" }}>{plan.carrier} Plan</div>
               </div>
               <table className="w-full">
                 <tbody>
@@ -784,7 +786,7 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
             {/* ── AI Analysis (streaming) ───────────────────────────────────── */}
             <div className="bg-white rounded-xl border border-gray-100 p-3">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles size={13} style={{ color: "#C41E3A" }} />
+                <Sparkles size={13} style={{ color: "#1C3A48" }} />
                 <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">AI Analysis</span>
                 {step === "streaming" && (
                   <span className="ml-auto flex items-center gap-1 text-[10px] text-gray-400">
@@ -822,15 +824,15 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
             {/* ── Annual Cost Comparison ───────────────────────────────────── */}
             <div className="bg-white rounded-xl border border-gray-100 p-3">
               <div className="flex items-center gap-2 mb-3">
-                <DollarSign size={13} style={{ color: "#1B365D" }} />
+                <DollarSign size={13} style={{ color: "#1C3A48" }} />
                 <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">
                   Estimated Annual Cost
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3 mb-3">
-                <div className="text-center p-2.5 rounded-lg" style={{ backgroundColor: "#F7F8FA" }}>
+                <div className="text-center p-2.5 rounded-lg" style={{ backgroundColor: "#FAF9F5" }}>
                   <div className="text-[10px] text-gray-500 mb-1">Your Current Plan</div>
-                  <div className="text-xl font-bold text-gray-800" style={{ fontFamily: "'Inter', serif" }}>
+                  <div className="text-xl font-bold text-gray-800" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                     ${estimatedCurrentCost.toLocaleString()}
                   </div>
                   <div className="text-[9px] text-gray-400">typical usage/year</div>
@@ -838,14 +840,14 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
                 <div
                   className="text-center p-2.5 rounded-lg"
                   style={{
-                    backgroundColor: savings > 0 ? "#D1FAE5" : savings < 0 ? "#FEE2E2" : "#F7F8FA",
+                    backgroundColor: savings > 0 ? "#D1FAE5" : savings < 0 ? "#FEE2E2" : "#FAF9F5",
                   }}
                 >
                   <div className="text-[10px] text-gray-500 mb-1">{plan.carrier} Plan</div>
                   <div
                     className="text-xl font-bold"
                     style={{
-                      fontFamily: "'Inter', serif",
+                      fontFamily: "'DM Sans', sans-serif",
                       color: savings > 0 ? "#065F46" : savings < 0 ? "#991B1B" : "#1F2937",
                     }}
                   >
@@ -860,14 +862,14 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
                 <div
                   className="flex items-center gap-2 p-2.5 rounded-lg"
                   style={{
-                    backgroundColor: savings > 0 ? "#FFF3E8" : "#FEF2F2",
-                    border: `1.5px solid ${savings > 0 ? "#C41E3A40" : "#FCA5A540"}`,
+                    backgroundColor: savings > 0 ? "#EEF5F7" : "#FEF2F2",
+                    border: `1.5px solid ${savings > 0 ? "#C6DAE0" : "#FECACA"}`,
                   }}
                 >
-                  <DollarSign size={14} style={{ color: savings > 0 ? "#C41E3A" : "#EF4444" }} />
+                  <DollarSign size={14} style={{ color: savings > 0 ? "#237A92" : "#EF4444" }} />
                   <span
                     className="text-xs font-bold"
-                    style={{ color: savings > 0 ? "#C2410C" : "#B91C1C" }}
+                    style={{ color: savings > 0 ? "#237A92" : "#B91C1C" }}
                   >
                     {savings > 0
                       ? `You could save ~$${savings.toLocaleString()}/year by switching to this plan`
@@ -884,9 +886,9 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
                   alert("Comparison saved! (In production, this would save to your account.)");
                 }}
                 className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold border transition-all"
-                style={{ borderColor: "#1B365D", color: "#1B365D" }}
+                style={{ borderColor: "#C6DAE0", color: "#1C3A48" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#E8F0FE";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#E8F2F5";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
@@ -898,12 +900,12 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
               <a
                 href="tel:1-800-555-0100"
                 className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold text-white no-underline transition-all"
-                style={{ backgroundColor: "#C41E3A" }}
+                style={{ backgroundColor: "#1C3A48" }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#A01830";
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#112333";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#C41E3A";
+                  (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#1C3A48";
                 }}
               >
                 <Phone size={12} />

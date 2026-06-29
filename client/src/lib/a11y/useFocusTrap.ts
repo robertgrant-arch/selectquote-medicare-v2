@@ -4,7 +4,7 @@ import { FOCUSABLE_SELECTOR, nextFocusIdx } from './focusTrap';
 export function useFocusTrap<T extends HTMLElement = HTMLElement>(
   active: boolean,
   onEscape: () => void,
-): React.RefObject<T> {
+): React.RefObject<T | null> {
   const containerRef = useRef<T>(null);
 
   const getFocusables = useCallback((): HTMLElement[] => {

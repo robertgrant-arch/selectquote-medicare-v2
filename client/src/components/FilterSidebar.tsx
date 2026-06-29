@@ -1,6 +1,6 @@
 import TermTip from '@/features/education/components/TermTip';
 // FilterSidebar component — plan filtering controls
-// Design: Chapter-style | Navy #1B365D | Red #C41E3A | Light Blue #E8F0FE
+// Design: Chapter-style | Navy #1C3A48 | Red #C41E3A | Light Blue #E8F2F5
 
 import { useState } from "react";
 import { SlidersHorizontal, RotateCcw, ChevronDown, ChevronUp } from "lucide-react";
@@ -48,7 +48,7 @@ function FilterSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-gray-100 pb-4 mb-4">
+    <div className="border-b pb-4 mb-4" style={{ borderColor: "rgba(226,234,237,0.6)" }}>
       <button
         className="flex items-center justify-between w-full mb-3"
         onClick={() => setOpen(!open)}
@@ -147,19 +147,20 @@ export default function FilterSidebar({
   const maOnlyCount = plans.length - mapdCount;
 
   return (
-    <div className="bg-white rounded-xl p-5 sticky top-20" style={{ border: "1px solid #E8F0FE", boxShadow: "0 2px 12px rgba(27,54,93,0.07)" }}>
+    <div className="bg-white rounded-xl p-5 sticky top-20" style={{ border: "1px solid #E2EAED", boxShadow: "0 1px 0 rgba(11,27,36,0.06), 0 4px 16px rgba(11,27,36,0.05)" }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal size={16} style={{ color: "#1B365D" }} />
-          <span className="font-bold text-sm" style={{ color: "#1B365D", fontFamily: "'Inter', sans-serif" }}>
+          <SlidersHorizontal size={16} style={{ color: "#1C3A48" }} />
+          <span className="font-bold text-sm" style={{ color: "#1C3A48", fontFamily: "'DM Sans', sans-serif" }}>
             Filter Plans
           </span>
         </div>
         {hasActiveFilters && (
           <button
             onClick={resetFilters}
-            className="flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-red-500 transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold hover:text-red-500 transition-colors"
+            style={{ color: "#7A9BA6" }}
           >
             <RotateCcw size={11} />
             Reset
@@ -169,8 +170,8 @@ export default function FilterSidebar({
 
       {/* Results count */}
       <div
-        className="text-xs font-semibold px-3 py-2 rounded-lg mb-5 text-center"
-        style={{ backgroundColor: "#E8F0FE", color: "#1B365D" }}
+        className="text-xs font-medium px-3 py-2 rounded-lg mb-5 text-center"
+        style={{ backgroundColor: "#FAF9F5", color: "#3E5560", border: "1px solid #E2EAED" }}
       >
         Showing {filteredCount} of {totalCount} plans
       </div>
@@ -182,10 +183,10 @@ export default function FilterSidebar({
           onChange={(e) =>
             onChange({ ...filters, sortBy: e.target.value as FilterState["sortBy"] })
           }
-          className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 focus:outline-none"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-          onFocus={(e) => { e.currentTarget.style.borderColor = "#1B365D"; }}
-          onBlur={(e) => { e.currentTarget.style.borderColor = "#E5E7EB"; }}
+          className="w-full text-sm border rounded-lg px-3 py-2 focus:outline-none"
+          style={{ borderColor: "#E2EAED", color: "#3E5560", fontFamily: "'DM Sans', sans-serif" }}
+          onFocus={(e) => { e.currentTarget.style.borderColor = "#1C3A48"; }}
+          onBlur={(e) => { e.currentTarget.style.borderColor = "#E2EAED"; }}
         >
           <option value="moop-low">Lowest Out-of-Pocket Cost</option>
           <option value="premium-low">Premium: Low to High</option>
@@ -222,15 +223,15 @@ export default function FilterSidebar({
                 checked={(filters.planStructure ?? []).includes(item.key)}
                 onChange={() => togglePlanStructure(item.key)}
                 className="w-4 h-4 rounded border-gray-300 mt-0.5 shrink-0"
-                style={{ accentColor: "#1B365D" }}
+                style={{ accentColor: "#1C3A48" }}
               />
               <span className="flex-1">
-                <span className="text-sm text-gray-700 font-semibold transition-colors group-hover:text-[#1B365D] block">
+                <span className="text-sm font-semibold transition-colors group-hover:text-[#237A92] block" style={{ color: "#3E5560" }}>
                   {item.label}
                 </span>
-                <span className="text-[10px] text-gray-400">{item.description}</span>
+                <span className="text-[10px]" style={{ color: "#7A9BA6" }}>{item.description}</span>
               </span>
-              <span className="text-xs text-gray-400 shrink-0">{item.count}</span>
+              <span className="text-xs shrink-0" style={{ color: "#7A9BA6" }}>{item.count}</span>
             </label>
           ))}
         </div>
@@ -246,12 +247,12 @@ export default function FilterSidebar({
                 checked={filters.planType.includes(type)}
                 onChange={() => togglePlanType(type)}
                 className="w-4 h-4 rounded border-gray-300"
-                style={{ accentColor: "#1B365D" }}
+                style={{ accentColor: "#1C3A48" }}
               />
-              <span className="text-sm text-gray-700 font-medium transition-colors group-hover:text-[#1B365D]">
+              <span className="text-sm font-medium transition-colors group-hover:text-[#237A92]" style={{ color: "#3E5560" }}>
                 {type}
               </span>
-              <span className="ml-auto text-xs text-gray-400">
+              <span className="ml-auto text-xs" style={{ color: "#7A9BA6" }}>
                 {plans.filter((p: any) => !p.snpCategory && p.planType === type).length}
               </span>
             </label>
@@ -261,7 +262,7 @@ export default function FilterSidebar({
 
       {/* Special Needs Plans (SNP) — broken out by sub-type */}
       <FilterSection title="Special Needs Plans (SNP)" defaultOpen={false}>
-        <p className="text-[10px] text-gray-400 mb-3">
+        <p className="text-[10px] mb-3" style={{ color: "#7A9BA6" }}>
           SNPs are specialized plans for beneficiaries with specific needs. Select one or more to filter.
         </p>
         <div className="space-y-2">
@@ -285,9 +286,9 @@ export default function FilterSidebar({
                     >
                       {snp.label}
                     </span>
-                    <span className="text-xs text-gray-400">{count} plans</span>
+                    <span className="text-xs" style={{ color: "#7A9BA6" }}>{count} plans</span>
                   </span>
-                  <span className="text-[10px] text-gray-400 block mt-0.5">{snp.description}</span>
+                  <span className="text-[10px] block mt-0.5" style={{ color: "#7A9BA6" }}>{snp.description}</span>
                 </span>
               </label>
             );
@@ -296,7 +297,8 @@ export default function FilterSidebar({
         {(filters.snpCategories?.length ?? 0) > 0 && (
           <button
             onClick={() => onChange({ ...filters, snpCategories: [] })}
-            className="mt-2 text-[10px] text-gray-400 hover:text-red-400 transition-colors"
+            className="mt-2 text-[10px] hover:text-[#EF4444] transition-colors"
+            style={{ color: "#7A9BA6" }}
           >
             Clear SNP filters
           </button>
@@ -313,9 +315,9 @@ export default function FilterSidebar({
                 checked={filters.carriers.includes(carrier)}
                 onChange={() => toggleCarrier(carrier)}
                 className="w-4 h-4 rounded border-gray-300"
-                style={{ accentColor: "#1B365D" }}
+                style={{ accentColor: "#1C3A48" }}
               />
-              <span className="text-sm text-gray-700 font-medium transition-colors group-hover:text-[#1B365D]">
+              <span className="text-sm font-medium transition-colors group-hover:text-[#237A92]" style={{ color: "#3E5560" }}>
                 {carrier}
               </span>
             </label>
@@ -326,7 +328,7 @@ export default function FilterSidebar({
       {/* Monthly Premium */}
       <FilterSection title="Monthly Premium">
         <div className="space-y-3">
-          <div className="flex justify-between text-xs text-gray-500 font-medium">
+          <div className="flex justify-between text-xs font-medium" style={{ color: "#7A9BA6" }}>
             <span>${filters.premiumRange[0]}/mo</span>
             <span>${filters.premiumRange[1] >= 200 ? "200+" : filters.premiumRange[1]}/mo</span>
           </div>
@@ -340,7 +342,7 @@ export default function FilterSidebar({
               onChange({ ...filters, premiumRange: [filters.premiumRange[0], Number(e.target.value)] })
             }
             className="w-full"
-            style={{ accentColor: "#1B365D" }}
+            style={{ accentColor: "#1C3A48" }}
           />
           <div className="flex gap-2">
             {[0, 25, 50, 100].map((val) => (
@@ -351,15 +353,15 @@ export default function FilterSidebar({
                 style={{
                   borderColor:
                     filters.premiumRange[1] <= val || (val === 0 && filters.premiumRange[1] === 0)
-                      ? "#1B365D"
-                      : "#E5E7EB",
+                      ? "#1C3A48"
+                      : "#E2EAED",
                   color:
                     filters.premiumRange[1] <= val || (val === 0 && filters.premiumRange[1] === 0)
-                      ? "#1B365D"
-                      : "#6B7280",
+                      ? "#1C3A48"
+                      : "#7A9BA6",
                   backgroundColor:
                     filters.premiumRange[1] <= val || (val === 0 && filters.premiumRange[1] === 0)
-                      ? "#E8F0FE"
+                      ? "#E8F2F5"
                       : "transparent",
                 }}
               >
@@ -373,10 +375,10 @@ export default function FilterSidebar({
       {/* Estimated Annual Drug Cost */}
       <FilterSection title="Est. Annual Drug Cost" defaultOpen={false}>
         <div className="space-y-3">
-          <p className="text-[10px] text-gray-400">
+          <p className="text-[10px]" style={{ color: "#7A9BA6" }}>
             Filter by estimated annual out-of-pocket drug cost based on your medications.
           </p>
-          <div className="flex justify-between text-xs text-gray-500 font-medium">
+          <div className="flex justify-between text-xs font-medium" style={{ color: "#7A9BA6" }}>
             <span>${(filters.drugCostRange?.[0] ?? 0).toLocaleString()}/yr</span>
             <span>
               {(filters.drugCostRange?.[1] ?? 5000) >= 5000
@@ -386,7 +388,7 @@ export default function FilterSidebar({
           </div>
           {/* Min slider */}
           <div className="space-y-1">
-            <label className="text-[10px] text-gray-400">Minimum</label>
+            <label className="text-[10px]" style={{ color: "#7A9BA6" }}>Minimum</label>
             <input
               type="range"
               min={0}
@@ -403,12 +405,12 @@ export default function FilterSidebar({
                 })
               }
               className="w-full"
-              style={{ accentColor: "#1B365D" }}
+              style={{ accentColor: "#1C3A48" }}
             />
           </div>
           {/* Max slider */}
           <div className="space-y-1">
-            <label className="text-[10px] text-gray-400">Maximum</label>
+            <label className="text-[10px]" style={{ color: "#7A9BA6" }}>Maximum</label>
             <input
               type="range"
               min={0}
@@ -425,7 +427,7 @@ export default function FilterSidebar({
                 })
               }
               className="w-full"
-              style={{ accentColor: "#1B365D" }}
+              style={{ accentColor: "#1C3A48" }}
             />
           </div>
           {/* Quick presets */}
@@ -446,9 +448,9 @@ export default function FilterSidebar({
                   }
                   className="text-[10px] px-2 py-1 rounded border font-medium transition-colors"
                   style={{
-                    borderColor: isActive ? "#1B365D" : "#E5E7EB",
-                    color: isActive ? "#1B365D" : "#6B7280",
-                    backgroundColor: isActive ? "#E8F0FE" : "transparent",
+                    borderColor: isActive ? "#1C3A48" : "#E2EAED",
+                    color: isActive ? "#1C3A48" : "#7A9BA6",
+                    backgroundColor: isActive ? "#E8F2F5" : "transparent",
                   }}
                 >
                   {preset.label}
@@ -459,7 +461,8 @@ export default function FilterSidebar({
           {(filters.drugCostRange?.[0] ?? 0) > 0 || (filters.drugCostRange?.[1] ?? 5000) < 5000 ? (
             <button
               onClick={() => onChange({ ...filters, drugCostRange: [0, 5000] })}
-              className="text-[10px] text-gray-400 hover:text-red-400 transition-colors"
+              className="text-[10px] hover:text-[#EF4444] transition-colors"
+              style={{ color: "#7A9BA6" }}
             >
               Clear range
             </button>
@@ -477,9 +480,9 @@ export default function FilterSidebar({
                 checked={filters.benefits.includes(b.key)}
                 onChange={() => toggleBenefit(b.key)}
                 className="w-4 h-4 rounded border-gray-300"
-                style={{ accentColor: "#1B365D" }}
+                style={{ accentColor: "#1C3A48" }}
               />
-              <span className="text-sm text-gray-700 font-medium transition-colors group-hover:text-[#1B365D]">
+              <span className="text-sm font-medium transition-colors group-hover:text-[#237A92]" style={{ color: "#3E5560" }}>
                 {b.label}
               </span>
             </label>
@@ -490,16 +493,18 @@ export default function FilterSidebar({
       {/* Help CTA */}
       <div
         className="rounded-xl p-4 text-center"
-        style={{ backgroundColor: "#E8F0FE" }}
+        style={{ backgroundColor: "#FAF9F5", border: "1px solid #E2EAED" }}
       >
-        <div className="text-xs font-bold text-gray-700 mb-1">Need Help Choosing?</div>
-        <div className="text-xs text-gray-500 mb-3">
+        <div className="text-xs font-semibold mb-1" style={{ color: "#0B1B24", fontFamily: "'DM Sans', sans-serif" }}>Need Help Choosing?</div>
+        <div className="text-xs mb-3" style={{ color: "#7A9BA6" }}>
           Speak with a licensed Medicare agent — free, no obligation.
         </div>
         <a
           href="tel:1-800-555-0100"
-          className="block w-full py-2 rounded-lg text-xs font-bold text-white text-center transition-all"
-          style={{ backgroundColor: "#C41E3A" }}
+          className="block w-full py-2 rounded-lg text-xs font-semibold text-white text-center transition-all"
+          style={{ backgroundColor: "#1C3A48", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.005em" }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#112333"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#1C3A48"; }}
         >
           Call 1-800-555-0100
         </a>

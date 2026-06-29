@@ -1,6 +1,6 @@
 /**
  * Plan Recommender — Questionnaire-based plan recommendation tool
- * Design: Bold Civic Design | Primary: #1B365D | CTA: #C41E3A
+ * Design: Bold Civic Design | Primary: #1C3A48 | CTA: #1C3A48
  *
  * 5-section questionnaire → cost calculation → top-3 ranked plans → Claude Haiku narrative
  */
@@ -321,16 +321,16 @@ function RadioGroup<T extends string>({ value, onChange, options, cols = 2 }: Ra
           onClick={() => onChange(opt.value)}
           className="text-left p-3 rounded-xl border-2 transition-all"
           style={{
-            borderColor: value === opt.value ? "#1B365D" : "#E5E7EB",
-            backgroundColor: value === opt.value ? "#E8F0FE" : "white",
+            borderColor: value === opt.value ? "#1C3A48" : "#E2EAED",
+            backgroundColor: value === opt.value ? "#E8F2F5" : "white",
           }}
         >
           <div className="flex items-center gap-2">
             <div
               className="w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0"
               style={{
-                borderColor: value === opt.value ? "#1B365D" : "#D1D5DB",
-                backgroundColor: value === opt.value ? "#1B365D" : "white",
+                borderColor: value === opt.value ? "#1C3A48" : "#D1D5DB",
+                backgroundColor: value === opt.value ? "#1C3A48" : "white",
               }}
             >
               {value === opt.value && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
@@ -364,14 +364,14 @@ function Question({ label, required, children }: { label: string; required?: boo
 
 function RankedPlanCard({ ranked }: { ranked: RankedPlan }) {
   const { plan, estimatedCost, rank, costBreakdown, whyRecommended } = ranked;
-  const rankColors = ["#1B365D", "#C41E3A", "#7C3AED"];
+  const rankColors = ["#1C3A48", "#237A92", "#3E5560"];
   const rankLabels = ["Best Match", "Runner Up", "Also Consider"];
   const color = rankColors[rank - 1];
 
   return (
     <div
-      className="bg-white rounded-2xl border-2 shadow-sm overflow-hidden"
-      style={{ borderColor: rank === 1 ? color : "#E5E7EB" }}
+      className="bg-white rounded-xl border-2 shadow-sm overflow-hidden"
+      style={{ borderColor: rank === 1 ? color : "#E2EAED" }}
     >
       {rank === 1 && (
         <div className="px-4 py-2 text-xs font-bold text-white flex items-center gap-1.5" style={{ backgroundColor: color }}>
@@ -399,8 +399,8 @@ function RankedPlanCard({ ranked }: { ranked: RankedPlan }) {
               <span
                 className="text-[10px] font-bold px-1.5 py-0.5 rounded"
                 style={{
-                  backgroundColor: plan.planType === "HMO" ? "#DBEAFE" : "#D1FAE5",
-                  color: plan.planType === "HMO" ? "#1D4ED8" : "#065F46",
+                  backgroundColor: "#E8F2F5",
+                  color: "#1C3A48",
                 }}
               >
                 {plan.planType}
@@ -414,12 +414,12 @@ function RankedPlanCard({ ranked }: { ranked: RankedPlan }) {
         {/* Estimated annual cost */}
         <div
           className="rounded-xl p-4 mb-4"
-          style={{ backgroundColor: rank === 1 ? "#E8F0FE" : "#F9FAFB" }}
+          style={{ backgroundColor: rank === 1 ? "#E8F2F5" : "#F9FAFB" }}
         >
           <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
             Estimated Annual Cost
           </div>
-          <div className="text-2xl font-bold" style={{ color: rank === 1 ? "#1B365D" : "#1F2937" }}>
+          <div className="text-2xl font-bold" style={{ color: rank === 1 ? "#1C3A48" : "#1F2937" }}>
             ${estimatedCost.toLocaleString()}
           </div>
           <div className="text-xs text-gray-500 mt-0.5">Based on your expected utilization</div>
@@ -438,13 +438,13 @@ function RankedPlanCard({ ranked }: { ranked: RankedPlan }) {
             </div>
             {costBreakdown.partBSavings > 0 && (
               <div className="flex justify-between text-xs">
-                <span className="text-green-600">Part B reduction savings</span>
-                <span className="font-semibold text-green-600">−${costBreakdown.partBSavings.toLocaleString()}</span>
+                <span style={{ color: "#237A92" }}>Part B reduction savings</span>
+                <span className="font-semibold" style={{ color: "#237A92" }}>−${costBreakdown.partBSavings.toLocaleString()}</span>
               </div>
             )}
             <div className="flex justify-between text-xs pt-1.5 border-t border-gray-200">
               <span className="font-semibold text-gray-700">Total estimate</span>
-              <span className="font-bold" style={{ color: rank === 1 ? "#1B365D" : "#1F2937" }}>
+              <span className="font-bold" style={{ color: rank === 1 ? "#1C3A48" : "#1F2937" }}>
                 ${estimatedCost.toLocaleString()}
               </span>
             </div>
@@ -485,7 +485,7 @@ function RankedPlanCard({ ranked }: { ranked: RankedPlan }) {
           <Link
             href={`/plans?zip=64106`}
             className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-bold text-white no-underline transition-opacity hover:opacity-90"
-            style={{ backgroundColor: rank === 1 ? color : "#6B7280" }}
+            style={{ backgroundColor: rank === 1 ? color : "#7A9BA6" }}
           >
             View Full Plan Details
             <ChevronRight size={14} />
@@ -498,7 +498,7 @@ function RankedPlanCard({ ranked }: { ranked: RankedPlan }) {
               color: color,
               backgroundColor: "transparent",
             }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = rank === 1 ? "#E8F0FE" : "#F3F4F6"; }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = rank === 1 ? "#E8F2F5" : "#F3F4F6"; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "transparent"; }}
           >
             <Sparkles size={14} />
@@ -643,13 +643,13 @@ export default function PlanRecommender() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F7F8FA" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#FAF9F5" }}>
       <Header />
 
       {/* ── Page Header ──────────────────────────────────────────────────────── */}
       <div
         className="relative overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #004D2C 0%, #1B365D 60%, #00A651 100%)" }}
+        style={{ backgroundColor: "#1C3A48" }}
       >
         <div className="relative container py-10">
           <Link
@@ -669,7 +669,7 @@ export default function PlanRecommender() {
             <div>
               <h1
                 className="text-3xl lg:text-4xl font-bold text-white mb-2"
-                style={{ fontFamily: "'Inter', serif" }}
+                style={{ fontFamily: "'DM Sans', serif" }}
               >
                 Plan Recommender
               </h1>
@@ -705,7 +705,7 @@ export default function PlanRecommender() {
           <div className="flex flex-col items-center justify-center py-24 gap-6">
             <div
               className="w-16 h-16 border-4 border-t-transparent rounded-full animate-spin"
-              style={{ borderColor: "#E8F0FE", borderTopColor: "#1B365D" }}
+              style={{ borderColor: "#E8F2F5", borderTopColor: "#1C3A48" }}
             />
             <div className="text-center">
               <div className="text-lg font-bold text-gray-800 mb-1">Calculating your best plans...</div>
@@ -729,8 +729,8 @@ export default function PlanRecommender() {
                     onClick={() => setCurrentSection(sec.id)}
                     className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0"
                     style={{
-                      backgroundColor: isActive ? "#1B365D" : isDone ? "#E8F0FE" : "#F3F4F6",
-                      color: isActive ? "white" : isDone ? "#1B365D" : "#6B7280",
+                      backgroundColor: isActive ? "#1C3A48" : isDone ? "#E8F2F5" : "#F3F4F6",
+                      color: isActive ? "white" : isDone ? "#1C3A48" : "#7A9BA6",
                     }}
                   >
                     {isDone ? <CheckCircle2 size={13} /> : <Icon size={13} />}
@@ -744,13 +744,13 @@ export default function PlanRecommender() {
             </div>
 
             {/* Section card */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
               {/* Section 1 */}
               {currentSection === 1 && (
                 <div>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F0FE" }}>
-                      <Heart size={16} style={{ color: "#1B365D" }} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F2F5" }}>
+                      <Heart size={16} style={{ color: "#1C3A48" }} />
                     </div>
                     <h2 className="text-lg font-bold text-gray-900">General Health Profile</h2>
                   </div>
@@ -800,8 +800,8 @@ export default function PlanRecommender() {
               {currentSection === 2 && (
                 <div>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F0FE" }}>
-                      <Users size={16} style={{ color: "#1B365D" }} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F2F5" }}>
+                      <Users size={16} style={{ color: "#1C3A48" }} />
                     </div>
                     <h2 className="text-lg font-bold text-gray-900">Expected Utilization</h2>
                   </div>
@@ -866,8 +866,8 @@ export default function PlanRecommender() {
               {currentSection === 3 && (
                 <div>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F0FE" }}>
-                      <Pill size={16} style={{ color: "#1B365D" }} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F2F5" }}>
+                      <Pill size={16} style={{ color: "#1C3A48" }} />
                     </div>
                     <h2 className="text-lg font-bold text-gray-900">Prescription Drug Needs</h2>
                   </div>
@@ -930,8 +930,8 @@ export default function PlanRecommender() {
               {currentSection === 4 && (
                 <div>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F0FE" }}>
-                      <StarIcon size={16} style={{ color: "#1B365D" }} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F2F5" }}>
+                      <StarIcon size={16} style={{ color: "#1C3A48" }} />
                     </div>
                     <h2 className="text-lg font-bold text-gray-900">Benefits Priorities</h2>
                   </div>
@@ -1017,8 +1017,8 @@ export default function PlanRecommender() {
               {currentSection === 5 && (
                 <div>
                   <div className="flex items-center gap-2 mb-5">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F0FE" }}>
-                      <DollarSign size={16} style={{ color: "#1B365D" }} />
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F2F5" }}>
+                      <DollarSign size={16} style={{ color: "#1C3A48" }} />
                     </div>
                     <h2 className="text-lg font-bold text-gray-900">Provider & Plan Preferences</h2>
                   </div>
@@ -1084,7 +1084,7 @@ export default function PlanRecommender() {
                     onClick={() => setCurrentSection(currentSection + 1)}
                     disabled={!sectionComplete[currentSection]}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ backgroundColor: sectionComplete[currentSection] ? "#1B365D" : "#9CA3AF" }}
+                    style={{ backgroundColor: sectionComplete[currentSection] ? "#1C3A48" : "#9CA3AF" }}
                   >
                     Next
                     <ArrowRight size={15} />
@@ -1094,7 +1094,7 @@ export default function PlanRecommender() {
                     onClick={handleSubmit}
                     disabled={!allComplete}
                     className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
-                    style={{ backgroundColor: allComplete ? "#C41E3A" : "#9CA3AF" }}
+                    style={{ backgroundColor: allComplete ? "#1C3A48" : "#9CA3AF" }}
                   >
                     <Sparkles size={15} />
                     Get My Recommendations
@@ -1114,7 +1114,7 @@ export default function PlanRecommender() {
                   className="h-full rounded-full transition-all duration-500"
                   style={{
                     width: `${(SECTIONS.filter((_, i) => sectionComplete[i + 1]).length / 5) * 100}%`,
-                    backgroundColor: "#1B365D",
+                    backgroundColor: "#1C3A48",
                   }}
                 />
               </div>
@@ -1126,7 +1126,7 @@ export default function PlanRecommender() {
         {phase === "results" && rankedPlans.length > 0 && (
           <div className="space-y-6">
             {/* Results header */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center justify-between">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-gray-900 mb-1">Your Top 3 Recommended Plans</h2>
                 <p className="text-sm text-gray-500">
@@ -1150,10 +1150,10 @@ export default function PlanRecommender() {
             </div>
 
             {/* Cost comparison bar chart */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F0FE" }}>
-                  <TrendingDown size={14} style={{ color: "#1B365D" }} />
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#E8F2F5" }}>
+                  <TrendingDown size={14} style={{ color: "#1C3A48" }} />
                 </div>
                 <h3 className="text-base font-bold text-gray-900">Estimated Annual Cost Comparison</h3>
               </div>
@@ -1161,7 +1161,7 @@ export default function PlanRecommender() {
                 {rankedPlans.map((ranked, i) => {
                   const maxCost = Math.max(...rankedPlans.map((r) => r.estimatedCost));
                   const pct = (ranked.estimatedCost / maxCost) * 100;
-                  const colors = ["#1B365D", "#C41E3A", "#7C3AED"];
+                  const colors = ["#1C3A48", "#237A92", "#3E5560"];
                   return (
                     <div key={ranked.plan.id}>
                       <div className="flex items-center justify-between text-xs mb-1">
@@ -1185,17 +1185,17 @@ export default function PlanRecommender() {
             </div>
 
             {/* AI Narrative */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#FFF3E8" }}>
-                    <Sparkles size={14} style={{ color: "#C41E3A" }} />
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: "#EEF5F7" }}>
+                    <Sparkles size={14} style={{ color: "#1C3A48" }} />
                   </div>
                   <div>
                     <h3 className="text-base font-bold text-gray-900">Personalized AI Recommendation</h3>
                     {streamPhase === "streaming" && (
-                      <div className="text-[10px] text-orange-500 flex items-center gap-1 animate-pulse">
-                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                      <div className="text-[10px] flex items-center gap-1 animate-pulse" style={{ color: "#237A92" }}>
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#237A92" }} />
                         Claude is writing your recommendation...
                       </div>
                     )}
@@ -1219,7 +1219,7 @@ export default function PlanRecommender() {
                   <div className="flex items-center gap-3 text-gray-500 text-sm py-4">
                     <div
                       className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin shrink-0"
-                      style={{ borderColor: "#E8F0FE", borderTopColor: "#C41E3A" }}
+                      style={{ borderColor: "#E8F2F5", borderTopColor: "#1C3A48" }}
                     />
                     Generating your personalized recommendation...
                   </div>
@@ -1228,24 +1228,24 @@ export default function PlanRecommender() {
                   <div className="ai-analysis">
                     <style>{`
                       .ai-analysis h2 {
-                        font-family: 'Inter', serif;
+                        font-family: 'DM Sans', serif;
                         font-size: 1.05rem;
                         font-weight: 700;
                         color: #1F2937;
                         margin-top: 1.25rem;
                         margin-bottom: 0.4rem;
                         padding-bottom: 0.3rem;
-                        border-bottom: 2px solid #E8F0FE;
+                        border-bottom: 2px solid #E8F2F5;
                       }
                       .ai-analysis h2:first-child { margin-top: 0; }
-                      .ai-analysis p { color: #374151; line-height: 1.65; margin-bottom: 0.75rem; font-size: 0.875rem; }
+                      .ai-analysis p { color: #3E5560; line-height: 1.65; margin-bottom: 0.75rem; font-size: 0.875rem; }
                       .ai-analysis ul { padding-left: 1.25rem; margin-bottom: 0.75rem; }
-                      .ai-analysis li { color: #374151; font-size: 0.875rem; margin-bottom: 0.3rem; line-height: 1.55; }
+                      .ai-analysis li { color: #3E5560; font-size: 0.875rem; margin-bottom: 0.3rem; line-height: 1.55; }
                       .ai-analysis strong { color: #111827; font-weight: 600; }
                     `}</style>
                     <Streamdown>{streamedText}</Streamdown>
                     {streamPhase === "streaming" && (
-                      <span className="inline-block w-0.5 h-4 bg-orange-400 animate-pulse ml-0.5 align-middle" />
+                      <span className="inline-block w-0.5 h-4 animate-pulse ml-0.5 align-middle" style={{ backgroundColor: "#237A92" }} />
                     )}
                   </div>
                 )}
@@ -1262,7 +1262,7 @@ export default function PlanRecommender() {
             </div>
 
             {/* Compare with AI button */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <h3 className="text-base font-bold text-gray-900 mb-1">Want a deeper side-by-side analysis?</h3>
                 <p className="text-sm text-gray-500">Open the AI Compare page with your top 3 plans pre-loaded for a detailed breakdown.</p>
@@ -1270,7 +1270,7 @@ export default function PlanRecommender() {
               <a
                 href={`/ai-compare?plan1=${encodeURIComponent(rankedPlans[0]?.plan.id ?? '')}&plan2=${encodeURIComponent(rankedPlans[1]?.plan.id ?? '')}&plan3=${encodeURIComponent(rankedPlans[2]?.plan.id ?? '')}`}
                 className="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-white shadow-md shrink-0 transition-opacity hover:opacity-90"
-                style={{ background: "linear-gradient(135deg, #1B365D 0%, #00A651 100%)" }}
+                style={{ backgroundColor: "#1C3A48" }}
               >
                 <Sparkles size={16} />
                 Compare These 3 Plans with AI
@@ -1279,7 +1279,7 @@ export default function PlanRecommender() {
             </div>
 
             {/* Disclaimer */}
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-700 flex items-start gap-2">
+            <div className="rounded-xl p-4 text-xs flex items-start gap-2 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0", color: "#3E5560" }}>
               <Info size={14} className="shrink-0 mt-0.5" />
               <div>
                 <strong>Important Disclaimer:</strong> These recommendations are for educational purposes only and are based on mock plan data. They do not constitute professional insurance advice. Plan availability, costs, and benefits vary by location and change annually. Always consult a licensed Medicare insurance agent before making enrollment decisions. This tool is a demonstration application.

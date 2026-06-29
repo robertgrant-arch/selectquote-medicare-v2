@@ -8,6 +8,7 @@
 import { isValidZipFormat } from "@/features/zip-validation/lib/zipValidator";
 import { useState, useEffect, useRef } from "react";
 import { trpc } from "@/lib/trpc";
+import { useQuoteSession } from "@/features/quote-session/hooks/useQuoteSession";
 import { POPULAR_RX_DRUGS } from "@/lib/mockData";
 import type { Doctor } from "@/lib/types";
 import {
@@ -90,6 +91,12 @@ interface Props {
     doctors: Doctor[];
     drugs: DrugEntry[];
   }) => void;
+  /** Pre-populated state for resume flow */
+  initialStep?: Step;
+  initialDoctors?: Doctor[];
+  initialDrugs?: DrugEntry[];
+  initialVerifyResult?: MBIVerifyResult | null;
+  initialHasMA?: boolean;
 }
 
 const COMMON_DRUGS: DrugEntry[] = POPULAR_RX_DRUGS.map(d => ({ name: d.name, dosage: d.dosage }));
@@ -116,22 +123,23 @@ const STEP_TITLES: Record<Step, string> = {
   aiLoading: "Finding Your Best Plan",
 };
 
-export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) {
-  const [step, setStep] = useState<Step>("maQuestion");
-  const [hasMA, setHasMA] = useState<boolean | null>(null);
+export default function GuidedWorkflowModal({ zip, onSkip, onComplete, initialStep, initialDoctors, initialDrugs, initialVerifyResult, initialHasMA }: Props) {
+  const [step, setStep] = useState<Step>(initialStep ?? "maQuestion");
+  const [hasMA, setHasMA] = useState<boolean | null>(initialHasMA ?? null);
+  const quoteSession = useQuoteSession();
   // pVerify state
   const [lookupMode, setLookupMode] = useState<"mbi" | "ssn">("mbi");
   const [mbi, setMbi] = useState("");
   const [ssn, setSsn] = useState("");
-  const [verifyResult, setVerifyResult] = useState<MBIVerifyResult | null>(null);
+  const [verifyResult, setVerifyResult] = useState<MBIVerifyResult | null>(initialVerifyResult ?? null);
   const [verifyError, setVerifyError] = useState("");
   // Doctor/Drug state
   const [doctorSearch, setDoctorSearch] = useState("");
   const [npiResults, setNpiResults] = useState<NpiDoctor[]>([]);
   const [npiLoading, setNpiLoading] = useState(false);
-  const [selectedDoctors, setSelectedDoctors] = useState<Doctor[]>([]);
+  const [selectedDoctors, setSelectedDoctors] = useState<Doctor[]>(initialDoctors ?? []);
   const [drugSearch, setDrugSearch] = useState("");
-  const [selectedDrugs, setSelectedDrugs] = useState<DrugEntry[]>([]);
+  const [selectedDrugs, setSelectedDrugs] = useState<DrugEntry[]>(initialDrugs ?? []);
   const [manualDrugName, setManualDrugName] = useState("");
   const [manualDrugDosage, setManualDrugDosage] = useState("");
   const [showManualDrug, setShowManualDrug] = useState(false);
@@ -149,6 +157,13 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
       if (timerRef.current) clearTimeout(timerRef.current);
       if (npiTimerRef.current) clearTimeout(npiTimerRef.current); if (rxTimerRef.current) clearTimeout(rxTimerRef.current);
     };
+  }, []);
+
+  // Create or touch the quote session when the modal opens with a zip.
+  // Fire-and-forget: session persistence never blocks the user flow.
+  useEffect(() => {
+    if (zip) quoteSession.save({ zip });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // Debounced NPI doctor search - now uses /api/doctors with ZIP
   useEffect(() => {
@@ -173,6 +188,16 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
       const result = data.data as MBIVerifyResult;
       setVerifyResult(result);
       setStep("planFound");
+      // Persist eligibility result — fire-and-forget
+      quoteSession.save({
+        eligibility: {
+          mbi: lookupMode === "mbi" ? mbi.trim() : undefined,
+          eligibilityResultJson: JSON.stringify(result),
+          currentPlanName: result.currentPlan?.planName,
+          currentPlanCarrier: result.currentPlan?.carrier,
+          verifiedAt: new Date().toISOString(),
+        },
+      });
     },
     onError: (err) => {
       setVerifyError(err.message || "Verification failed. You can skip this step.");
@@ -216,6 +241,11 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
   }, [drugSearch, selectedDrugs]);
   const handleFinish = () => {
     setStep("aiLoading");
+    // Persist final state — fire-and-forget
+    quoteSession.save({
+      medications: selectedDrugs.map((d) => ({ name: d.name, dosage: d.dosage })),
+      providers: selectedDoctors.map((d) => ({ name: d.name, npi: d.id.startsWith("manual-") ? undefined : d.id, specialty: d.specialty })),
+    });
     timerRef.current = setTimeout(() => {
       onComplete({ hasMA: hasMA === true, verifyResult, doctors: selectedDoctors, drugs: selectedDrugs });
     }, 1500);
@@ -223,6 +253,7 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
   const addNpiDoctor = (doc: NpiDoctor) => {
     const doctor: Doctor = {
       id: doc.npi,
+      npi: doc.npi,
       name: doc.name,
       specialty: doc.specialty,
       address: doc.address,
@@ -237,6 +268,7 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
     if (!manualDoctorName.trim()) return;
     const doc: Doctor = {
       id: `manual-${Date.now()}`,
+      npi: "",
       name: manualDoctorName.trim(),
       specialty: manualDoctorSpecialty.trim() || "General",
       address: zip,
@@ -259,10 +291,10 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
   };
   const isPending = eligibilityMutation.isPending;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}>
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden" style={{ border: "1px solid #E8F0FE", maxHeight: "90vh", overflowY: "auto" }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(11,27,36,0.5)", backdropFilter: "blur(3px)" }}>
+      <div className="relative bg-white rounded-xl w-full max-w-lg overflow-hidden" style={{ border: "1px solid #E2EAED", boxShadow: "0 8px 40px rgba(11,27,36,0.16)", maxHeight: "90vh", overflowY: "auto" }}>
         {/* Header */}
-        <div className="px-6 py-4 flex items-center justify-between" style={{ background: "linear-gradient(135deg, #1B365D 0%, #243E6B 100%)" }}>
+        <div className="px-6 py-4 flex items-center justify-between" style={{ backgroundColor: "#1C3A48" }}>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
               {step === "aiLoading" ? <Sparkles size={18} className="text-white" /> : <Shield size={18} className="text-white" />}
@@ -278,21 +310,21 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
           {/* STEP 1: MA Question */}
           {step === "maQuestion" && (
             <div className="space-y-4">
-              <div className="flex items-start gap-3 p-4 rounded-xl text-sm" style={{ backgroundColor: "#EFF6FF", color: "#1E40AF" }}>
+              <div className="flex items-start gap-3 p-4 rounded-xl text-sm" style={{ backgroundColor: "#EEF5F7", color: "#1C3A48" }}>
                 <Info size={16} className="mt-0.5 shrink-0" />
                 <div>This helps us find the best plan match for you. Your answer determines how we personalize your results.</div>
               </div>
-              <p className="text-sm font-semibold text-center" style={{ color: "#1B365D" }}>Do you currently have a Medicare Advantage plan?</p>
+              <p className="text-sm font-semibold text-center" style={{ color: "#1C3A48" }}>Do you currently have a Medicare Advantage plan?</p>
               <div className="grid grid-cols-2 gap-3">
-                <button onClick={() => { setHasMA(true); setStep("pverifyLookup"); }} className="flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all hover:border-[#1B365D] hover:bg-[#E8F0FE]" style={{ borderColor: "#E5E7EB" }}>
+                <button onClick={() => { setHasMA(true); setStep("pverifyLookup"); }} className="flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all hover:border-[#237A92] hover:bg-[#EEF5F7]" style={{ borderColor: "#E2EAED" }}>
                   <CheckCircle2 size={28} style={{ color: "#16A34A" }} />
-                  <span className="text-sm font-bold" style={{ color: "#1B365D" }}>Yes, I do</span>
-                  <span className="text-xs text-gray-500">We'll look up your current plan</span>
+                  <span className="text-sm font-bold" style={{ color: "#1C3A48" }}>Yes, I do</span>
+                  <span className="text-xs" style={{ color: "#7A9BA6" }}>We'll look up your current plan</span>
                 </button>
-                <button onClick={() => { setHasMA(false); setStep("doctorsDrugs"); }} className="flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all hover:border-[#C41E3A] hover:bg-[#FDEEF1]" style={{ borderColor: "#E5E7EB" }}>
-                  <X size={28} style={{ color: "#C41E3A" }} />
-                  <span className="text-sm font-bold" style={{ color: "#1B365D" }}>No, I don't</span>
-                  <span className="text-xs text-gray-500">We'll help you find one</span>
+                <button onClick={() => { setHasMA(false); setStep("doctorsDrugs"); }} className="flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all hover:border-[#237A92] hover:bg-[#EEF5F7]" style={{ borderColor: "#E2EAED" }}>
+                  <X size={28} style={{ color: "#1C3A48" }} />
+                  <span className="text-sm font-bold" style={{ color: "#1C3A48" }}>No, I don't</span>
+                  <span className="text-xs" style={{ color: "#7A9BA6" }}>We'll help you find one</span>
                 </button>
               </div>
             </div>
@@ -300,40 +332,40 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
           {/* STEP 2: pVerify Lookup */}
           {step === "pverifyLookup" && (
             <div className="space-y-3">
-              <p className="text-sm" style={{ color: "#555" }}>How would you like us to look up your current plan?</p>
-              <div className="flex rounded-lg overflow-hidden border mb-2" style={{ borderColor: "#E5E7EB" }}>
-                <button onClick={() => setLookupMode("mbi")} className="flex-1 py-2 text-sm font-semibold" style={{ backgroundColor: lookupMode === "mbi" ? "#1B365D" : "white", color: lookupMode === "mbi" ? "white" : "#555" }}>Use Medicare ID</button>
-                <button onClick={() => setLookupMode("ssn")} className="flex-1 py-2 text-sm font-semibold" style={{ backgroundColor: lookupMode === "ssn" ? "#1B365D" : "white", color: lookupMode === "ssn" ? "white" : "#555" }}>Use SSN</button>
+              <p className="text-sm" style={{ color: "#3E5560" }}>How would you like us to look up your current plan?</p>
+              <div className="flex rounded-lg overflow-hidden border mb-2" style={{ borderColor: "#E2EAED" }}>
+                <button onClick={() => setLookupMode("mbi")} className="flex-1 py-2 text-sm font-semibold" style={{ backgroundColor: lookupMode === "mbi" ? "#1C3A48" : "white", color: lookupMode === "mbi" ? "white" : "#3E5560" }}>Use Medicare ID</button>
+                <button onClick={() => setLookupMode("ssn")} className="flex-1 py-2 text-sm font-semibold" style={{ backgroundColor: lookupMode === "ssn" ? "#1C3A48" : "white", color: lookupMode === "ssn" ? "white" : "#3E5560" }}>Use SSN</button>
               </div>
               {lookupMode === "mbi" && (
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1">Medicare Beneficiary ID (MBI)</label>
-                  <input type="text" value={mbi} onChange={(e) => setMbi(e.target.value.toUpperCase())} placeholder="e.g. 1EG4-TE5-MK72" maxLength={20} className="w-full px-3 py-2.5 border rounded-lg text-sm font-mono outline-none" style={{ borderColor: "#E5E7EB" }} />
-                  <p className="text-xs text-gray-400 mt-1">Found on your red, white & blue Medicare card</p>
+                  <label className="text-xs font-semibold block mb-1" style={{ color: "#3E5560" }}>Medicare Beneficiary ID (MBI)</label>
+                  <input type="text" value={mbi} onChange={(e) => setMbi(e.target.value.toUpperCase())} placeholder="e.g. 1EG4-TE5-MK72" maxLength={20} className="w-full px-3 py-2.5 border rounded-lg text-sm font-mono outline-none" style={{ borderColor: "#E2EAED" }} />
+                  <p className="text-xs mt-1" style={{ color: "#7A9BA6" }}>Found on your red, white & blue Medicare card</p>
                 </div>
               )}
               {lookupMode === "ssn" && (
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 block mb-1">Social Security Number (SSN)</label>
-                  <input type="password" value={formatSsn(ssn)} onChange={handleSsnChange} placeholder="XXX-XX-XXXX" maxLength={11} className="w-full px-3 py-2.5 border rounded-lg text-sm font-mono outline-none" style={{ borderColor: "#E5E7EB" }} />
-                  <p className="text-xs text-gray-400 mt-1">Your SSN is encrypted and never stored</p>
+                  <label className="text-xs font-semibold block mb-1" style={{ color: "#3E5560" }}>Social Security Number (SSN)</label>
+                  <input type="password" value={formatSsn(ssn)} onChange={handleSsnChange} placeholder="XXX-XX-XXXX" maxLength={11} className="w-full px-3 py-2.5 border rounded-lg text-sm font-mono outline-none" style={{ borderColor: "#E2EAED" }} />
+                  <p className="text-xs mt-1" style={{ color: "#7A9BA6" }}>Your SSN is encrypted and never stored</p>
                 </div>
               )}
-              {verifyError && <div className="flex items-center gap-2 text-red-600 text-xs bg-red-50 px-3 py-2 rounded-lg"><AlertCircle size={13} />{verifyError}</div>}
-              <div className="flex items-center gap-1.5 text-xs text-gray-400"><Lock size={11} />256-bit SSL · HIPAA-compliant · Data never stored</div>
+              {verifyError && <div className="flex items-center gap-2 text-red-600 text-xs bg-[#FAF9F5] px-3 py-2 rounded-lg"><AlertCircle size={13} />{verifyError}</div>}
+              <div className="flex items-center gap-1.5 text-xs" style={{ color: "#7A9BA6" }}><Lock size={11} />256-bit SSL · HIPAA-compliant · Data never stored</div>
             </div>
           )}
           {/* STEP 3: Plan Found */}
           {step === "planFound" && (
             <div className="text-center py-2">
-              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: "#DCFCE7" }}>
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: "#EEF5F7" }}>
                 <CheckCircle2 size={28} style={{ color: "#16A34A" }} />
               </div>
-              <h3 className="text-lg font-bold mb-1" style={{ color: "#1B365D" }}>We Found Your Plan!</h3>
+              <h3 className="text-lg font-bold mb-1" style={{ color: "#1C3A48" }}>We Found Your Plan!</h3>
               {verifyResult?.currentPlan && (
-                <div className="bg-gray-50 rounded-xl p-4 mt-3 text-left">
-                  <p className="text-sm font-bold" style={{ color: "#1B365D" }}>{verifyResult.currentPlan.planName}</p>
-                  <p className="text-xs text-gray-500">{verifyResult.currentPlan.carrier}</p>
+                <div className="rounded-xl p-4 mt-3 text-left" style={{ backgroundColor: "#FAF9F5", border: "1px solid #E2EAED" }}>
+                  <p className="text-sm font-bold" style={{ color: "#1C3A48" }}>{verifyResult.currentPlan.planName}</p>
+                  <p className="text-xs" style={{ color: "#7A9BA6" }}>{verifyResult.currentPlan.carrier}</p>
                   <div className="flex gap-4 mt-2 text-xs text-gray-600">
                     <span>Premium: ${verifyResult.currentPlan.premium}/mo</span>
                     <span>Deductible: ${verifyResult.currentPlan.deductible}</span>
@@ -349,24 +381,24 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
               {/* Doctors Section */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <Stethoscope size={16} style={{ color: "#1B365D" }} />
-                  <span className="text-sm font-bold" style={{ color: "#1B365D" }}>Your Doctors</span>
+                  <Stethoscope size={16} style={{ color: "#1C3A48" }} />
+                  <span className="text-sm font-bold" style={{ color: "#1C3A48" }}>Your Doctors</span>
                   <span className="text-xs text-gray-400 ml-auto">{isValidZipFormat(zip) ? `Within 25 miles of ${zip}` : "Within your area"}</span>
                 </div>
                 <div className="relative mb-2">
                   <Search size={14} className="absolute left-3 top-3 text-gray-400" />
-                  <input type="text" value={doctorSearch} onChange={(e) => setDoctorSearch(e.target.value)} placeholder="Search any doctor by name..." className="w-full pl-9 pr-3 py-2.5 border rounded-lg text-sm outline-none" style={{ borderColor: "#E5E7EB" }} />
+                  <input type="text" value={doctorSearch} onChange={(e) => setDoctorSearch(e.target.value)} placeholder="Search any doctor by name..." className="w-full pl-9 pr-3 py-2.5 border rounded-lg text-sm outline-none" style={{ borderColor: "#E2EAED" }} />
                   {npiLoading && <Loader2 size={14} className="absolute right-3 top-3 text-gray-400 animate-spin" />}
                 </div>
                 {doctorSearch.length >= 2 && npiResults.length > 0 && (
-                  <div className="border rounded-lg max-h-40 overflow-y-auto mb-2" style={{ borderColor: "#E5E7EB" }}>
+                  <div className="border rounded-lg max-h-40 overflow-y-auto mb-2" style={{ borderColor: "#E2EAED" }}>
                     {npiResults.map((d) => (
-                      <button key={d.npi} onClick={() => addNpiDoctor(d)} className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 flex justify-between items-center border-b last:border-b-0" style={{ borderColor: "#F3F4F6" }}>
+                      <button key={d.npi} onClick={() => addNpiDoctor(d)} className="w-full text-left px-3 py-2 text-sm hover:bg-[#EEF5F7] flex justify-between items-center border-b last:border-b-0" style={{ borderColor: "#E2EAED" }}>
                         <div className="flex-1 min-w-0">
-                          <div><span className="font-medium" style={{ color: "#1B365D" }}>{d.name}</span><span className="text-xs text-blue-600 ml-2">{d.specialty}</span></div>
-                          <div className="text-xs text-gray-400 truncate">{d.address}{d.distance !== null && <span className="ml-1 text-blue-500 font-medium">· {d.distance} mi</span>}</div>
+                          <div><span className="font-medium" style={{ color: "#1C3A48" }}>{d.name}</span><span className="text-xs text-[#237A92] ml-2">{d.specialty}</span></div>
+                          <div className="text-xs text-gray-400 truncate">{d.address}{d.distance !== null && <span className="ml-1 text-[#237A92] font-medium">· {d.distance} mi</span>}</div>
                         </div>
-                        <Plus size={14} className="text-gray-400 shrink-0 ml-2" />
+                        <Plus size={14} className="shrink-0 ml-2" style={{ color: "#7A9BA6" }} />
                       </button>
                     ))}
                   </div>
@@ -375,9 +407,9 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
                   <p className="text-xs text-gray-400 mb-2">No doctors found within 25 miles. Try a different name or add manually.</p>
                 )}
                 {selectedDoctors.map((d) => (
-                  <div key={d.id} className="flex items-center justify-between bg-blue-50 rounded-lg px-3 py-2 mb-1">
+                  <div key={d.id} className="flex items-center justify-between bg-[#EEF5F7] rounded-lg px-3 py-2 mb-1">
                     <div className="min-w-0">
-                      <span className="text-sm font-medium" style={{ color: "#1B365D" }}>{d.name}</span>
+                      <span className="text-sm font-medium" style={{ color: "#1C3A48" }}>{d.name}</span>
                       <span className="text-xs text-gray-500 ml-2">{d.specialty}</span>
                       {d.address && <div className="text-xs text-gray-400 truncate">{d.address}</div>}
                     </div>
@@ -385,50 +417,50 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
                   </div>
                 ))}
                 {!showManualDoctor ? (
-                  <button onClick={() => setShowManualDoctor(true)} className="text-xs font-medium flex items-center gap-1 mt-1" style={{ color: "#1B365D" }}><Plus size={12} />Add doctor manually</button>
+                  <button onClick={() => setShowManualDoctor(true)} className="text-xs font-medium flex items-center gap-1 mt-1" style={{ color: "#1C3A48" }}><Plus size={12} />Add doctor manually</button>
                 ) : (
-                  <div className="border rounded-lg p-3 space-y-2 mt-1" style={{ borderColor: "#E5E7EB" }}>
-                    <input type="text" value={manualDoctorName} onChange={(e) => setManualDoctorName(e.target.value)} placeholder="Doctor name" className="w-full px-3 py-2 border rounded-lg text-sm outline-none" style={{ borderColor: "#E5E7EB" }} />
-                    <input type="text" value={manualDoctorSpecialty} onChange={(e) => setManualDoctorSpecialty(e.target.value)} placeholder="Specialty (optional)" className="w-full px-3 py-2 border rounded-lg text-sm outline-none" style={{ borderColor: "#E5E7EB" }} />
-                    <div className="flex gap-2"><button onClick={addManualDoctor} className="px-3 py-1.5 text-xs font-bold rounded-lg text-white" style={{ backgroundColor: "#1B365D" }}>Add</button><button onClick={() => setShowManualDoctor(false)} className="px-3 py-1.5 text-xs rounded-lg border" style={{ borderColor: "#E5E7EB" }}>Cancel</button></div>
+                  <div className="border rounded-lg p-3 space-y-2 mt-1" style={{ borderColor: "#E2EAED" }}>
+                    <input type="text" value={manualDoctorName} onChange={(e) => setManualDoctorName(e.target.value)} placeholder="Doctor name" className="w-full px-3 py-2 border rounded-lg text-sm outline-none" style={{ borderColor: "#E2EAED" }} />
+                    <input type="text" value={manualDoctorSpecialty} onChange={(e) => setManualDoctorSpecialty(e.target.value)} placeholder="Specialty (optional)" className="w-full px-3 py-2 border rounded-lg text-sm outline-none" style={{ borderColor: "#E2EAED" }} />
+                    <div className="flex gap-2"><button onClick={addManualDoctor} className="px-3 py-1.5 text-xs font-bold rounded-lg text-white" style={{ backgroundColor: "#1C3A48" }}>Add</button><button onClick={() => setShowManualDoctor(false)} className="px-3 py-1.5 text-xs rounded-lg border" style={{ borderColor: "#E2EAED" }}>Cancel</button></div>
                   </div>
                 )}
               </div>
               {/* Divider */}
-              <div className="border-t" style={{ borderColor: "#E8F0FE" }} />
+              <div className="border-t" style={{ borderColor: "#E8F2F5" }} />
               {/* Drugs Section */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <Pill size={16} style={{ color: "#C41E3A" }} />
-                  <span className="text-sm font-bold" style={{ color: "#1B365D" }}>Your Prescriptions</span>
+                  <Pill size={16} style={{ color: "#1C3A48" }} />
+                  <span className="text-sm font-bold" style={{ color: "#1C3A48" }}>Your Prescriptions</span>
                 </div>
                 <div className="relative mb-2">
                   <Search size={14} className="absolute left-3 top-3 text-gray-400" />
-                  <input type="text" value={drugSearch} onChange={(e) => setDrugSearch(e.target.value)} placeholder="Search medications..." className="w-full pl-9 pr-3 py-2.5 border rounded-lg text-sm outline-none" style={{ borderColor: "#E5E7EB" }} />
+                  <input type="text" value={drugSearch} onChange={(e) => setDrugSearch(e.target.value)} placeholder="Search medications..." className="w-full pl-9 pr-3 py-2.5 border rounded-lg text-sm outline-none" style={{ borderColor: "#E2EAED" }} />
                 </div>
                 {(rxLoading || rxResults.length > 0) && (
-                  <div className="border rounded-lg max-h-32 overflow-y-auto mb-2" style={{ borderColor: "#E5E7EB" }}>
+                  <div className="border rounded-lg max-h-32 overflow-y-auto mb-2" style={{ borderColor: "#E2EAED" }}>
                     {rxLoading ? (<div className="px-3 py-2 text-xs text-gray-400 flex items-center gap-2"><Loader2 size={12} className="animate-spin" />Searching...</div>) : rxResults.map((d) => (
-                      <button key={d.displayName} onClick={() => { setSelectedDrugs([...selectedDrugs, { name: d.displayName, dosage: d.strength || "" }]); setDrugSearch(""); setRxResults([]); }} className="w-full text-left px-3 py-2 text-sm hover:bg-red-50 flex justify-between items-center">
-                        <div><span className="font-medium" style={{ color: "#1B365D" }}>{d.displayName}</span><span className="text-xs text-gray-500 ml-2">{d.strength}</span></div>
-                        <Plus size={14} className="text-gray-400" />
+                      <button key={d.displayName} onClick={() => { setSelectedDrugs([...selectedDrugs, { name: d.displayName, dosage: d.strength || "" }]); setDrugSearch(""); setRxResults([]); }} className="w-full text-left px-3 py-2 text-sm hover:bg-[#FAF9F5] flex justify-between items-center">
+                        <div><span className="font-medium" style={{ color: "#1C3A48" }}>{d.displayName}</span><span className="text-xs text-gray-500 ml-2">{d.strength}</span></div>
+                        <Plus size={14} style={{ color: "#7A9BA6" }} />
                       </button>
                     ))}
                   </div>
                 )}
                 {selectedDrugs.map((d, i) => (
-                  <div key={`${d.name}-${i}`} className="flex items-center justify-between bg-red-50 rounded-lg px-3 py-2 mb-1">
-                    <div><span className="text-sm font-medium" style={{ color: "#1B365D" }}>{d.name}</span><span className="text-xs text-gray-500 ml-2">{d.dosage}</span></div>
+                  <div key={`${d.name}-${i}`} className="flex items-center justify-between bg-[#FAF9F5] rounded-lg px-3 py-2 mb-1">
+                    <div><span className="text-sm font-medium" style={{ color: "#1C3A48" }}>{d.name}</span><span className="text-xs text-gray-500 ml-2">{d.dosage}</span></div>
                     <button onClick={() => setSelectedDrugs(selectedDrugs.filter((_, idx) => idx !== i))}><Trash2 size={14} className="text-red-400" /></button>
                   </div>
                 ))}
                 {!showManualDrug ? (
-                  <button onClick={() => setShowManualDrug(true)} className="text-xs font-medium flex items-center gap-1 mt-1" style={{ color: "#C41E3A" }}><Plus size={12} />Add medication manually</button>
+                  <button onClick={() => setShowManualDrug(true)} className="text-xs font-medium flex items-center gap-1 mt-1" style={{ color: "#1C3A48" }}><Plus size={12} />Add medication manually</button>
                 ) : (
-                  <div className="border rounded-lg p-3 space-y-2 mt-1" style={{ borderColor: "#E5E7EB" }}>
-                    <input type="text" value={manualDrugName} onChange={(e) => setManualDrugName(e.target.value)} placeholder="Medication name" className="w-full px-3 py-2 border rounded-lg text-sm outline-none" style={{ borderColor: "#E5E7EB" }} />
-                    <input type="text" value={manualDrugDosage} onChange={(e) => setManualDrugDosage(e.target.value)} placeholder="Dosage (optional)" className="w-full px-3 py-2 border rounded-lg text-sm outline-none" style={{ borderColor: "#E5E7EB" }} />
-                    <div className="flex gap-2"><button onClick={addManualDrug} className="px-3 py-1.5 text-xs font-bold rounded-lg text-white" style={{ backgroundColor: "#C41E3A" }}>Add</button><button onClick={() => setShowManualDrug(false)} className="px-3 py-1.5 text-xs rounded-lg border" style={{ borderColor: "#E5E7EB" }}>Cancel</button></div>
+                  <div className="border rounded-lg p-3 space-y-2 mt-1" style={{ borderColor: "#E2EAED" }}>
+                    <input type="text" value={manualDrugName} onChange={(e) => setManualDrugName(e.target.value)} placeholder="Medication name" className="w-full px-3 py-2 border rounded-lg text-sm outline-none" style={{ borderColor: "#E2EAED" }} />
+                    <input type="text" value={manualDrugDosage} onChange={(e) => setManualDrugDosage(e.target.value)} placeholder="Dosage (optional)" className="w-full px-3 py-2 border rounded-lg text-sm outline-none" style={{ borderColor: "#E2EAED" }} />
+                    <div className="flex gap-2"><button onClick={addManualDrug} className="px-3 py-1.5 text-xs font-bold rounded-lg text-white" style={{ backgroundColor: "#1C3A48" }}>Add</button><button onClick={() => setShowManualDrug(false)} className="px-3 py-1.5 text-xs rounded-lg border" style={{ borderColor: "#E2EAED" }}>Cancel</button></div>
                   </div>
                 )}
               </div>
@@ -437,32 +469,32 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
           {/* STEP 5: AI Loading */}
           {step === "aiLoading" && (
             <div className="text-center py-8">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "#EFF6FF" }}>
-                <Loader2 size={32} className="animate-spin" style={{ color: "#1B365D" }} />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: "#EEF5F7" }}>
+                <Loader2 size={32} className="animate-spin" style={{ color: "#1C3A48" }} />
               </div>
-              <h3 className="text-lg font-bold mb-2" style={{ color: "#1B365D" }}>Analyzing Your Profile</h3>
-              <p className="text-sm text-gray-500">Our AI is comparing plans based on your doctors, prescriptions{hasMA ? ", and current coverage" : ""}...</p>
+              <h3 className="text-lg font-bold mb-2" style={{ color: "#1C3A48" }}>Analyzing Your Profile</h3>
+              <p className="text-sm" style={{ color: "#7A9BA6" }}>Our AI is comparing plans based on your doctors, prescriptions{hasMA ? ", and current coverage" : ""}...</p>
             </div>
           )}
         </div>
         {/* Footer Buttons */}
         {step !== "aiLoading" && step !== "maQuestion" && (
-          <div className="px-6 py-4 flex items-center gap-3" style={{ backgroundColor: "#F8FAFC", borderTop: "1px solid #E8F0FE" }}>
-            <button onClick={handleBack} className="flex-1 py-2.5 text-sm font-semibold rounded-xl border-2 flex items-center justify-center gap-1" style={{ borderColor: "#E5E7EB", color: "#555" }}>
+          <div className="px-6 py-4 flex items-center gap-3" style={{ backgroundColor: "#FAF9F5", borderTop: "1px solid #E8F2F5" }}>
+            <button onClick={handleBack} className="flex-1 py-2.5 text-sm font-semibold rounded-lg border-2 flex items-center justify-center gap-1" style={{ borderColor: "#E2EAED", color: "#3E5560" }}>
               <ChevronLeft size={15} />Back
             </button>
             {step === "pverifyLookup" && (
-              <button onClick={handleVerify} disabled={isPending} className="flex-1 py-2.5 text-sm font-bold rounded-xl flex items-center justify-center gap-2 text-white" style={{ backgroundColor: isPending ? "#9CA3AF" : "#C41E3A" }}>
+              <button onClick={handleVerify} disabled={isPending} className="flex-1 py-2.5 text-sm font-bold rounded-lg flex items-center justify-center gap-2 text-white" style={{ backgroundColor: isPending ? "#9CA3AF" : "#1C3A48" }}>
                 {isPending ? <><Loader2 size={15} className="animate-spin" />Verifying...</> : <>Verify & Continue<ChevronRight size={15} /></>}
               </button>
             )}
             {step === "planFound" && (
-              <button onClick={() => setStep("doctorsDrugs")} className="flex-1 py-2.5 text-sm font-bold rounded-xl flex items-center justify-center gap-2 text-white" style={{ backgroundColor: "#C41E3A" }}>
+              <button onClick={() => setStep("doctorsDrugs")} className="flex-1 py-2.5 text-sm font-bold rounded-lg flex items-center justify-center gap-2 text-white" style={{ backgroundColor: "#1C3A48" }}>
                 Next: Doctors & Drugs<ChevronRight size={15} />
               </button>
             )}
             {step === "doctorsDrugs" && (
-              <button onClick={handleFinish} className="flex-1 py-2.5 text-sm font-bold rounded-xl flex items-center justify-center gap-2 text-white" style={{ backgroundColor: "#C41E3A" }}>
+              <button onClick={handleFinish} className="flex-1 py-2.5 text-sm font-bold rounded-lg flex items-center justify-center gap-2 text-white" style={{ backgroundColor: "#1C3A48" }}>
                 <Sparkles size={15} />Find My Best Plan
               </button>
             )}
@@ -470,8 +502,8 @@ export default function GuidedWorkflowModal({ zip, onSkip, onComplete }: Props) 
         )}
         {/* Skip link for maQuestion */}
         {step === "maQuestion" && (
-          <div className="px-6 py-3 text-center" style={{ backgroundColor: "#F8FAFC", borderTop: "1px solid #E8F0FE" }}>
-            <button onClick={onSkip} className="text-xs font-medium text-gray-400 hover:text-gray-600">Skip — Show All Plans Without Personalization</button>
+          <div className="px-6 py-3 text-center" style={{ backgroundColor: "#FAF9F5", borderTop: "1px solid #E8F2F5" }}>
+            <button onClick={onSkip} className="text-xs font-medium hover:text-[#3E5560] transition-colors" style={{ color: "#7A9BA6" }}>Skip — Show All Plans Without Personalization</button>
           </div>
         )}
       </div>

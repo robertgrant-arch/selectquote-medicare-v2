@@ -19,7 +19,7 @@ function extractDrugs(text: string): ParsedEntry[] {
       const dm = DOSAGE_RE.exec(text.slice(lower.indexOf(clean)));
       res.push({ id:nextId(), kind:'drug', rawText:clean, parsedName:clean.charAt(0).toUpperCase()+clean.slice(1), parsedDetail:dm?dm[1]:'', confidence:'high' });
     } else if (clean.length >= 6) {
-      const m = [...KNOWN_DRUGS].find(d => d.startsWith(clean.slice(0,6)));
+      const m = Array.from(KNOWN_DRUGS).find(d => d.startsWith(clean.slice(0,6)));
       if (m && !seen.has(m)) { seen.add(m); const dm = DOSAGE_RE.exec(text.slice(lower.indexOf(clean))); res.push({ id:nextId(), kind:'drug', rawText:clean, parsedName:m.charAt(0).toUpperCase()+m.slice(1), parsedDetail:dm?dm[1]:'', confidence:'medium' }); }
     }
   }

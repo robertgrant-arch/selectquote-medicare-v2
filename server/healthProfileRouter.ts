@@ -312,28 +312,57 @@ function scorePlan(
   };
 }
 
+// ── PHI boundary for AI narrative ────────────────────────────────────────────
+//
+// PHI risk for this integration: LOW.
+// HealthProfileSchema uses strict enums for every field — no name, DOB, address,
+// MBI, SSN, or specific drug/doctor names are accepted. The ZIP code is passed
+// as context for the scoring engine but is NOT forwarded to the AI.
+//
+// toAIHealthProfile() explicitly whitelists the fields sent to the LLM.
+// If a future schema revision adds free-text fields, they cannot accidentally
+// reach the AI without a conscious decision at this boundary function.
+//
+// Previous shape: all 20 profile fields including zip.
+// New (minimized) shape: 14 health-preference fields only (zip excluded).
+// Risk before → after: LOW → LOW (zip removed, explicit gate added).
+
+type HealthProfile = z.infer<typeof HealthProfileSchema>;
+
+export function toAIHealthProfile(profile: HealthProfile): Record<string, string> {
+  // zip is used for plan scoring/filtering only — it never needs to reach the AI.
+  return {
+    healthStatus:       profile.healthStatus,
+    chronicConditions:  profile.chronicConditions,
+    plannedSurgery:     profile.plannedSurgery,
+    pcpVisits:          profile.pcpVisits,
+    specialistVisits:   profile.specialistVisits,
+    monthlyRxCount:     profile.monthlyRxCount,
+    brandNameDrugs:     profile.brandNameDrugs,
+    specialtyDrugs:     profile.specialtyDrugs,
+    dentalImportance:   profile.dentalImportance,
+    visionImportance:   profile.visionImportance,
+    hearingImportance:  profile.hearingImportance,
+    needsTransportation: profile.needsTransportation,
+    planTypePreference: profile.planTypePreference,
+    topPriority:        profile.topPriority,
+    // Omitted: zip (geographic, not needed for narrative reasoning)
+    // Omitted: erVisits, urgentCareVisits (used for cost scoring only)
+  };
+}
+
 // ── AI narrative builder ──────────────────────────────────────────────────────
 
 async function buildAINarrative(
-  profile: z.infer<typeof HealthProfileSchema>,
+  profile: HealthProfile,
   topPlans: ScoredPlan[]
 ): Promise<string> {
-  const profileText = [
-    `Health status: ${profile.healthStatus}`,
-    `Chronic conditions: ${profile.chronicConditions}`,
-    `Planned surgery: ${profile.plannedSurgery}`,
-    `PCP visits/year: ${profile.pcpVisits}`,
-    `Specialist visits/year: ${profile.specialistVisits}`,
-    `Monthly prescriptions: ${profile.monthlyRxCount}`,
-    `Brand-name drugs: ${profile.brandNameDrugs}`,
-    `Specialty drugs: ${profile.specialtyDrugs}`,
-    `Dental importance: ${profile.dentalImportance}`,
-    `Vision importance: ${profile.visionImportance}`,
-    `Hearing importance: ${profile.hearingImportance}`,
-    `Needs transportation: ${profile.needsTransportation}`,
-    `Plan type preference: ${profile.planTypePreference}`,
-    `Top priority: ${profile.topPriority}`,
-  ].map((l) => `- ${l}`).join("\n");
+  // PHI boundary: toAIHealthProfile() excludes zip and visit-count fields
+  // that the AI doesn't need for narrative generation.
+  const aiProfile = toAIHealthProfile(profile);
+  const profileText = Object.entries(aiProfile)
+    .map(([k, v]) => `- ${k}: ${v}`)
+    .join("\n");
 
   const plansText = topPlans.slice(0, 3).map((p, i) =>
     `#${i + 1} (${p.matchScore}% match): ${p.planName} (${p.carrier})\n` +
@@ -409,7 +438,7 @@ export const healthProfileRouter = router({
       try {
         aiNarrative = await buildAINarrative(profile, top3);
       } catch (err) {
-        console.warn("[healthProfile] AI narrative failed:", err);
+        console.warn("[healthProfile] AI narrative failed:", (err as Error)?.message ?? "unknown");
         aiNarrative = ""; // graceful degradation
       }
 

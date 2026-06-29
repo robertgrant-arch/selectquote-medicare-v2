@@ -48,9 +48,9 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
   // Auto-start when modal opens with valid plans
   useEffect(() => {
     if (open && !blocked && phase === 'idle') {
-      // Check localStorage cache
+      // Check sessionStorage cache (tab-scoped; cleared on close)
       try {
-        const cached = localStorage.getItem(`ai-compare-${cacheKey}`);
+        const cached = sessionStorage.getItem(`ai-compare-${cacheKey}`);
         if (cached) { setText(cached); setPhase('done'); return; }
       } catch {}
       startStream();
@@ -69,14 +69,14 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
       onToken: (t) => setText(prev => prev + t),
       onDone: (full) => {
         setPhase('done');
-        try { localStorage.setItem(`ai-compare-${cacheKey}`, full); } catch {}
+        try { sessionStorage.setItem(`ai-compare-${cacheKey}`, full); } catch {}
       },
       onError: (msg) => { setPhase('error'); setErrorMsg(msg); },
     }, abortRef.current.signal);
   }, [plans, blocked, cacheKey]);
 
   const handleRetry = () => {
-    try { localStorage.removeItem(`ai-compare-${cacheKey}`); } catch {}
+    try { sessionStorage.removeItem(`ai-compare-${cacheKey}`); } catch {}
     setPhase('idle');
     startStream();
   };
@@ -92,7 +92,7 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
 
   return (
     <div
-      style={{ position:'fixed', inset:0, zIndex:9991, display:'flex', alignItems:'flex-end', justifyContent:'center', backgroundColor:'rgba(0,0,0,0.55)', backdropFilter:'blur(4px)' }}
+      style={{ position:'fixed', inset:0, zIndex:9991, display:'flex', alignItems:'flex-end', justifyContent:'center', backgroundColor:'rgba(11,27,36,0.5)', backdropFilter:'blur(3px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
@@ -100,10 +100,10 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
         aria-modal="true"
         aria-label={`AI plan comparison: ${planHeaders.join(' vs ')}`}
         data-testid="ai-compare-modal"
-        style={{ width:'100%', maxWidth:'620px', maxHeight:'90vh', backgroundColor:'#fff', borderRadius:'16px 16px 0 0', display:'flex', flexDirection:'column', boxShadow:'0 -8px 40px rgba(0,0,0,0.18)', overflowY:'auto' }}
+        style={{ width:'100%', maxWidth:'620px', maxHeight:'90vh', backgroundColor:'#fff', borderRadius:'12px 12px 0 0', display:'flex', flexDirection:'column', boxShadow:'0 -4px 32px rgba(11,27,36,0.14)', overflowY:'auto' }}
       >
         {/* Header */}
-        <div style={{ position:'sticky', top:0, zIndex:10, flexShrink:0, background:'linear-gradient(135deg, #1B365D 0%, #243E6B 100%)', padding:'14px 16px' }}>
+        <div style={{ position:'sticky', top:0, zIndex:10, flexShrink:0, backgroundColor:'#1C3A48', padding:'14px 16px' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'6px' }}>
             <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
               <Sparkles size={15} style={{ color:'#93C5FD' }} aria-hidden="true" />
@@ -135,12 +135,12 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
 
           {/* Loading / streaming */}
           {(isLoading || isStreaming) && (
-            <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px 0 14px', color:'#1B365D' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px 0 14px', color:'#1C3A48' }}>
               <Loader2 size={16} style={{ animation:'spin 1s linear infinite', flexShrink:0 }} aria-hidden="true" />
               <span style={{ fontSize:'12px', fontWeight:600 }}>
                 {isLoading ? 'Connecting to AI…' : 'Analyzing plans…'}
               </span>
-              <span style={{ fontSize:'10px', color:'#9CA3AF', marginLeft:'auto' }}>30s max</span>
+              <span style={{ fontSize:'10px', color:'#7A9BA6', marginLeft:'auto' }}>30s max</span>
             </div>
           )}
 
@@ -184,7 +184,7 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
                     </button>
                     {isOpen && (
                       <div id={`section-${sec.key.replace(/\s/g,'-')}`} style={{ padding:'0 14px 12px' }}>
-                        <p style={{ fontSize:'12px', color:'#374151', margin:0, lineHeight:1.65, whiteSpace:'pre-wrap' }}>{content}</p>
+                        <p style={{ fontSize:'12px', color:'#3E5560', margin:0, lineHeight:1.65, whiteSpace:'pre-wrap' }}>{content}</p>
                       </div>
                     )}
                   </div>
@@ -192,7 +192,7 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
               })}
 
               {isDone && (
-                <p style={{ fontSize:'9px', color:'#9CA3AF', textAlign:'center', marginTop:'8px', lineHeight:1.4 }}>
+                <p style={{ fontSize:'9px', color:'#7A9BA6', textAlign:'center', marginTop:'8px', lineHeight:1.4 }}>
                   AI analysis is for comparison purposes only. Verify all plan details with the carrier before enrolling.
                   Not affiliated with Medicare.gov or CMS.
                 </p>
@@ -203,8 +203,8 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
 
         {/* Retry button when done */}
         {isDone && (
-          <div style={{ position:'sticky', bottom:0, backgroundColor:'#fff', borderTop:'1px solid #F1F5F9', padding:'10px 16px', display:'flex', gap:'8px' }}>
-            <button onClick={handleRetry} style={{ display:'flex', alignItems:'center', gap:'5px', padding:'8px 14px', borderRadius:'8px', backgroundColor:'#F1F5F9', border:'1px solid #E2E8F0', cursor:'pointer', fontSize:'11px', fontWeight:600, color:'#374151' }}>
+          <div style={{ position:'sticky', bottom:0, backgroundColor:'#fff', borderTop:'1px solid #E2EAED', padding:'10px 16px', display:'flex', gap:'8px' }}>
+            <button onClick={handleRetry} style={{ display:'flex', alignItems:'center', gap:'5px', padding:'8px 14px', borderRadius:'8px', backgroundColor:'#FAF9F5', border:'1px solid #E2EAED', cursor:'pointer', fontSize:'11px', fontWeight:600, color:'#3E5560' }}>
               <RotateCcw size={12} aria-hidden="true" /> Refresh
             </button>
           </div>

@@ -207,14 +207,14 @@ export default function MASNPlans() {
         <Link
           href="/plans?zip=64106"
           className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white"
-          style={{ backgroundColor: "#1B365D" }}
+          style={{ backgroundColor: "#1C3A48" }}
         >
           Browse SNP Plans in Your Area <ArrowRight size={14} />
         </Link>
         <Link
           href="/dual-eligible"
           className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border"
-          style={{ color: "#1B365D", borderColor: "#1B365D" }}
+          style={{ color: "#1C3A48", borderColor: "#1C3A48" }}
         >
           Learn About Dual Eligible Benefits
         </Link>

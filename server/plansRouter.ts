@@ -16,7 +16,7 @@ import { type Express } from "express";
 import { eq } from "drizzle-orm";
 import { getDb } from "./db";
 import { carrierOverrides, planOverrides } from "../drizzle/schema";
-import { enrichPlansWithDrugCosts, type DrugInput } from "./formularyCalculator";
+import { enrichPlansWithDrugCosts, type DrugInput } from "../shared/formulary/calculator";
 
 // ── CDN URLs for pre-processed per-state plan JSON files ─────────────────────
 const CDN_BASE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663319810046/5TY7JcF275WMujMHZWWJT8";
@@ -397,12 +397,11 @@ export function registerPlansRoute(app: Express): void {
             } else {
               drugs = [];
             }
-                        console.log('[Plans] drugsParam type:', typeof drugsParam, 'isArray:', Array.isArray(drugsParam), 'parsed drugs:', JSON.stringify(drugs));
             if (Array.isArray(drugs) && drugs.length > 0) {
               enrichedPlans = enrichPlansWithDrugCosts(plans, drugs);
             }
           } catch (parseErr) {
-            console.warn("[Plans] Failed to parse drugs param:", parseErr);
+            console.warn("[Plans] Failed to parse drugs param (count redacted)");
           }
         }
 
