@@ -8,10 +8,10 @@ const ACCENT = "#1C3A48";
 // ── About Us ─────────────────────────────────────────────────────────────────
 export function AboutUs() {
   return (
-    <InfoPage section="Company" sectionHref="/#" title="About MedicarePlan Finder" accentColor={ACCENT}
-      subtitle="Helping Americans navigate Medicare since 2010. We're an independent, licensed insurance agency committed to unbiased plan comparison.">
+    <InfoPage section="Company" sectionHref="/#" title="About SelectQuote Medicare" accentColor={ACCENT}
+      subtitle="Helping Americans navigate Medicare since 2010. SelectQuote is an independent, licensed insurance agency committed to unbiased plan comparison.">
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Our Mission
       </h2>
       <p className="text-gray-600 leading-relaxed mb-4">
@@ -20,13 +20,13 @@ export function AboutUs() {
         can feel overwhelming. Our mission is to make that decision simple, transparent, and free.
       </p>
       <p className="text-gray-600 leading-relaxed mb-4">
-        MedicarePlan Finder is an independent insurance agency licensed in all 50 states. We
+        SelectQuote is an independent insurance agency licensed in all 50 states. We
         represent all major Medicare carriers — UnitedHealthcare, Humana, Aetna, Cigna, WellCare,
         Blue Cross Blue Shield, and more — so we can show you every plan available in your area
         without bias toward any single carrier.
       </p>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Why We're Different
       </h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
@@ -46,7 +46,7 @@ export function AboutUs() {
         ))}
       </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Our Numbers
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
@@ -57,17 +57,17 @@ export function AboutUs() {
           { value: "500K+", label: "Beneficiaries Helped" },
         ].map((stat) => (
           <div key={stat.label} className="text-center rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
-            <div className="text-2xl font-bold mb-1" style={{ color: ACCENT, fontFamily: "'Inter', serif" }}>{stat.value}</div>
+            <div className="text-2xl font-bold mb-1" style={{ color: ACCENT, fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>{stat.value}</div>
             <div className="text-xs text-gray-600 font-medium">{stat.label}</div>
           </div>
         ))}
       </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Disclaimer
       </h2>
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs text-gray-500 leading-relaxed mb-6">
-        MedicarePlan Finder is not affiliated with or endorsed by the U.S. government or the
+        SelectQuote is not affiliated with or endorsed by the U.S. government or the
         federal Medicare program. We are a licensed insurance agency. Plan data shown on this
         website is for illustrative purposes. Actual plan availability, benefits, and costs vary
         by location and are subject to change. Always verify plan details directly with the
@@ -92,7 +92,7 @@ export function LicensedAgents() {
     <InfoPage section="Company" sectionHref="/#" title="Licensed Agents" accentColor={ACCENT}
       subtitle="Our licensed insurance agents are Medicare specialists — certified annually by CMS and trained to help you find the right plan for your health needs and budget.">
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Why Work with a Licensed Medicare Agent?
       </h2>
       <p className="text-gray-600 leading-relaxed mb-4">
@@ -102,7 +102,7 @@ export function LicensedAgents() {
         all at no cost to you. Agents are paid by insurance carriers, not by beneficiaries.
       </p>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         What Our Agents Are Certified to Do
       </h2>
       <ul className="space-y-2 text-sm text-gray-600 mb-6">
@@ -123,7 +123,7 @@ export function LicensedAgents() {
         ))}
       </ul>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Agent Credentials & Compliance
       </h2>
       <div className="space-y-3 mb-6">
@@ -140,7 +140,7 @@ export function LicensedAgents() {
         ))}
       </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Speak with an Agent Today
       </h2>
       <div className="rounded-xl p-5 mb-6 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
@@ -149,7 +149,7 @@ export function LicensedAgents() {
             <Phone size={18} style={{ color: ACCENT }} className="shrink-0 mt-0.5" />
             <div>
               <div className="font-bold text-gray-800 text-sm">Call Us</div>
-              <a href="tel:1-800-555-0100" className="text-sm font-semibold" style={{ color: ACCENT }}>1-800-555-0100</a>
+              <a href="tel:1-800-777-8002" className="text-sm font-semibold" style={{ color: ACCENT }}>1-800-777-8002</a>
               <div className="text-xs text-gray-500">Mon–Fri 8am–8pm, Sat 9am–5pm ET</div>
             </div>
           </div>
@@ -157,7 +157,7 @@ export function LicensedAgents() {
             <Mail size={18} style={{ color: ACCENT }} className="shrink-0 mt-0.5" />
             <div>
               <div className="font-bold text-gray-800 text-sm">Email Us</div>
-              <a href="mailto:agents@medicareplans.example.com" className="text-sm font-semibold" style={{ color: ACCENT }}>agents@medicareplans.example.com</a>
+              <a href="mailto:medicare@selectquote.com" className="text-sm font-semibold" style={{ color: ACCENT }}>medicare@selectquote.com</a>
               <div className="text-xs text-gray-500">Response within 1 business day</div>
             </div>
           </div>
@@ -184,9 +184,9 @@ export function ContactUs() {
 
       <div className="grid sm:grid-cols-3 gap-4 mb-8">
         {[
-          { icon: Phone, title: "Call Us", primary: "1-800-555-0100", secondary: "Mon–Fri 8am–8pm ET\nSat 9am–5pm ET\nTTY: 711", href: "tel:1-800-555-0100" },
-          { icon: Mail, title: "Email Us", primary: "info@medicareplans.example.com", secondary: "Response within 1 business day\nFor non-urgent questions", href: "mailto:info@medicareplans.example.com" },
-          { icon: MapPin, title: "Main Office", primary: "1234 Main Street, Suite 500", secondary: "Kansas City, MO 64106\nLicensed in all 50 states", href: "#" },
+          { icon: Phone, title: "Call Us", primary: "1-800-777-8002", secondary: "Mon–Fri 8am–8pm ET\nSat 9am–5pm ET\nTTY: 711", href: "tel:1-800-777-8002" },
+          { icon: Mail, title: "Email Us", primary: "medicare@selectquote.com", secondary: "Response within 1 business day\nFor non-urgent questions", href: "mailto:medicare@selectquote.com" },
+          { icon: MapPin, title: "Main Office", primary: "11919 Roe Ave.", secondary: "Overland Park, KS 66209\nLicensed in all 50 states", href: "#" },
         ].map((item) => (
           <div key={item.title} className="bg-gray-50 rounded-xl p-5 border border-gray-100 text-center">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: "#EEF5F7" }}>
@@ -199,7 +199,7 @@ export function ContactUs() {
         ))}
       </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         What to Expect When You Call
       </h2>
       <ol className="space-y-3 mb-6">
@@ -228,8 +228,8 @@ export function ContactUs() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <a href="tel:1-800-555-0100" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white" style={{ backgroundColor: ACCENT }}>
-          <Phone size={14} /> Call 1-800-555-0100
+        <a href="tel:1-800-777-8002" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white" style={{ backgroundColor: ACCENT }}>
+          <Phone size={14} /> Call 1-800-777-8002
         </a>
         <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: ACCENT, borderColor: ACCENT }}>
           Compare Plans Online
@@ -243,14 +243,14 @@ export function ContactUs() {
 export function PrivacyPolicy() {
   return (
     <InfoPage section="Company" sectionHref="/#" title="Privacy Policy" accentColor={ACCENT}
-      subtitle="Last updated: January 1, 2025. This policy explains how MedicarePlan Finder collects, uses, and protects your personal information.">
+      subtitle="Last updated: January 1, 2025. This policy explains how SelectQuote Medicare collects, uses, and protects your personal information.">
 
       <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED", color: "#3E5560" }}>
         <strong>Disclaimer:</strong> This is a demonstration application. This privacy policy is
         provided for illustrative purposes only and does not constitute a legally binding document.
       </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Information We Collect
       </h2>
       <div className="space-y-3 mb-6">
@@ -273,7 +273,7 @@ export function PrivacyPolicy() {
         ))}
       </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         How We Use Your Information
       </h2>
       <ul className="space-y-2 text-sm text-gray-600 mb-6">
@@ -293,7 +293,7 @@ export function PrivacyPolicy() {
         ))}
       </ul>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Information Sharing
       </h2>
       <p className="text-gray-600 text-sm leading-relaxed mb-3">
@@ -313,7 +313,7 @@ export function PrivacyPolicy() {
         ))}
       </ul>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Your Rights
       </h2>
       <div className="space-y-2 mb-6">
@@ -330,15 +330,15 @@ export function PrivacyPolicy() {
         ))}
       </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Contact for Privacy Matters
       </h2>
       <p className="text-gray-600 text-sm leading-relaxed mb-6">
         For privacy-related questions or requests, contact our Privacy Officer at{" "}
-        <a href="mailto:privacy@medicareplans.example.com" style={{ color: ACCENT }} className="font-semibold">
-          privacy@medicareplans.example.com
+        <a href="mailto:privacy@selectquote.com" style={{ color: ACCENT }} className="font-semibold">
+          privacy@selectquote.com
         </a>{" "}
-        or write to: Privacy Officer, MedicarePlan Finder, 1234 Main Street Suite 500, Kansas City, MO 64106.
+        or write to: Privacy Officer, SelectQuote Insurance Services, Inc., 11919 Roe Ave., Overland Park, KS 66209.
       </p>
     </InfoPage>
   );
@@ -350,7 +350,7 @@ export function DualEligible() {
     <InfoPage section="Plans" sectionHref="/#" title="Dual Eligible Plans" accentColor={ACCENT}
       subtitle="If you qualify for both Medicare and Medicaid, you may be eligible for Dual Eligible Special Needs Plans (D-SNPs) that coordinate both programs into a single, simplified benefit.">
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         What Does "Dual Eligible" Mean?
       </h2>
       <p className="text-gray-600 leading-relaxed mb-4">
@@ -366,7 +366,7 @@ export function DualEligible() {
         to coordinate Medicare and Medicaid benefits, reduce paperwork, and lower out-of-pocket costs.
       </p>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Types of Dual Eligibility
       </h2>
       <div className="overflow-x-auto mb-6">
@@ -396,7 +396,7 @@ export function DualEligible() {
         </table>
       </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         Dual Eligible Special Needs Plans (D-SNPs)
       </h2>
       <p className="text-gray-600 text-sm leading-relaxed mb-3">
@@ -447,7 +447,7 @@ export function DualEligible() {
         </div>
       </div>
 
-      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Inter', serif" }}>
+      <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
         How to Find a D-SNP in Your Area
       </h2>
       <ol className="space-y-3 mb-6">

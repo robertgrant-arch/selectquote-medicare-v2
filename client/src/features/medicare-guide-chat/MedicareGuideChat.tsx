@@ -68,7 +68,7 @@ export function MedicareGuideChat() {
 
       <p className="border-t border-border px-4 py-2 text-center text-[11px] text-muted-foreground">
         AI assistant · Not a licensed agent ·{' '}
-        <a href="tel:1-800-555-0100" className="text-primary hover:underline">1-800-555-0100</a>
+        <a href="tel:1-800-777-8002" className="text-primary hover:underline">1-800-777-8002</a>
       </p>
     </div>
   );

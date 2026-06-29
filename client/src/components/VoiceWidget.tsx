@@ -293,7 +293,7 @@ export default function VoiceWidget() {
             background: '#fff',
             borderTop: '1px solid #f1f5f9',
           }}>
-            Voice AI assistant · Not a licensed agent · <a href="tel:1-800-555-0100" style={{ color: '#7c3aed' }}>1-800-555-0100</a>
+            SelectQuote AI assistant · Not a licensed agent · <a href="tel:1-800-777-8002" style={{ color: '#7c3aed' }}>1-800-777-8002</a>
           </div>
         </div>
       )}

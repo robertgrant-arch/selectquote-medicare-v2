@@ -206,7 +206,7 @@ export default function InfoPage({
           We are not affiliated with or endorsed by the U.S. government or the federal Medicare
           program. This is a demonstration application for educational purposes only.
         </p>
-        <p style={{ marginTop: "4px" }}>© 2026 MedicarePlan Finder. All rights reserved.</p>
+        <p style={{ marginTop: "4px" }}>© 2026 SelectQuote Insurance Services, Inc. All rights reserved.</p>
       </footer>
 
     </div>

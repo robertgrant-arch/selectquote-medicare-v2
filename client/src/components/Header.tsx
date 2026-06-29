@@ -403,7 +403,7 @@ export default function Header() {
                     color:         T.ink,
                     lineHeight:    1,
                   }}>
-                    MedicarePlan
+                    SelectQuote
                   </span>
                   <span style={{
                     display:       "block",
@@ -416,7 +416,7 @@ export default function Header() {
                     marginTop:     "6px",
                     lineHeight:    1,
                   }}>
-                    Finder
+                    Medicare
                   </span>
                 </span>
               </Link>
@@ -489,7 +489,7 @@ export default function Header() {
 
               {/* Primary CTA — matches hero btn-primary exactly */}
               <a
-                href="tel:1-800-555-0100"
+                href="tel:1-800-777-8002"
                 className="hdr-cta hdr-desktop-only"
                 style={{
                   display:         "inline-flex",
@@ -570,7 +570,7 @@ export default function Header() {
               <div style={{ paddingTop: "28px", display: "flex", flexDirection: "column", gap: "8px" }}>
                 {/* CTA — full width, primary */}
                 <a
-                  href="tel:1-800-555-0100"
+                  href="tel:1-800-777-8002"
                   className="hdr-mob-cta"
                   style={{
                     display:         "flex",

@@ -845,11 +845,11 @@ export default function Home() {
                 <span>
                   Or call{" "}
                   <a
-                    href="tel:1-800-555-0100"
+                    href="tel:1-800-777-8002"
                     className="phone-link"
                     style={{ color: "rgba(235,245,248,0.5)", fontWeight: 500, textDecoration: "none", transition: "color 0.12s" }}
                   >
-                    1-800-555-0100
+                    1-800-777-8002
                   </a>
                   {" "}— a licensed advisor, no script, no pressure
                 </span>
@@ -874,14 +874,14 @@ export default function Home() {
                   fontFamily: F.serif, fontSize: "20px", fontWeight: 400,
                   color: "#fff", letterSpacing: "-0.01em", lineHeight: 1,
                 }}>
-                  MedicarePlan
+                  SelectQuote
                 </div>
                 <div style={{
                   fontFamily: F.sans, fontSize: "10px", fontWeight: 600,
                   color: "rgba(255,255,255,0.22)", letterSpacing: "0.1em",
                   textTransform: "uppercase", marginTop: "5px",
                 }}>
-                  Finder
+                  Medicare
                 </div>
               </div>
               <p style={{
@@ -951,7 +951,7 @@ export default function Home() {
             <p style={{ marginBottom: "4px" }}>
               Not affiliated with or endorsed by the U.S. government or the federal Medicare program. This is a demonstration application. Plan data sourced from CMS public datasets.
             </p>
-            <p>© 2026 MedicarePlan Finder. All rights reserved.</p>
+            <p>© 2026 SelectQuote Insurance Services, Inc. All rights reserved.</p>
           </div>
         </div>
       </footer>

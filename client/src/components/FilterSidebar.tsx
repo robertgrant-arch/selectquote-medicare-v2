@@ -500,13 +500,13 @@ export default function FilterSidebar({
           Speak with a licensed Medicare agent — free, no obligation.
         </div>
         <a
-          href="tel:1-800-555-0100"
+          href="tel:1-800-777-8002"
           className="block w-full py-2 rounded-lg text-xs font-semibold text-white text-center transition-all"
           style={{ backgroundColor: "#1C3A48", fontFamily: "'DM Sans', sans-serif", letterSpacing: "0.005em" }}
           onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#112333"; }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#1C3A48"; }}
         >
-          Call 1-800-555-0100
+          Call 1-800-777-8002
         </a>
       </div>
     </div>

@@ -104,7 +104,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             result: JSON.stringify({
               transferred: true,
               message: 'Transferring to a licensed Medicare advisor now.',
-              phone: '1-800-555-0100',
+              phone: '1-800-777-8002',
             }),
           }],
         });

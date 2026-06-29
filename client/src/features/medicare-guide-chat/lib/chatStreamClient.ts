@@ -2,7 +2,7 @@ import { CHAT_IDLE_TIMEOUT_MS } from './chatConstants';
 import type { ConversationPhase, UserProfile } from '../types/chat';
 
 const ERROR_GENERIC =
-  "I couldn't reach the assistant just now. Please try again, or call 1-800-555-0199 to speak with a licensed advisor.";
+  "I couldn't reach the assistant just now. Please try again, or call 1-800-777-8002 to speak with a licensed SelectQuote advisor.";
 const ERROR_OFFLINE = 'You appear to be offline. Check your connection and try again.';
 const ERROR_TIMEOUT = 'That response took too long to come back. Please try again.';
 

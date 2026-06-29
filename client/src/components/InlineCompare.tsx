@@ -898,7 +898,7 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
                 Save Comparison
               </button>
               <a
-                href="tel:1-800-555-0100"
+                href="tel:1-800-777-8002"
                 className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold text-white no-underline transition-all"
                 style={{ backgroundColor: "#1C3A48" }}
                 onMouseEnter={(e) => {

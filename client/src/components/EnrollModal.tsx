@@ -128,7 +128,7 @@ export default function EnrollModal({ open, onClose, plan }: EnrollModalProps) {
                 </div>
                 <div>
                   <div className="text-sm font-bold text-[#0B1B24]">Call to Enroll</div>
-                  <div className="text-xs text-[#7A9BA6]">Speak with a licensed agent: 1-800-555-0100</div>
+                  <div className="text-xs text-[#7A9BA6]">Speak with a licensed agent: 1-800-777-8002</div>
                 </div>
               </div>
               <span

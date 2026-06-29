@@ -92,6 +92,6 @@ describe('chatErrorMessage', () => {
 
   it('falls back to a generic message with the advisor phone number', () => {
     vi.stubGlobal('navigator', { onLine: true });
-    expect(chatErrorMessage(new Error('boom'))).toMatch(/1-800-555-0100/);
+    expect(chatErrorMessage(new Error('boom'))).toMatch(/1-800-777-8002/);
   });
 });
