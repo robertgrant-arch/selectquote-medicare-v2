@@ -24,10 +24,10 @@ CONVERSATION FLOW:
 1. Opening: If you don't have the ZIP yet, ask for it. Nothing else.
 2. Discovery: Once you have ZIP, ask in ONE message about their main doctor/clinic AND prescriptions AND monthly budget comfort.
 3. Recommend + Handoff (CRITICAL): Once you have ZIP plus any one of (doctor, prescription, or budget), do ALL of the following in ONE reply:
-   a. Give a 2-line plan match: "Based on what you've told me, [Plan Name] looks like your best fit — [key benefit], $X/mo premium."
+   a. Give a 2-line plan match starting with: "Based on what you've told me, [Plan Name] looks like your best fit — [key benefit], $X/mo premium."
    b. Add one sentence on coverage fit (doctor in network / drug covered / $0 premium).
-   c. End with a handoff line like: "Click below to compare all your options side by side and lock in your plan."
-   KEEP IT SHORT. The compare tool does the heavy lifting — your job is to give confidence, not enumerate every plan detail in chat.
+   c. End EXACTLY with this closing line (word for word): "Click below to compare all your options side by side and lock in your plan."
+   KEEP IT SHORT. Do not list multiple plans. Do not add more questions. The compare tool does the heavy lifting.
 4. Close: If the user wants to talk to someone instead, offer the licensed agent line at 1-800-555-0199.
 
 SAFETY:
@@ -148,6 +148,30 @@ function extractProfileData(userMsg: string): Record<string, string> {
 }
 
 const CTA_PHASES = new Set(['plan_search', 'comparison', 'deep_dive', 'enrollment']);
+
+// Detect when the bot's response itself contains a plan recommendation so the
+// CTA fires even if the user's trigger message had no qualifying keywords.
+function botIsRecommending(text: string): boolean {
+  const t = text.toLowerCase();
+  return (
+    t.includes('best fit') ||
+    t.includes("i'd recommend") ||
+    t.includes('i recommend') ||
+    t.includes('recommend the') ||
+    t.includes("here's your best") ||
+    t.includes('best plan for you') ||
+    t.includes('best match') ||
+    t.includes('perfect fit') ||
+    t.includes('strong match') ||
+    t.includes('top pick') ||
+    t.includes('fits your needs') ||
+    t.includes('based on what you') ||
+    t.includes('based on your zip') ||
+    t.includes('based on your information') ||
+    t.includes('click below') ||
+    t.includes('compare all your options')
+  );
+}
 
 function buildCta(
   phase: string,
@@ -303,7 +327,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Send phase / chips / profileUpdate / cta as a single meta event
     const nextPhase = determinePhase(message, phase);
     const profileUpdate = extractProfileData(message);
-    const cta = buildCta(nextPhase, profileUpdate, userProfile as Record<string, unknown> | undefined, cleanHistory.length);
+
+    // Primary trigger: phase + profile context from user's message
+    let cta = buildCta(nextPhase, profileUpdate, userProfile as Record<string, unknown> | undefined, cleanHistory.length);
+
+    // Fallback trigger: bot's own response text contains recommendation language.
+    // This fires even when the user's message had no qualifying keywords (e.g. "okay", "yes").
+    if (!cta && botIsRecommending(fullText)) {
+      const zip = profileUpdate.zipCode || (userProfile?.zipCode as string | undefined);
+      cta = { label: 'Compare Plans Near You', href: zip ? `/plans?zip=${zip}&from=chat` : '/plans?from=chat' };
+    }
+
     sendSSE(res, 'meta', {
       chips: extractChips(nextPhase),
       phase: nextPhase,
