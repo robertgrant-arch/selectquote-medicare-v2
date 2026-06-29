@@ -12,7 +12,18 @@ function toTitleCase(str: string): string {
     .replace(/\bThe\b/g, "the");
 }
 
+const ALLOWED_ORIGINS = [
+  'https://medicare-quote-app.vercel.app',
+  'http://localhost:5173',
+];
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const origin = req.headers.origin ?? '';
+  res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0]);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
   const zip = (
     typeof req.query.zip === "string" ? req.query.zip : ""
   ).trim();
