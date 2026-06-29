@@ -117,12 +117,19 @@ COMPLIANCE: "We are not affiliated with or endorsed by the U.S. government or th
 //   - Health preferences mentioned conversationally: user-volunteered context the
 //     AI legitimately needs for plan recommendations
 
-import {
-  sanitizeMessagesForAI,
-  PHONE_RE,
-  MAX_CHAT_CONTEXT_MESSAGES,
-  type ChatMessage,
-} from "../server/chatBoundary";
+// Inlined from server/chatBoundary — Vercel bundles each api/ function
+// in isolation so cross-directory server/ imports don't resolve at runtime.
+interface ChatMessage { role: string; content: string | unknown; }
+const PHONE_RE = /\b(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}\b/g;
+const MAX_CHAT_CONTEXT_MESSAGES = 20;
+function sanitizeMessagesForAI(messages: ChatMessage[]): ChatMessage[] {
+  return messages.slice(-MAX_CHAT_CONTEXT_MESSAGES).map((msg) => ({
+    ...msg,
+    content: typeof msg.content === 'string'
+      ? msg.content.replace(PHONE_RE, '[phone redacted]')
+      : msg.content,
+  }));
+}
 
 function sendSSE(res: VercelResponse, event: string, data: string) {
   res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
