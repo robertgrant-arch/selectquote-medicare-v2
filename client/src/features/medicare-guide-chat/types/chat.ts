@@ -7,6 +7,8 @@ export interface Message {
   error?: boolean;
   /** Phase-based quick-reply chips attached to an assistant message. */
   chips?: string[];
+  /** Handoff CTA shown after a plan recommendation. */
+  cta?: { label: string; href: string };
 }
 
 export type ConversationPhase =

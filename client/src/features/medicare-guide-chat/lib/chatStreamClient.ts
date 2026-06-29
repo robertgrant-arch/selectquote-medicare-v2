@@ -21,6 +21,7 @@ export interface ChatMeta {
   chips?: string[];
   phase?: ConversationPhase;
   profileUpdate?: Partial<UserProfile>;
+  cta?: { label: string; href: string };
 }
 
 export async function streamChat(

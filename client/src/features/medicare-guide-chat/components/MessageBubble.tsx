@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { Stethoscope, AlertCircle, RotateCw, ChevronRight } from 'lucide-react';
+import { Stethoscope, AlertCircle, RotateCw, ChevronRight, ArrowRight } from 'lucide-react';
+import { Link } from 'wouter';
 import { RichText } from '../lib/richText';
 
 /** Small assistant identity glyph, shown once per assistant turn-group. */
@@ -40,6 +41,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   error,
   streaming,
   chips,
+  cta,
   onRetry,
   onChipClick,
 }: {
@@ -47,6 +49,7 @@ export const AssistantMessage = memo(function AssistantMessage({
   error?: boolean;
   streaming?: boolean;
   chips?: string[];
+  cta?: { label: string; href: string };
   onRetry: () => void;
   onChipClick?: (chip: string) => void;
 }) {
@@ -95,6 +98,15 @@ export const AssistantMessage = memo(function AssistantMessage({
             </button>
           ))}
         </div>
+      )}
+      {!streaming && cta && (
+        <Link
+          href={cta.href}
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground no-underline transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {cta.label}
+          <ArrowRight className="size-3.5" />
+        </Link>
       )}
     </div>
   );

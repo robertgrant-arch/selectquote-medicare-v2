@@ -55,6 +55,7 @@ export function ChatConversation({
                       error={msg.error}
                       streaming={isLoading && index === lastIndex && msg.content !== ''}
                       chips={msg.chips}
+                      cta={msg.cta}
                       onRetry={onRetry}
                       onChipClick={onSendPrompt}
                     />

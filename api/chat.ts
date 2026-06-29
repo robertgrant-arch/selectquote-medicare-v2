@@ -34,7 +34,10 @@ SAFETY:
 - Never give medical advice.
 - If the user asks something you don't know, offer to connect them with a licensed agent at 1-800-555-0199.
 
-REMEMBER: You are selling. Be confident, concise, and always moving toward the next step.`;
+REMEMBER: You are selling. Be confident, concise, and always moving toward the next step.
+
+UI NOTE: When you recommend a plan or tell the user to compare plans, do NOT include a raw URL or link in your text. The app will automatically show a "Compare Plans Near You" button below your message. Simply say something like "Ready to see your options?" or "Here's the plan I'd recommend — click below to compare."`;
+
 
 const COVERAGE_FLOW_INSTRUCTIONS = `
 
@@ -129,6 +132,21 @@ function extractProfileData(userMsg: string): Record<string, string> {
   const zipMatch = userMsg.match(/\b\d{5}\b/);
   if (zipMatch) profile.zipCode = zipMatch[0];
   return profile;
+}
+
+const CTA_PHASES = new Set(['plan_search', 'comparison', 'deep_dive', 'enrollment']);
+
+function buildCta(
+  phase: string,
+  profileUpdate: Record<string, string>,
+  userProfile?: Record<string, unknown>,
+): { label: string; href: string } | undefined {
+  if (!CTA_PHASES.has(phase)) return undefined;
+  const zip = (profileUpdate.zipCode) || (userProfile?.zipCode as string | undefined);
+  return {
+    label: 'Compare Plans Near You',
+    href: zip ? `/plans?zip=${zip}` : '/plans',
+  };
 }
 
 // ── SSE helper ────────────────────────────────────────────────────────────────
@@ -253,13 +271,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // Send phase / chips / profileUpdate as a single meta event
+    // Send phase / chips / profileUpdate / cta as a single meta event
     const nextPhase = determinePhase(message, phase);
     const profileUpdate = extractProfileData(message);
+    const cta = buildCta(nextPhase, profileUpdate, userProfile as Record<string, unknown> | undefined);
     sendSSE(res, 'meta', {
       chips: extractChips(nextPhase),
       phase: nextPhase,
       ...(Object.keys(profileUpdate).length > 0 ? { profileUpdate } : {}),
+      ...(cta ? { cta } : {}),
     });
 
     sendSSE(res, 'done', {});

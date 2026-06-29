@@ -97,6 +97,7 @@ export function useChatSession() {
           role: 'assistant',
           content: actions.length > 0 ? cleanText : fullText,
           chips: meta.chips,
+          cta: meta.cta,
         };
         return updated;
       });
