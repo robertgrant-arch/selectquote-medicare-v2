@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { ChevronRight } from "lucide-react";
 import Header from "@/components/Header";
+import SiteFooter from "@/components/brand/SiteFooter";
 
 // ── Design tokens (mirrors Home.tsx) ─────────────────────────────────────────
 const T = {
@@ -190,24 +191,7 @@ export default function InfoPage({
         </div>
       </section>
 
-      {/* ── Footer ──────────────────────────────────────────────────────────── */}
-      <footer
-        aria-label="Site footer"
-        style={{
-          backgroundColor: T.ftr,
-          fontFamily: F.sans, fontSize: "12px",
-          color: "rgba(255,255,255,0.25)",
-          padding: "32px 40px",
-          textAlign: "center",
-          lineHeight: 1.72,
-        }}
-      >
-        <p>
-          We are not affiliated with or endorsed by the U.S. government or the federal Medicare
-          program. This is a demonstration application for educational purposes only.
-        </p>
-        <p style={{ marginTop: "4px" }}>© 2026 SelectQuote Insurance Services, Inc. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
 
     </div>
   );

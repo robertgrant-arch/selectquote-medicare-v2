@@ -18,6 +18,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Header from "@/components/Header";
+import SiteFooter from "@/components/brand/SiteFooter";
 
 const ACCENT = "#1C3A48";
 
@@ -655,17 +656,7 @@ export default function MedicareGuide() {
         </div>
       </div>
 
-      {/* Minimal footer */}
-      <footer
-        className="py-6 text-center text-xs"
-        style={{ backgroundColor: "#060E14", color: "rgba(255,255,255,0.25)", lineHeight: 1.72 }}
-      >
-        <p>
-          We are not affiliated with or endorsed by the U.S. government or the federal Medicare
-          program. This is a demonstration application for educational purposes only.
-        </p>
-        <p className="mt-1">© 2026 SelectQuote Insurance Services, Inc. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

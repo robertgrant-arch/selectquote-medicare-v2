@@ -1,7 +1,8 @@
 // Medicare Advantage Quote Engine — Header v10 (production)
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
+import Logo from "@/components/brand/Logo";
 
 const T = {
   ink:   "#0B1B24",
@@ -370,56 +371,7 @@ export default function Header() {
 
             {/* Left: brand lockup — flex:1 for geometric centering */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <Link
-                href="/"
-                onClick={closeDropdown}
-                style={{
-                  textDecoration: "none",
-                  display:        "inline-flex",
-                  alignItems:     "center",
-                  gap:            "11px",
-                }}
-              >
-                {/* Teal vertical bar — brand mark */}
-                <span
-                  aria-hidden="true"
-                  style={{
-                    display:         "block",
-                    width:           "3px",
-                    height:          "26px",
-                    borderRadius:    "2px",
-                    backgroundColor: T.teal,
-                    flexShrink:      0,
-                  }}
-                />
-                {/* Two-line text lockup */}
-                <span style={{ display: "block", lineHeight: 1 }}>
-                  <span style={{
-                    display:       "block",
-                    fontFamily:    F.serif,
-                    fontSize:      "19px",
-                    fontWeight:    500,
-                    letterSpacing: "-0.02em",
-                    color:         T.ink,
-                    lineHeight:    1,
-                  }}>
-                    SelectQuote
-                  </span>
-                  <span style={{
-                    display:       "block",
-                    fontFamily:    F.sans,
-                    fontSize:      "8.5px",
-                    fontWeight:    500,
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color:         T.sub,
-                    marginTop:     "6px",
-                    lineHeight:    1,
-                  }}>
-                    Medicare
-                  </span>
-                </span>
-              </Link>
+              <Logo variant="header" onClick={closeDropdown} />
             </div>
 
             {/* Center: nav — auto width, always centered between the two flex:1 zones */}

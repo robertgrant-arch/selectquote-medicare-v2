@@ -19,6 +19,7 @@ import GuidedWorkflowModal, { type MBIVerifyResult } from "@/components/GuidedWo
 import { useZipValidation } from "@/features/zip-validation/lib/useZipValidation";
 import CountySelector from "@/features/zip-validation/components/CountySelector";
 import Header from "@/components/Header";
+import Logo from "@/components/brand/Logo";
 import { useQuoteHandoff } from "@/contexts/QuoteHandoffContext";
 import { trpc } from "@/lib/trpc";
 import type { Doctor } from "@/lib/types";
@@ -870,19 +871,7 @@ export default function Home() {
             {/* Brand */}
             <div>
               <div style={{ marginBottom: "24px" }}>
-                <div style={{
-                  fontFamily: F.serif, fontSize: "20px", fontWeight: 400,
-                  color: "#fff", letterSpacing: "-0.01em", lineHeight: 1,
-                }}>
-                  SelectQuote
-                </div>
-                <div style={{
-                  fontFamily: F.sans, fontSize: "10px", fontWeight: 600,
-                  color: "rgba(255,255,255,0.22)", letterSpacing: "0.1em",
-                  textTransform: "uppercase", marginTop: "5px",
-                }}>
-                  Medicare
-                </div>
+                <Logo variant="footer" />
               </div>
               <p style={{
                 fontFamily: F.sans, fontSize: "13px",

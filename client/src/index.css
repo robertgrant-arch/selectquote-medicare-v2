@@ -41,16 +41,31 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* ── Medicare Brand Colors ── */
+  /* ── SelectQuote Brand Tokens ── */
+  --color-brand-orange: #F26522;
+  --color-brand-orange-dark: #D4561A;
+  --color-brand-orange-light: #FEF0E6;
+  --color-brand-teal: #237A92;
+  --color-brand-teal-dark: #1C6478;
+  --color-brand-teal-light: #E8F2F5;
+  --color-brand-teal-hover: #2E96B0;
   --color-brand-navy: #1C3A48;
   --color-brand-navy-dark: #0B1B24;
-  --color-brand-navy-light: #237A92;
-  --color-brand-teal: #237A92;
-  --color-brand-teal-light: #2E96B0;
-  --color-brand-rule: #E2EAED;
-  --color-brand-warm: #FAF9F5;
+  --color-brand-ink: #0B1B24;
   --color-brand-body: #3E5560;
   --color-brand-sub: #7A9BA6;
+  --color-brand-warm: #FAF9F5;
+  --color-brand-rule: #E2EAED;
+  --color-brand-night: #0A1820;
+  --color-brand-footer: #060E14;
+  /* Legacy aliases — kept for utility-class references */
+  --color-brand-navy-light: #237A92;
+  --color-brand-red: #1C3A48;
+  --color-brand-red-dark: #112333;
+  --color-brand-blue-light: #E8F2F5;
+  --color-brand-blue-mid: #D6E8ED;
+  --color-brand-gray: #3E5560;
+  --color-brand-gray-light: #FAF9F5;
   /* Legacy aliases — kept for any remaining utility-class references */
   --color-brand-red: #1C3A48;
   --color-brand-red-dark: #112333;
