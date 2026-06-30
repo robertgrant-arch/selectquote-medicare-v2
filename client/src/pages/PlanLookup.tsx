@@ -388,8 +388,7 @@ export default function PlanLookup() {
                 className="mt-0.5 w-4 h-4 rounded accent-[#00353E]"
               />
               <span className="text-sm text-gray-700">
-                I consent to look up my eligibility information. I understand this is a simulated
-                lookup for demonstration purposes only.
+                I consent to look up my Medicare eligibility information via CMS data. I understand SelectQuote uses this to verify plan compatibility only.
               </span>
             </label>
 
@@ -876,7 +875,7 @@ export default function PlanLookup() {
                 style={{ backgroundColor: "#00353E" }}
               >
                 <Phone size={16} />
-                Talk to an Agent
+                Talk to an Advisor
               </a>
             </div>
           </div>

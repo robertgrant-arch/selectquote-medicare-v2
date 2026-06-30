@@ -185,7 +185,7 @@ export default function VerifyCoverage() {
           </div>
           <h1
             className="text-3xl lg:text-4xl font-bold text-white mb-3"
-            style={{ fontFamily: "'DM Serif Display', serif" }}
+            style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             Verify Your Medicare Coverage
           </h1>

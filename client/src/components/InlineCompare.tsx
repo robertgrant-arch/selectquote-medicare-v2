@@ -678,8 +678,7 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
                     className="mt-0.5 w-3.5 h-3.5 accent-[#00353E] shrink-0"
                   />
                   <span className="text-[11px] text-gray-600 leading-relaxed">
-                    I consent to a one-time eligibility lookup. I understand this is a simulated
-                    lookup for demonstration purposes only.
+                    I consent to a one-time Medicare eligibility lookup. SelectQuote uses this solely to verify plan compatibility.
                   </span>
                 </label>
 
@@ -909,7 +908,7 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
                 }}
               >
                 <Phone size={12} />
-                Talk to an Agent
+                Talk to an Advisor
               </a>
             </div>
 

@@ -497,7 +497,7 @@ export default function FilterSidebar({
       >
         <div className="text-xs font-semibold mb-1" style={{ color: "#1A1A1A", fontFamily: "'Montserrat', sans-serif" }}>Need Help Choosing?</div>
         <div className="text-xs mb-3" style={{ color: "#8C8C8C" }}>
-          Speak with a licensed Medicare agent — free, no obligation.
+          Speak with a licensed SelectQuote advisor — free, no obligation.
         </div>
         <a
           href="tel:1-800-777-8002"

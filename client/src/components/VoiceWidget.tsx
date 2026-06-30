@@ -105,7 +105,7 @@ export default function VoiceWidget() {
     borderRadius: '50%',
     background: status === 'active'
       ? 'linear-gradient(135deg, #16a34a, #15803d)'
-      : 'linear-gradient(135deg, #7c3aed, #6d28d9)',
+      : 'linear-gradient(135deg, #00859A, #00353E)',
     color: '#fff',
     border: 'none',
     cursor: 'pointer',
@@ -162,7 +162,7 @@ export default function VoiceWidget() {
           <div style={{
             background: status === 'active'
               ? 'linear-gradient(135deg, #16a34a, #15803d)'
-              : 'linear-gradient(135deg, #7c3aed, #6d28d9)',
+              : 'linear-gradient(135deg, #00859A, #00353E)',
             padding: '12px 16px',
             display: 'flex',
             alignItems: 'center',
@@ -293,7 +293,7 @@ export default function VoiceWidget() {
             background: '#fff',
             borderTop: '1px solid #f1f5f9',
           }}>
-            SelectQuote AI assistant · Not a licensed agent · <a href="tel:1-800-777-8002" style={{ color: '#7c3aed' }}>1-800-777-8002</a>
+            SelectQuote AI · Not a licensed advisor · <a href="tel:1-800-777-8002" style={{ color: '#EF7000' }}>1-800-777-8002</a>
           </div>
         </div>
       )}

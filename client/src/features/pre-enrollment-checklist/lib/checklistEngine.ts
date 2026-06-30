@@ -20,8 +20,8 @@ export function buildChecklistItems(ctx: { zip:string; county:string; plan:any; 
     item('costs','costs','I understand my costs on this plan', [`Premium: $${plan.premium}/mo`, `Deductible: $${plan.deductible}`, `Max OOP: $${plan.maxOutOfPocket.toLocaleString()}/yr`, `PCP copay: ${plan.copays?.primaryCare}`, `Specialist copay: ${plan.copays?.specialist}`, annualStr].join(' · '), 'You have not confirmed you understand the cost structure.', true),
     item('plan_type','plan_type','I understand this plan type and its network rules', requiresReferral?`${plan.planType} plan — specialist referrals required. Out-of-network care generally not covered except emergencies.`:`${plan.planType} plan — no referrals required. Some out-of-network coverage available.`, requiresReferral?'HMO network rules not confirmed.':'Network rules not confirmed.'),
     item('benefits','benefits','I have reviewed the extra benefits included and excluded', [`Dental: ${plan.extraBenefits?.dental?.covered?plan.extraBenefits.dental.details||'Included':'Not included'}`, `Vision: ${plan.extraBenefits?.vision?.covered?plan.extraBenefits.vision.details||'Included':'Not included'}`, `Hearing: ${plan.extraBenefits?.hearing?.covered?'Included':'Not included'}`, `OTC: ${plan.extraBenefits?.otc?.covered?'Included':'Not included'}`].join(' · '), 'Extra benefits not reviewed. You may be switching away from benefits you rely on.'),
-    item('ai_disclosure','ai_disclosure','I understand the AI assistant is not a licensed insurance agent', 'The AI tools on this site are for comparison purposes only. They do not provide insurance advice. Licensed SelectQuote agents are available: 1-800-777-8002.', 'AI disclosure has not been confirmed. Required before proceeding.', true, 'CMS Medicare Marketing Guidelines require clear disclosure that AI comparisons are not agent advice.'),
-    item('handoff','handoff','I have chosen how I want to proceed', "Select: Call a licensed agent (recommended) or complete application online.", 'You have not selected your enrollment path.', true),
+    item('ai_disclosure','ai_disclosure','I understand the SelectQuote AI is not a licensed insurance advisor', 'The AI tools on this site are for comparison purposes only. They do not provide insurance advice. Licensed SelectQuote advisors are available at no cost: 1-800-777-8002.', 'AI disclosure has not been confirmed. Required before proceeding.', true, 'CMS Medicare Marketing Guidelines require clear disclosure that AI comparisons are not advisor advice.'),
+    item('handoff','handoff','I have chosen how I want to proceed', "Select: Call a licensed SelectQuote advisor (recommended) or complete application online.", 'You have not selected your enrollment path.', true),
   ];
 }
 
@@ -30,7 +30,7 @@ export function detectRisks(items: ChecklistItem[]) {
     itemId:i.id,
     severity:(i.isBlocking?'blocking':i.category==='doctors'||i.category==='prescriptions'?'high':'medium') as 'blocking'|'high'|'medium'|'low',
     message:i.riskIfFlagged,
-    action:i.isBlocking?'You must confirm this item before proceeding.':'Review with a licensed agent before enrolling.',
+    action:i.isBlocking?'You must confirm this item before proceeding.':'Review with a licensed SelectQuote advisor before enrolling.',
   })).sort((a,b)=>({blocking:0,high:1,medium:2,low:3}[a.severity]??3)-({blocking:0,high:1,medium:2,low:3}[b.severity]??3));
 }
 

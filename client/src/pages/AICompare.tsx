@@ -908,7 +908,7 @@ export default function AICompare() {
                 <span className="text-white/30">·</span>
                 <div className="flex items-center gap-1.5 text-white/60 text-xs">
                   <Info size={11} />
-                  <span>For educational purposes only</span>
+                  <span>Free, no obligation</span>
                 </div>
               </div>
             </div>

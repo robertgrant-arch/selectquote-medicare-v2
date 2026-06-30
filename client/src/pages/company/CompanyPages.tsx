@@ -1,4 +1,4 @@
-// Company pages: About Us, Licensed Agents, Contact Us, Privacy Policy, Dual Eligible
+// Company pages: About Us, Licensed Advisors, Contact Us, Privacy Policy, Dual Eligible
 import InfoPage from "@/components/InfoPage";
 import { Link } from "wouter";
 import { CheckCircle2, ArrowRight, Phone, Mail, MapPin, Shield, Users, Award, Clock } from "lucide-react";
@@ -31,10 +31,10 @@ export function AboutUs() {
       </h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
         {[
-          { icon: Shield, title: "100% Free Service", desc: "We are paid by insurance carriers when you enroll — never by you. There is no cost to compare plans or speak with an agent." },
+          { icon: Shield, title: "100% Free Service", desc: "We are paid by insurance carriers when you enroll — never by you. There is no cost to compare plans or speak with an advisor." },
           { icon: Users, title: "Independent & Unbiased", desc: "We represent all major carriers and have no incentive to steer you toward any particular plan. Our only goal is finding the right fit for you." },
-          { icon: Award, title: "Licensed in All 50 States", desc: "Our agents hold active insurance licenses in every state and complete annual Medicare certification training required by CMS." },
-          { icon: Clock, title: "Year-Round Support", desc: "Our licensed agents are available year-round — not just during Open Enrollment. We're here when you need to make changes or have questions." },
+          { icon: Award, title: "Licensed in All 50 States", desc: "Our advisors hold active insurance licenses in every state and complete annual Medicare certification training required by CMS." },
+          { icon: Clock, title: "Year-Round Support", desc: "Our licensed advisors are available year-round — not just during Open Enrollment. We're here when you need to make changes or have questions." },
         ].map((item) => (
           <div key={item.title} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: "#E6F7F9" }}>
@@ -51,9 +51,9 @@ export function AboutUs() {
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {[
-          { value: "15+", label: "Years in Business" },
+          { value: "40+", label: "Years Independent" },
           { value: "50", label: "States Licensed" },
-          { value: "200+", label: "Licensed Agents" },
+          { value: "200+", label: "Licensed Advisors" },
           { value: "500K+", label: "Beneficiaries Helped" },
         ].map((stat) => (
           <div key={stat.label} className="text-center rounded-xl p-4 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
@@ -67,11 +67,7 @@ export function AboutUs() {
         Disclaimer
       </h2>
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs text-gray-500 leading-relaxed mb-6">
-        SelectQuote is not affiliated with or endorsed by the U.S. government or the
-        federal Medicare program. We are a licensed insurance agency. Plan data shown on this
-        website is for illustrative purposes. Actual plan availability, benefits, and costs vary
-        by location and are subject to change. Always verify plan details directly with the
-        insurance carrier before enrolling. This is a demonstration application.
+        SelectQuote Insurance Services, Inc. is an independent insurance agency. We are not affiliated with or endorsed by the U.S. government or the federal Medicare program. Plan availability, benefits, and costs vary by location and are subject to change annually. Always verify current plan details with the carrier before enrolling. A licensed SelectQuote advisor can confirm eligibility at no cost: 1-800-777-8002.
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -79,31 +75,31 @@ export function AboutUs() {
           Contact Us <ArrowRight size={14} />
         </Link>
         <Link href="/agents" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: ACCENT, borderColor: ACCENT }}>
-          Meet Our Agents
+          Meet Our Advisors
         </Link>
       </div>
     </InfoPage>
   );
 }
 
-// ── Licensed Agents ───────────────────────────────────────────────────────────
+// ── Licensed Advisors ───────────────────────────────────────────────────────────
 export function LicensedAgents() {
   return (
-    <InfoPage section="Company" sectionHref="/#" title="Licensed Agents" accentColor={ACCENT}
-      subtitle="Our licensed insurance agents are Medicare specialists — certified annually by CMS and trained to help you find the right plan for your health needs and budget.">
+    <InfoPage section="Company" sectionHref="/#" title="Licensed Advisors" accentColor={ACCENT}
+      subtitle="Our licensed advisors are Medicare specialists — certified annually by CMS and trained to help you find the right plan for your health needs and budget.">
 
       <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
-        Why Work with a Licensed Medicare Agent?
+        Why Work with a Licensed SelectQuote Advisor?
       </h2>
       <p className="text-gray-600 leading-relaxed mb-4">
         Medicare has hundreds of plan options in most markets, and the rules around enrollment
-        periods, late penalties, and plan types are complex. A licensed Medicare agent can walk you
+        periods, late penalties, and plan types are complex. A licensed SelectQuote advisor can walk you
         through your options, verify that your doctors and drugs are covered, and help you enroll —
-        all at no cost to you. Agents are paid by insurance carriers, not by beneficiaries.
+        all at no cost to you. Advisors are paid by insurance carriers, not by beneficiaries.
       </p>
 
       <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
-        What Our Agents Are Certified to Do
+        What Our Advisors Are Certified to Do
       </h2>
       <ul className="space-y-2 text-sm text-gray-600 mb-6">
         {[
@@ -124,14 +120,14 @@ export function LicensedAgents() {
       </ul>
 
       <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
-        Agent Credentials & Compliance
+        Advisor Credentials & Compliance
       </h2>
       <div className="space-y-3 mb-6">
         {[
-          { title: "State Insurance License", desc: "All agents hold an active health insurance license in the states where they sell. Licenses are renewed every 2 years and require continuing education." },
-          { title: "Annual Medicare Certification (AHIP)", desc: "CMS requires all agents who sell Medicare plans to complete the America's Health Insurance Plans (AHIP) Medicare certification each year. This covers Medicare rules, plan types, and ethical sales practices." },
+          { title: "State Insurance License", desc: "All advisors hold an active health insurance license in the states where they sell. Licenses are renewed every 2 years and require continuing education." },
+          { title: "Annual Medicare Certification (AHIP)", desc: "CMS requires all advisors who sell Medicare plans to complete the America's Health Insurance Plans (AHIP) Medicare certification each year. This covers Medicare rules, plan types, and ethical sales practices." },
           { title: "Carrier Certifications", desc: "Agents must complete carrier-specific certification for each insurance company they represent. This ensures they understand each carrier's specific plan offerings, benefits, and enrollment processes." },
-          { title: "CMS Compliance", desc: "All agent activities are governed by CMS marketing guidelines. Agents cannot pressure you, make unsolicited calls, or offer gifts to influence enrollment. All calls may be recorded for compliance." },
+          { title: "CMS Compliance", desc: "All advisor activities are governed by CMS marketing guidelines. Agents cannot pressure you, make unsolicited calls, or offer gifts to influence enrollment. All calls may be recorded for compliance." },
         ].map((item) => (
           <div key={item.title} className="border-l-4 border-green-400 pl-4 py-1">
             <div className="font-semibold text-gray-800 text-sm mb-1">{item.title}</div>
@@ -141,7 +137,7 @@ export function LicensedAgents() {
       </div>
 
       <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
-        Speak with an Agent Today
+        Speak with an Advisor Today
       </h2>
       <div className="rounded-xl p-5 mb-6 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
         <div className="grid sm:grid-cols-2 gap-4">
@@ -180,7 +176,7 @@ export function LicensedAgents() {
 export function ContactUs() {
   return (
     <InfoPage section="Company" sectionHref="/#" title="Contact Us" accentColor={ACCENT}
-      subtitle="Our licensed agents are available to answer your Medicare questions and help you find the right plan — at no cost to you.">
+      subtitle="Our licensed advisors are available to answer your Medicare questions and help you find the right plan — at no cost to you.">
 
       <div className="grid sm:grid-cols-3 gap-4 mb-8">
         {[
@@ -204,7 +200,7 @@ export function ContactUs() {
       </h2>
       <ol className="space-y-3 mb-6">
         {[
-          { step: "Speak with a licensed Medicare agent", detail: "You'll be connected directly with a licensed agent — no automated menus or sales scripts. Our agents are trained Medicare specialists." },
+          { step: "Speak with a licensed SelectQuote advisor", detail: "You'll be connected directly with a licensed SelectQuote advisor — no automated menus or sales scripts. Our advisors are trained Medicare specialists." },
           { step: "Share your health needs and preferences", detail: "Tell us about your doctors, medications, and what matters most to you (premium, network, extra benefits). The more we know, the better we can help." },
           { step: "Receive a personalized plan comparison", detail: "We'll show you every plan available in your ZIP code that meets your criteria, with side-by-side cost and benefit comparisons." },
           { step: "Enroll if you're ready (or take your time)", detail: "There's never any pressure. You can enroll on the call, request a callback, or take the information home to review. We're here when you're ready." },
@@ -223,7 +219,7 @@ export function ContactUs() {
 
       <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8", color: "#303030" }}>
         <strong>Our service is 100% free.</strong> We are paid by insurance carriers when you
-        enroll in a plan. You will never be charged for speaking with an agent, comparing plans,
+        enroll in a plan. You will never be charged for speaking with an advisor, comparing plans,
         or enrolling. There is no obligation to enroll after speaking with us.
       </div>
 
@@ -246,8 +242,7 @@ export function PrivacyPolicy() {
       subtitle="Last updated: January 1, 2025. This policy explains how SelectQuote Medicare collects, uses, and protects your personal information.">
 
       <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8", color: "#303030" }}>
-        <strong>Disclaimer:</strong> This is a demonstration application. This privacy policy is
-        provided for illustrative purposes only and does not constitute a legally binding document.
+        <strong>SelectQuote Privacy Notice:</strong> This policy describes how SelectQuote Insurance Services, Inc. collects, uses, and protects your personal information in accordance with applicable state and federal laws, including HIPAA where applicable.
       </div>
 
       <h2 className="text-xl font-bold text-gray-900 mb-3" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
@@ -279,7 +274,7 @@ export function PrivacyPolicy() {
       <ul className="space-y-2 text-sm text-gray-600 mb-6">
         {[
           "To provide plan comparison services and enrollment assistance",
-          "To connect you with licensed insurance agents",
+          "To connect you with licensed advisors",
           "To process insurance enrollment applications",
           "To send you information about Medicare plans and enrollment periods (with your consent)",
           "To improve our website and services",
@@ -302,7 +297,7 @@ export function PrivacyPolicy() {
       <ul className="space-y-2 text-sm text-gray-600 mb-6">
         {[
           "Insurance carriers when you request a quote or enrollment",
-          "Licensed insurance agents who assist with your enrollment",
+          "Licensed SelectQuote advisors who assist with your enrollment",
           "Service providers who help operate our website (hosting, analytics)",
           "Government authorities when required by law",
         ].map((item) => (
