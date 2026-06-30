@@ -22,20 +22,20 @@ const NAV_DROPDOWNS: NavDropdownDef[] = [
     label: "Medicare",
     activeRoutes: ["/medicare-advantage", "/medicare-supplement", "/medigap", "/part-d", "/resources", "/plans"],
     items: [
-      { label: "Medicare Advantage",  href: "/medicare-advantage/hmo-plans",  description: "HMO, PPO, SNP & drug coverage plans"    },
-      { label: "Medicare Supplement", href: "/medicare-supplement/compare",    description: "Medigap Plans F, G, N & more"          },
-      { label: "Medicare Part D",     href: "/part-d/compare",                 description: "Prescription drug plans & formularies" },
-      { label: "Resources & Guides",  href: "/resources/medicare-guide",       description: "Medicare 101, enrollment periods, FAQ" },
+      { label: "Medicare Advantage",  href: "/medicare-advantage/hmo-plans",  description: "Shop HMO, PPO & SNP plans in your area"        },
+      { label: "Medicare Supplement", href: "/medicare-supplement/compare",    description: "Medigap coverage to fill Original Medicare gaps" },
+      { label: "Medicare Part D",     href: "/part-d/compare",                 description: "Shop prescription drug plans & formularies"     },
+      { label: "Resources & Guides",  href: "/resources/medicare-guide",       description: "Medicare 101, enrollment periods & more"        },
     ],
   },
   {
     label: "Tools",
     activeRoutes: ["/ai-compare", "/plan-recommender", "/verify-coverage", "/find-best-plan", "/plan-lookup"],
     items: [
-      { label: "AI Plan Compare",         href: "/ai-compare",       description: "Compare up to 3 plans side-by-side with AI" },
-      { label: "AI Plan Recommender",     href: "/plan-recommender", description: "Get personalized plan recommendations"       },
-      { label: "Verify Current Coverage", href: "/verify-coverage",  description: "Look up your current Medicare plan details"  },
-      { label: "Find Best Plan",          href: "/find-best-plan",   description: "5-step health profile wizard with AI scoring" },
+      { label: "AI Plan Compare",         href: "/ai-compare",       description: "SelectQuote AI compares up to 3 plans side-by-side" },
+      { label: "AI Plan Recommender",     href: "/plan-recommender", description: "Get a personalized SelectQuote recommendation"       },
+      { label: "Verify Current Coverage", href: "/verify-coverage",  description: "Look up your current Medicare plan details"          },
+      { label: "Find Best Plan",          href: "/find-best-plan",   description: "Answer 20 questions — we find your best match"       },
     ],
   },
 ];
@@ -444,7 +444,7 @@ export default function Header() {
                   whiteSpace:      "nowrap",
                 }}
               >
-                Talk to an Agent
+                Talk to an Advisor
               </a>
 
               {/* Hamburger — mobile only */}
@@ -523,7 +523,7 @@ export default function Header() {
                     transition:      "background-color 0.14s",
                   }}
                 >
-                  Talk to an Agent
+                  Talk to an Advisor
                 </a>
                 {/* Sign in — ghost, secondary */}
                 <button

@@ -142,7 +142,7 @@ export default function InfoPage({
                 color: "#fff", marginBottom: "18px",
               }}
             >
-              Ready to Compare Plans?
+              Ready to Let SelectQuote Shop for You?
             </h2>
             <p
               style={{
@@ -151,7 +151,7 @@ export default function InfoPage({
                 marginBottom: "40px", maxWidth: "44ch",
               }}
             >
-              Enter your ZIP code to see every available Medicare Advantage plan in your area — free, with no obligation.
+              Enter your ZIP code and SelectQuote shops every Medicare Advantage plan available in your area — free, no obligation, no pressure.
             </p>
             <Link
               href="/plans?zip=64106"
@@ -166,7 +166,7 @@ export default function InfoPage({
                 letterSpacing: "0.005em",
               }}
             >
-              See Plans Near You
+              Shop Plans Near You
               <ChevronRight size={15} aria-hidden="true" />
             </Link>
           </div>

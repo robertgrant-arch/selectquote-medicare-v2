@@ -99,7 +99,7 @@ export default function BrandButton({
   );
 }
 
-/** Pre-wired "Talk to an Agent" phone CTA */
+/** Pre-wired "Talk to an Advisor" phone CTA */
 export function TalkToAgentButton({ style, className, height }: { style?: CSSProperties; className?: string; height?: string }) {
   return (
     <BrandButton
@@ -109,7 +109,7 @@ export function TalkToAgentButton({ style, className, height }: { style?: CSSPro
       style={{ height: height ?? "38px", ...style }}
       className={className}
     >
-      Talk to an Agent
+      Talk to an Advisor
     </BrandButton>
   );
 }

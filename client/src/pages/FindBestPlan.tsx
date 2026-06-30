@@ -351,7 +351,7 @@ export default function FindBestPlan() {
               style={{ backgroundColor: "#E6F7F9", color: "#00353E" }}
             >
               <Sparkles size={12} />
-              AI-Powered Plan Matching
+              SelectQuote AI Plan Matching
             </div>
             <h1
               className="text-3xl font-bold mb-2"
@@ -360,7 +360,7 @@ export default function FindBestPlan() {
               Find Your Best Plan
             </h1>
             <p className="text-gray-500 text-base">
-              Answer 20 quick questions and our AI will match you with the best Medicare Advantage plans for your health needs.
+              Answer 20 questions and SelectQuote's AI will match you with the best Medicare Advantage plans for your doctors, prescriptions, and budget.
             </p>
           </div>
         )}
@@ -420,9 +420,9 @@ export default function FindBestPlan() {
 
             <div className="mt-6 grid grid-cols-3 gap-3">
               {[
-                { icon: Shield, text: "Real CMS 2026 data" },
-                { icon: Sparkles, text: "AI-powered matching" },
-                { icon: CheckCircle2, text: "Free, no obligation" },
+                { icon: Shield, text: "Real CMS 2026 plan data" },
+                { icon: Sparkles, text: "SelectQuote AI matching" },
+                { icon: CheckCircle2, text: "Free, no pressure" },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2 text-xs text-gray-500">
                   <Icon size={13} style={{ color: "#00353E" }} />

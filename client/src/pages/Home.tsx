@@ -32,17 +32,17 @@ const BENEFITS = [
   {
     label: "Independence",
     title: "Every plan in your county. Not a curated selection.",
-    body: "As independent advisors, we compare every Medicare Advantage plan active in your area — across every carrier. No plan is filtered out. No carrier pays for preferred placement.",
+    body: "SelectQuote is an independent agency — no carrier pays us for referrals or preferred placement. We compare every Medicare Advantage plan active in your area, across every carrier. The same result, whether it comes from Humana or UnitedHealthcare.",
   },
   {
     label: "Precision",
     title: "What you'll actually pay, calculated before you commit.",
-    body: "We calculate your true annual drug cost for every plan: deductible, tier copays, and coverage gap included. The same math CMS uses — before you see a single result.",
+    body: "We calculate your true annual drug cost for every plan: deductible, tier copays, and coverage gap included. The same math CMS uses — and SelectQuote has been running these numbers for Medicare beneficiaries since 1985.",
   },
   {
     label: "Control",
-    title: "Compare on your terms, at your own pace.",
-    body: "You never have to speak with anyone to use this. Licensed advisors are available if you want them. If you'd rather decide independently, everything you need is here.",
+    title: "Our advisors work for you — not the carriers.",
+    body: "You never have to speak with anyone to use this tool. When you're ready, licensed SelectQuote advisors are available — no script, no quota, no carrier preference. We shop. You save.",
   },
 ] as const;
 
@@ -346,7 +346,7 @@ export default function Home() {
                   lineHeight: 1.75, color: T.body,
                   maxWidth: "38ch", marginBottom: "52px",
                 }}>
-                  Compare every plan in your county — matched to your doctors, prescriptions, and budget. Free. No account. No pressure.
+                  SelectQuote shops every Medicare Advantage plan available in your county — matched to your doctors, prescriptions, and budget. Free. No pressure.
                 </p>
 
                 {/* ZIP CTA */}
@@ -390,7 +390,7 @@ export default function Home() {
                         letterSpacing: "0.005em", whiteSpace: "nowrap",
                       }}
                     >
-                      See my plans
+                      Shop my plans
                       <ChevronRight size={14} aria-hidden="true" />
                     </button>
                   </div>
@@ -422,7 +422,7 @@ export default function Home() {
                     fontFamily: F.sans, fontSize: "13px",
                     color: T.sub, marginTop: "16px", lineHeight: 1.5,
                   }}>
-                    Always free · No account required · No sales calls unless you ask
+                    Always free · No account required · No pressure, ever
                   </p>
                 </div>
               </div>
@@ -449,7 +449,7 @@ export default function Home() {
                     paddingTop: "28px",
                     borderTop: `1px solid ${T.rule}`,
                   }}>
-                    All carriers. Nothing filtered or ranked for commercial reasons. Plan data from CMS.gov — the same source Medicare uses.
+                    SelectQuote represents all carriers — nothing filtered or ranked for commercial reasons. Plan data from CMS.gov — the same source Medicare uses.
                   </p>
                 </div>
               </div>
@@ -480,10 +480,10 @@ export default function Home() {
               {/* Credential facts — left */}
               <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", rowGap: "8px" }}>
                 {([
-                  "Licensed independent agents",
+                  "Licensed SelectQuote advisors",
                   "Plan data from CMS.gov",
-                  "Free — always",
-                  "Doctors & Rx verified",
+                  "Free — no carrier ties",
+                  "Doctors & Rx verified first",
                 ] as const).map((claim, i) => (
                   <span key={claim} style={{ display: "inline-flex", alignItems: "center" }}>
                     {i > 0 && (
@@ -542,7 +542,7 @@ export default function Home() {
           <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
 
             <div style={{ maxWidth: "600px", marginBottom: "96px" }}>
-              <p style={sectionLabel}>Why people choose us</p>
+              <p style={sectionLabel}>Why people choose SelectQuote</p>
               <h2
                 id="why-h"
                 style={{
@@ -553,8 +553,8 @@ export default function Home() {
                   color: T.ink, margin: 0,
                 }}
               >
-                Built for an important decision —
-                <em style={{ fontStyle: "italic", fontWeight: 400 }}>{" "}not for speed.</em>
+                We've been shopping Medicare
+                <em style={{ fontStyle: "italic", fontWeight: 400 }}>{" "}since before you had to.</em>
               </h2>
             </div>
 
@@ -623,7 +623,7 @@ export default function Home() {
             >
               {/* Sticky editorial anchor */}
               <div className="cov-anchor" style={{ position: "sticky", top: "56px" }}>
-                <p style={sectionLabel}>Coverage verification</p>
+                <p style={sectionLabel}>How SelectQuote shops for you</p>
                 <h2
                   id="cov-h"
                   style={{
@@ -634,13 +634,13 @@ export default function Home() {
                     color: T.ink, marginBottom: "24px",
                   }}
                 >
-                  The two things people overlook — and that we check first.
+                  The two things people overlook — and that SelectQuote checks first.
                 </h2>
                 <p style={{
                   fontFamily: F.sans, fontSize: "16px",
                   lineHeight: 1.82, color: T.body, marginBottom: "36px",
                 }}>
-                  Switching Medicare plans and losing your doctor, or discovering your prescriptions cost three times as much — these are the most common and most avoidable mistakes. We verify both before you see a single result.
+                  Switching plans and losing your doctor, or discovering your prescriptions cost three times as much — these are the most common and most avoidable mistakes. SelectQuote verifies both before a single result appears.
                 </p>
                 <button
                   type="button"
@@ -733,7 +733,7 @@ export default function Home() {
                   fontWeight: 400, lineHeight: 1.5,
                   color: T.body, margin: 0,
                 }}>
-                  seniors helped find better Medicare coverage since 2010.
+                  Americans helped find better Medicare coverage. SelectQuote has been independent since 1985.
                 </p>
               </div>
 
@@ -743,7 +743,7 @@ export default function Home() {
                   fontFamily: F.sans, fontSize: "18px",
                   lineHeight: 1.82, color: T.body, marginBottom: "28px",
                 }}>
-                  No carrier pays us for referrals. No plan is hidden or ranked for commercial reasons. Every comparison is built on data published by CMS.gov — the same official source Medicare uses — with your doctors and prescriptions verified before results appear.
+                  No carrier pays SelectQuote for referrals or preferred placement. No plan is hidden or ranked for commercial reasons. Every comparison is built on data published by CMS.gov — verified against your doctors and prescriptions before results appear. We shop every option so you don't have to.
                 </p>
                 <p style={{
                   fontFamily: F.sans, fontSize: "12px",
@@ -751,7 +751,7 @@ export default function Home() {
                   paddingTop: "20px",
                   borderTop: `1px solid ${T.rule}`,
                 }}>
-                  Not affiliated with or endorsed by any insurance carrier or the federal Medicare program.
+                  SelectQuote Insurance Services, Inc. is an independent agency — not affiliated with or endorsed by any insurance carrier or the federal Medicare program.
                 </p>
               </div>
             </div>
@@ -776,7 +776,7 @@ export default function Home() {
                   color: "#fff", marginBottom: "52px",
                 }}
               >
-                The plan you choose today shapes who can care for you next year.
+                We shop every plan.<br />You keep your doctor.<br /><em style={{ fontStyle: "italic", fontWeight: 400 }}>You save.</em>
               </h2>
 
               <div style={{ display: "flex", gap: "8px", maxWidth: "420px", marginBottom: "20px" }}>
@@ -813,7 +813,7 @@ export default function Home() {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  See Plans
+                  Shop Plans
                   <ChevronRight size={14} aria-hidden="true" />
                 </button>
               </div>
@@ -833,7 +833,7 @@ export default function Home() {
                   >
                     1-800-777-8002
                   </a>
-                  {" "}— a licensed advisor, no script, no pressure
+                  {" "}— a licensed SelectQuote advisor, no pressure
                 </span>
               </p>
             </div>
@@ -859,7 +859,7 @@ export default function Home() {
                 lineHeight: 1.75, color: "rgba(255,255,255,0.3)",
                 maxWidth: "26ch",
               }}>
-                Helping Americans find better Medicare Advantage plans since 2010. Licensed in all 50 states.
+                Independent since 1985. We shop every Medicare plan so you get the best fit — not the best commission.
               </p>
             </div>
 
@@ -919,7 +919,7 @@ export default function Home() {
             color: "rgba(255,255,255,0.17)", lineHeight: 1.72,
           }}>
             <p style={{ marginBottom: "4px" }}>
-              Not affiliated with or endorsed by the U.S. government or the federal Medicare program. This is a demonstration application. Plan data sourced from CMS public datasets.
+              SelectQuote Insurance Services, Inc. is an independent insurance agency. Not affiliated with or endorsed by the U.S. government or the federal Medicare program. Plan data sourced from CMS.gov public datasets. Licensed in all 50 states.
             </p>
             <p>© 2026 SelectQuote Insurance Services, Inc. All rights reserved.</p>
           </div>

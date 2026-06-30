@@ -764,7 +764,7 @@ export default function Plans() {
 
           {/* Bottom disclaimer */}
           <div className="mt-8 p-4 rounded-xl border text-xs" style={{ borderColor: "#E8E8E8", backgroundColor: "#F9F9F9", color: "#8C8C8C" }}>
-            <p><strong>Data Source:</strong> Plan information is sourced from the CMS CY2026 Medicare Advantage Landscape file. Benefit details are AI-estimated. Always verify plan details directly with the insurance carrier before enrolling. Medicare has neither reviewed nor endorsed this information.</p>
+            <p><strong>SelectQuote Data Notice:</strong> Plan information is sourced from the CMS CY2026 Medicare Advantage Landscape file. SelectQuote is an independent agency — no carrier pays for preferred placement. Always verify current plan details with the carrier before enrolling. A licensed SelectQuote advisor can confirm eligibility at no cost: 1-800-777-8002.</p>
           </div>
         </main>
       </div>

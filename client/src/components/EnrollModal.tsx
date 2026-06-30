@@ -46,7 +46,7 @@ export default function EnrollModal({ open, onClose, plan }: EnrollModalProps) {
             Ready to Enroll?
           </h2>
           <p className="text-white/80 text-sm">
-            You've selected a great plan. Here's how to complete your enrollment.
+            Good choice. Here's how to complete your enrollment with SelectQuote.
           </p>
         </div>
 
@@ -128,7 +128,7 @@ export default function EnrollModal({ open, onClose, plan }: EnrollModalProps) {
                 </div>
                 <div>
                   <div className="text-sm font-bold text-[#1A1A1A]">Call to Enroll</div>
-                  <div className="text-xs text-[#8C8C8C]">Speak with a licensed agent: 1-800-777-8002</div>
+                  <div className="text-xs text-[#8C8C8C]">Speak with a licensed SelectQuote advisor: 1-800-777-8002</div>
                 </div>
               </div>
               <span
@@ -147,8 +147,7 @@ export default function EnrollModal({ open, onClose, plan }: EnrollModalProps) {
           >
             <Shield size={13} className="text-[#8C8C8C] shrink-0 mt-0.5" />
             <p className="text-xs text-[#8C8C8C] leading-relaxed">
-              This is a mock demonstration. Enrollment links are for illustration only. Always
-              verify plan details with the carrier before enrolling.
+              Plan details are sourced from CMS.gov. Always verify current benefits and network with the carrier before enrolling. A licensed SelectQuote advisor can confirm eligibility at no cost.
             </p>
           </div>
         </div>

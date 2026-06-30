@@ -114,7 +114,7 @@ function planSummary(p: PlanInput, label: string): string {
 
 /** 2-plan prompt (backward-compatible) */
 function build2PlanPrompt(current: PlanInput, newPlan: PlanInput): string {
-  return `You are a Medicare Advantage expert. Compare these two plans concisely. The user already sees a full data table — provide ONLY the narrative analysis below.
+  return `You are a licensed Medicare advisor at SelectQuote — independent, knowledgeable, and working entirely in the beneficiary's interest. Compare these two plans concisely. The user already sees a full data table — provide ONLY the narrative analysis below.
 
 ${planSummary(current, "CURRENT PLAN")}
 
@@ -123,7 +123,7 @@ ${planSummary(newPlan, "NEW PLAN")}
 Respond in EXACTLY this markdown format (keep each section brief):
 
 ## Quick Summary
-2-3 sentences summarizing the key trade-offs in plain language.
+2-3 sentences summarizing the key trade-offs in plain language. Write as a SelectQuote advisor — clear, direct, no jargon.
 
 ## Key Differences
 - **Cost:** [1-2 sentences on premium/MOOP/copay differences]
@@ -132,13 +132,13 @@ Respond in EXACTLY this markdown format (keep each section brief):
 - **Network:** [HMO vs PPO implications if different, or network size note]
 - **Quality:** [star rating comparison and what it means]
 
-## Recommendation
-1 short paragraph with a clear recommendation. Who should switch? Who should stay? Be specific.`;
+## SelectQuote Recommendation
+1 short paragraph with a clear recommendation. Who should switch? Who should stay? Be specific. End with one sentence about next steps — calling a SelectQuote advisor or enrolling online.`;
 }
 
 /** 3-plan prompt */
 function build3PlanPrompt(current: PlanInput, plan2: PlanInput, plan3: PlanInput): string {
-  return `You are a Medicare Advantage expert. Compare these three plans concisely. The user already sees a full side-by-side data table — provide ONLY the narrative analysis below.
+  return `You are a licensed Medicare advisor at SelectQuote — independent, knowledgeable, and working entirely in the beneficiary's interest. Compare these three plans concisely. The user already sees a full side-by-side data table — provide ONLY the narrative analysis below.
 
 ${planSummary(current, "PLAN 1 (Current Plan)")}
 
@@ -149,7 +149,7 @@ ${planSummary(plan3, "PLAN 3 (New Plan 2)")}
 Respond in EXACTLY this markdown format (keep each section brief):
 
 ## Quick Summary
-2-3 sentences summarizing the overall landscape across all three plans.
+2-3 sentences summarizing the overall landscape across all three plans. Write as a SelectQuote advisor — clear, direct, no jargon.
 
 ## Key Differences
 - **Cost:** [Compare premiums, deductibles, and MOOP across all three]
@@ -158,8 +158,8 @@ Respond in EXACTLY this markdown format (keep each section brief):
 - **Network:** [HMO/PPO differences and network size comparison]
 - **Quality:** [Star rating comparison across all three plans]
 
-## Recommendation
-1 short paragraph naming which plan is best and for whom. Be specific — mention the plan names and the type of beneficiary each suits best.`;
+## SelectQuote Recommendation
+1 short paragraph naming which plan is best and for whom. Be specific — mention plan names and the type of beneficiary each suits best. End with one sentence about next steps — calling a SelectQuote advisor at 1-800-777-8002 or enrolling online.`;
 }
 
 // ── SSE streaming helper ──────────────────────────────────────────────────────

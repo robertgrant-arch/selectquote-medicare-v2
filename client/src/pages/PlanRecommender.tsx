@@ -25,6 +25,7 @@ import {
   TrendingDown,
   Award,
   Info,
+  Shield,
 } from "lucide-react";
 import { Streamdown } from "streamdown";
 import Header from "@/components/Header";
@@ -674,9 +675,9 @@ export default function PlanRecommender() {
                 Plan Recommender
               </h1>
               <p className="text-white/80 text-base max-w-2xl">
-                Answer 20 questions about your health needs and priorities. We'll calculate your
-                estimated annual cost for every plan and recommend the top 3 matches — with a
-                personalized AI explanation.
+                Answer 20 questions about your health needs and priorities. SelectQuote calculates
+                your estimated annual cost for every plan and recommends your top 3 matches —
+                with a personalized explanation from our AI advisor.
               </p>
               <div className="flex items-center gap-4 mt-3">
                 <div className="flex items-center gap-1.5 text-white/60 text-xs">
@@ -686,12 +687,12 @@ export default function PlanRecommender() {
                 <span className="text-white/30">·</span>
                 <div className="flex items-center gap-1.5 text-white/60 text-xs">
                   <Sparkles size={11} />
-                  <span>AI-powered recommendation</span>
+                  <span>SelectQuote AI recommendation</span>
                 </div>
                 <span className="text-white/30">·</span>
                 <div className="flex items-center gap-1.5 text-white/60 text-xs">
-                  <Info size={11} />
-                  <span>For educational purposes only</span>
+                  <Shield size={11} />
+                  <span>Free, no obligation</span>
                 </div>
               </div>
             </div>
@@ -708,8 +709,8 @@ export default function PlanRecommender() {
               style={{ borderColor: "#E6F7F9", borderTopColor: "#00353E" }}
             />
             <div className="text-center">
-              <div className="text-lg font-bold text-gray-800 mb-1">Calculating your best plans...</div>
-              <div className="text-sm text-gray-500">Estimating annual costs across all available plans</div>
+              <div className="text-lg font-bold text-gray-800 mb-1">SelectQuote is matching your profile...</div>
+              <div className="text-sm text-gray-500">Calculating annual costs across all plans in your area</div>
             </div>
           </div>
         )}
@@ -1130,7 +1131,7 @@ export default function PlanRecommender() {
               <div>
                 <h2 className="text-lg font-bold text-gray-900 mb-1">Your Top 3 Recommended Plans</h2>
                 <p className="text-sm text-gray-500">
-                  Based on your health profile, utilization, and priorities — ranked by best overall fit.
+                  Ranked by SelectQuote based on your health profile, utilization, and priorities — best overall fit first.
                 </p>
               </div>
               <button
@@ -1180,7 +1181,7 @@ export default function PlanRecommender() {
               </div>
               <p className="text-xs text-gray-400 mt-3 flex items-start gap-1.5">
                 <Info size={11} className="shrink-0 mt-0.5" />
-                Estimates are based on your expected utilization and plan copay rates. Actual costs may vary. This is for educational purposes only — consult a licensed agent before enrolling.
+                Estimates based on your expected utilization and plan copay rates. Actual costs may vary. Consult a licensed SelectQuote advisor before enrolling — call 1-800-777-8002, free.
               </p>
             </div>
 
@@ -1192,15 +1193,15 @@ export default function PlanRecommender() {
                     <Sparkles size={14} style={{ color: "#00353E" }} />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-gray-900">Personalized AI Recommendation</h3>
+                    <h3 className="text-base font-bold text-gray-900">Your SelectQuote Recommendation</h3>
                     {streamPhase === "streaming" && (
                       <div className="text-[10px] flex items-center gap-1 animate-pulse" style={{ color: "#00859A" }}>
                         <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#00859A" }} />
-                        Claude is writing your recommendation...
+                        SelectQuote AI is preparing your recommendation...
                       </div>
                     )}
                     {streamPhase === "done" && (
-                      <div className="text-[10px] text-gray-400">Powered by Claude Haiku</div>
+                      <div className="text-[10px] text-gray-400">SelectQuote AI · Powered by Claude</div>
                     )}
                   </div>
                 </div>
@@ -1264,8 +1265,8 @@ export default function PlanRecommender() {
             {/* Compare with AI button */}
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <h3 className="text-base font-bold text-gray-900 mb-1">Want a deeper side-by-side analysis?</h3>
-                <p className="text-sm text-gray-500">Open the AI Compare page with your top 3 plans pre-loaded for a detailed breakdown.</p>
+                <h3 className="text-base font-bold text-gray-900 mb-1">Want a deeper side-by-side comparison?</h3>
+                <p className="text-sm text-gray-500">SelectQuote AI will break down all three plans in detail — costs, coverage, and which fits your situation best.</p>
               </div>
               <a
                 href={`/ai-compare?plan1=${encodeURIComponent(rankedPlans[0]?.plan.id ?? '')}&plan2=${encodeURIComponent(rankedPlans[1]?.plan.id ?? '')}&plan3=${encodeURIComponent(rankedPlans[2]?.plan.id ?? '')}`}
@@ -1282,7 +1283,7 @@ export default function PlanRecommender() {
             <div className="rounded-xl p-4 text-xs flex items-start gap-2 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8", color: "#303030" }}>
               <Info size={14} className="shrink-0 mt-0.5" />
               <div>
-                <strong>Important Disclaimer:</strong> These recommendations are for educational purposes only and are based on mock plan data. They do not constitute professional insurance advice. Plan availability, costs, and benefits vary by location and change annually. Always consult a licensed Medicare insurance agent before making enrollment decisions. This tool is a demonstration application.
+                <strong>SelectQuote Notice:</strong> These recommendations are based on CMS plan data and the profile information you provided. Plan availability, costs, and benefits vary by location and change annually. Always confirm plan details with your carrier before enrolling. For personalized guidance, call a licensed SelectQuote advisor at 1-800-777-8002 — free, no obligation.
               </div>
             </div>
           </div>

@@ -10,8 +10,9 @@ export const BRAND = {
   subtagline:  "We shop. You save.",
   legalEntity: "SelectQuote Insurance Services, Inc.",
   copyright:   `© ${new Date().getFullYear()} SelectQuote Insurance Services, Inc. All rights reserved.`,
-  disclaimer:  "SelectQuote is not affiliated with or endorsed by the U.S. government or the federal Medicare program. This is a demonstration application for educational purposes only.",
+  disclaimer:  "SelectQuote Insurance Services, Inc. is an independent insurance agency. We are not affiliated with or endorsed by the U.S. government or the federal Medicare program. Plan availability and cost vary by location. Consult a licensed SelectQuote advisor before making enrollment decisions.",
   notLicensed: "Not a licensed agent",
+  founded:     "1985",
 } as const;
 
 // ── Contact ───────────────────────────────────────────────────────────────────
