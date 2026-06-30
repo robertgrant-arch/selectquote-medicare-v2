@@ -70,8 +70,8 @@ function CoverageStatusBadge({ active, label }: { active: boolean; label: string
     <div
       className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium"
       style={{
-        backgroundColor: active ? "#EEF5F7" : "#FEF2F2",
-        color: active ? "#237A92" : "#991B1B",
+        backgroundColor: active ? "#E6F7F9" : "#FEF2F2",
+        color: active ? "#00859A" : "#991B1B",
       }}
     >
       {active ? (
@@ -99,7 +99,7 @@ function BenefitRow({
   return (
     <div className="flex items-center justify-between py-2.5 border-b border-gray-100 last:border-0">
       <div className="flex items-center gap-2.5 text-sm text-gray-600">
-        <Icon size={15} style={{ color: "#1C3A48" }} className="shrink-0" />
+        <Icon size={15} style={{ color: "#00353E" }} className="shrink-0" />
         {label}
       </div>
       <span className="text-sm font-semibold text-gray-900">{display}</span>
@@ -165,14 +165,14 @@ export default function VerifyCoverage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FAF9F5" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#F9F9F9" }}>
       <Header />
 
       {/* ── Page Hero ─────────────────────────────────────────────────────── */}
       <section
         className="py-14"
         style={{
-          backgroundColor: "#1C3A48",
+          backgroundColor: "#00353E",
         }}
       >
         <div className="container text-center">
@@ -204,7 +204,7 @@ export default function VerifyCoverage() {
               {/* Privacy notice */}
               <div
                 className="flex items-start gap-3 p-4 rounded-xl mb-6 text-sm"
-                style={{ backgroundColor: "#EEF5F7", color: "#1C3A48" }}
+                style={{ backgroundColor: "#E6F7F9", color: "#00353E" }}
               >
                 <Lock size={16} className="mt-0.5 shrink-0" />
                 <div>
@@ -213,7 +213,7 @@ export default function VerifyCoverage() {
                 </div>
               </div>
 
-              <h2 className="text-xl font-bold mb-6" style={{ color: "#1C3A48" }}>
+              <h2 className="text-xl font-bold mb-6" style={{ color: "#00353E" }}>
                 Enter Your Information
               </h2>
 
@@ -296,7 +296,7 @@ export default function VerifyCoverage() {
                   type="submit"
                   disabled={eligibilityMutation.isPending}
                   className="w-full h-12 text-base font-semibold rounded-xl"
-                  style={{ backgroundColor: "#1C3A48", color: "white" }}
+                  style={{ backgroundColor: "#00353E", color: "white" }}
                 >
                   {eligibilityMutation.isPending ? (
                     <span className="flex items-center gap-2">
@@ -320,7 +320,7 @@ export default function VerifyCoverage() {
                   { icon: CheckCircle2, text: "No data stored" },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <Icon size={12} style={{ color: "#1C3A48" }} />
+                    <Icon size={12} style={{ color: "#00353E" }} />
                     {text}
                   </div>
                 ))}
@@ -347,14 +347,14 @@ export default function VerifyCoverage() {
               {/* Coverage status */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold" style={{ color: "#1C3A48" }}>
+                  <h2 className="text-lg font-bold" style={{ color: "#00353E" }}>
                     Medicare Coverage Status
                   </h2>
                   <div
                     className="px-3 py-1 rounded-full text-xs font-bold"
                     style={{
-                      backgroundColor: result.isActive ? "#EEF5F7" : "#FEE2E2",
-                      color: result.isActive ? "#237A92" : "#991B1B",
+                      backgroundColor: result.isActive ? "#E6F7F9" : "#FEE2E2",
+                      color: result.isActive ? "#00859A" : "#991B1B",
                     }}
                   >
                     {result.isActive ? "✓ Active Coverage" : "⚠ Inactive"}
@@ -392,7 +392,7 @@ export default function VerifyCoverage() {
                       <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">
                         Current Medicare Advantage Plan
                       </p>
-                      <h3 className="text-lg font-bold" style={{ color: "#1C3A48" }}>
+                      <h3 className="text-lg font-bold" style={{ color: "#00353E" }}>
                         {result.currentPlan.planName}
                       </h3>
                       <p className="text-sm text-gray-500 mt-0.5">
@@ -401,7 +401,7 @@ export default function VerifyCoverage() {
                     </div>
                     <div
                       className="px-3 py-1 rounded-full text-xs font-bold shrink-0"
-                      style={{ backgroundColor: "#EEF5F7", color: "#237A92" }}
+                      style={{ backgroundColor: "#E6F7F9", color: "#00859A" }}
                     >
                       Active
                     </div>
@@ -417,9 +417,9 @@ export default function VerifyCoverage() {
                       <div
                         key={label}
                         className="text-center p-3 rounded-xl"
-                        style={{ backgroundColor: "#EEF5F7" }}
+                        style={{ backgroundColor: "#E6F7F9" }}
                       >
-                        <div className="text-xl font-bold" style={{ color: "#1C3A48" }}>
+                        <div className="text-xl font-bold" style={{ color: "#00353E" }}>
                           {value}
                         </div>
                         <div className="text-xs text-gray-500 mt-0.5">{label}</div>
@@ -457,7 +457,7 @@ export default function VerifyCoverage() {
                   {/* CTA */}
                   <div
                     className="mt-5 p-4 rounded-xl"
-                    style={{ backgroundColor: "#EEF5F7", border: "1px solid #C6DAE0" }}
+                    style={{ backgroundColor: "#E6F7F9", border: "1px solid #E8E8E8" }}
                   >
                     <p className="text-sm font-medium text-gray-800 mb-3">
                       Want to see if there's a better plan available in your area?
@@ -466,7 +466,7 @@ export default function VerifyCoverage() {
                       <Button
                         onClick={() => navigate("/plans?zip=")}
                         className="flex items-center gap-2 text-sm font-semibold h-10 px-5 rounded-lg"
-                        style={{ backgroundColor: "#1C3A48", color: "white" }}
+                        style={{ backgroundColor: "#00353E", color: "white" }}
                       >
                         Compare Plans in Your Area
                         <ChevronRight size={15} />
@@ -475,7 +475,7 @@ export default function VerifyCoverage() {
                         onClick={() => navigate("/find-best-plan")}
                         variant="outline"
                         className="flex items-center gap-2 text-sm font-semibold h-10 px-5 rounded-lg border-gray-300"
-                        style={{ color: "#1C3A48" }}
+                        style={{ color: "#00353E" }}
                       >
                         Get Personalized Recommendation
                       </Button>
@@ -487,11 +487,11 @@ export default function VerifyCoverage() {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center">
                   <div
                     className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-                    style={{ backgroundColor: "#EEF5F7" }}
+                    style={{ backgroundColor: "#E6F7F9" }}
                   >
-                    <DollarSign size={24} style={{ color: "#1C3A48" }} />
+                    <DollarSign size={24} style={{ color: "#00353E" }} />
                   </div>
-                  <h3 className="text-lg font-bold mb-2" style={{ color: "#1C3A48" }}>
+                  <h3 className="text-lg font-bold mb-2" style={{ color: "#00353E" }}>
                     No Medicare Advantage Plan Found
                   </h3>
                   <p className="text-gray-500 text-sm mb-5 max-w-sm mx-auto">
@@ -501,7 +501,7 @@ export default function VerifyCoverage() {
                   <Button
                     onClick={() => navigate("/plans?zip=")}
                     className="flex items-center gap-2 text-sm font-semibold h-10 px-6 rounded-lg mx-auto"
-                    style={{ backgroundColor: "#1C3A48", color: "white" }}
+                    style={{ backgroundColor: "#00353E", color: "white" }}
                   >
                     Explore Medicare Advantage Plans
                     <ChevronRight size={15} />
@@ -514,7 +514,7 @@ export default function VerifyCoverage() {
                 <button
                   onClick={handleReset}
                   className="text-sm font-medium hover:underline"
-                  style={{ color: "#1C3A48" }}
+                  style={{ color: "#00353E" }}
                 >
                   ← Check a different person
                 </button>

@@ -68,7 +68,7 @@ export default function PlanDetailsModal({
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ backgroundColor: '#1C3A48', borderRadius: '10px 10px 0 0', padding: '20px 24px', position: 'sticky', top: 0, zIndex: 10 }}>
+        <div style={{ backgroundColor: '#00353E', borderRadius: '10px 10px 0 0', padding: '20px 24px', position: 'sticky', top: 0, zIndex: 10 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
             <div style={{ flex: 1 }}>
               {isAiContext && score !== null && (
@@ -96,15 +96,15 @@ export default function PlanDetailsModal({
         <div style={{ padding: '24px' }}>
           {/* AI Reasons */}
           {isAiContext && reasons.length > 0 && (
-            <div style={{ background: '#EEF5F7', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px', borderLeft: '3px solid #1C3A48', border: '1px solid #C6DAE0' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#1C3A48', marginBottom: '8px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Why AI Recommends This Plan</div>
-              {reasons.map((r, i) => <div key={i} style={{ fontSize: '13px', color: '#3E5560', marginBottom: '4px' }}>• {r}</div>)}
+            <div style={{ background: '#E6F7F9', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px', borderLeft: '3px solid #00353E', border: '1px solid #E8E8E8' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: '#00353E', marginBottom: '8px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Why AI Recommends This Plan</div>
+              {reasons.map((r, i) => <div key={i} style={{ fontSize: '13px', color: '#303030', marginBottom: '4px' }}>• {r}</div>)}
             </div>
           )}
 
           {/* Cost Grid */}
           <div style={{ marginBottom: '20px' }}>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#1C3A48', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Costs</h3>
+            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#00353E', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Costs</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
               {[
                 { label: 'Monthly Premium', value: plan.premium === 0 ? '$0' : `$${plan.premium}`, highlight: plan.premium === 0 },
@@ -114,9 +114,9 @@ export default function PlanDetailsModal({
                 { label: 'Drug Deductible', value: plan.rxDrugs?.deductible || '$0' },
                 { label: 'Extra Benefits', value: `${Object.values(eb).filter((b: any) => b?.covered).length}/8` },
               ].map(({ label, value, highlight, warn }) => (
-                <div key={label} style={{ background: '#FAF9F5', borderRadius: '10px', padding: '12px', textAlign: 'center' as const }}>
-                  <div style={{ fontSize: '18px', fontWeight: 800, color: highlight ? '#059669' : warn ? '#B45309' : '#1C3A48' }}>{value}</div>
-                  <div style={{ fontSize: '10px', color: '#7A9BA6', marginTop: '2px' }}>{label}</div>
+                <div key={label} style={{ background: '#F9F9F9', borderRadius: '10px', padding: '12px', textAlign: 'center' as const }}>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: highlight ? '#059669' : warn ? '#B45309' : '#00353E' }}>{value}</div>
+                  <div style={{ fontSize: '10px', color: '#8C8C8C', marginTop: '2px' }}>{label}</div>
                 </div>
               ))}
             </div>
@@ -125,7 +125,7 @@ export default function PlanDetailsModal({
           {/* Two-column: Copays + Rx */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
             <div>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#1C3A48', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Copays</h3>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#00353E', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Copays</h3>
               {[
                 ['Primary Care', plan.copays.primaryCare],
                 ['Specialist', plan.copays.specialist],
@@ -135,13 +135,13 @@ export default function PlanDetailsModal({
                 ['Outpatient Surgery', plan.copays.outpatientSurgery],
               ].map(([label, val]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid rgba(226,234,237,0.6)', fontSize: '13px' }}>
-                  <span style={{ color: '#7A9BA6' }}>{label}</span>
-                  <span style={{ fontWeight: 600, color: '#1C3A48' }}>{val}</span>
+                  <span style={{ color: '#8C8C8C' }}>{label}</span>
+                  <span style={{ fontWeight: 600, color: '#00353E' }}>{val}</span>
                 </div>
               ))}
             </div>
             <div>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#1C3A48', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Rx Drug Coverage</h3>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#00353E', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Rx Drug Coverage</h3>
               {[
                 ['Tier 1 (Generic)', plan.rxDrugs?.tier1 || 'N/A'],
                 ['Tier 2 (Pref Brand)', plan.rxDrugs?.tier2 || 'N/A'],
@@ -149,8 +149,8 @@ export default function PlanDetailsModal({
                 ['Tier 4 (Specialty)', plan.rxDrugs?.tier4 || 'N/A'],
               ].map(([label, val]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid rgba(226,234,237,0.6)', fontSize: '13px' }}>
-                  <span style={{ color: '#7A9BA6' }}>{label}</span>
-                  <span style={{ fontWeight: 600, color: '#1C3A48' }}>{val}</span>
+                  <span style={{ color: '#8C8C8C' }}>{label}</span>
+                  <span style={{ fontWeight: 600, color: '#00353E' }}>{val}</span>
                 </div>
               ))}
               {plan.rxDrugs?.gap && <div style={{ fontSize: '11px', color: '#059669', marginTop: '8px', fontWeight: 600 }}>✓ Gap Coverage Included</div>}
@@ -160,16 +160,16 @@ export default function PlanDetailsModal({
           {/* Doctor Network */}
           {doctors.length > 0 && (
             <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#1C3A48', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Your Doctors</h3>
-              <div style={{ background: '#EEF5F7', border: '1px solid #C6DAE0', borderRadius: '10px', padding: '12px' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#00353E', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Your Doctors</h3>
+              <div style={{ background: '#E6F7F9', border: '1px solid #E8E8E8', borderRadius: '10px', padding: '12px' }}>
                 {net ? net.doctors.map((d, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: i < net.doctors.length - 1 ? '1px solid #E0F2FE' : 'none', fontSize: '13px' }}>
-                    <span style={{ color: '#3E5560', fontWeight: 500 }}>{d.doctorName}</span>
+                    <span style={{ color: '#303030', fontWeight: 500 }}>{d.doctorName}</span>
                     {d.inNetwork
                       ? <span style={{ color: '#059669', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}><CheckCircle2 size={13} /> In Network</span>
                       : <span style={{ color: '#DC2626', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}><XCircle size={13} /> Out of Network</span>}
                   </div>
-                )) : <div style={{ fontSize: '13px', color: '#7A9BA6' }}>Checking network status...</div>}
+                )) : <div style={{ fontSize: '13px', color: '#8C8C8C' }}>Checking network status...</div>}
                 {net && <div style={{ fontSize: '12px', color: '#059669', fontWeight: 700, marginTop: '8px' }}>{net.inNetworkCount}/{net.inNetworkCount + net.outOfNetworkCount} Doctors In Network</div>}
               </div>
             </div>
@@ -177,16 +177,16 @@ export default function PlanDetailsModal({
 
           {/* Extra Benefits */}
           <div style={{ marginBottom: '20px' }}>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#1C3A48', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Extra Benefits</h3>
+            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#00353E', marginBottom: '12px', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>Extra Benefits</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
               {benefitKeys.map(key => {
                 const benefit = (eb as any)[key];
                 const covered = benefit?.covered;
                 return (
-                  <div key={key} style={{ background: covered ? '#F0FDF4' : '#F9FAFB', border: `1px solid ${covered ? '#86EFAC' : '#E2EAED'}`, borderRadius: '8px', padding: '8px', textAlign: 'center' as const }}>
+                  <div key={key} style={{ background: covered ? '#F0FDF4' : '#F9FAFB', border: `1px solid ${covered ? '#86EFAC' : '#E8E8E8'}`, borderRadius: '8px', padding: '8px', textAlign: 'center' as const }}>
                     <div style={{ fontSize: '16px', marginBottom: '2px' }}>{covered ? '✓' : '✕'}</div>
-                    <div style={{ fontSize: '11px', color: covered ? '#059669' : '#7A9BA6', fontWeight: 600 }}>{BENEFIT_LABELS[key]}</div>
-                    {covered && benefit?.details && <div style={{ fontSize: '10px', color: '#7A9BA6', marginTop: '2px' }}>{benefit.details}</div>}
+                    <div style={{ fontSize: '11px', color: covered ? '#059669' : '#8C8C8C', fontWeight: 600 }}>{BENEFIT_LABELS[key]}</div>
+                    {covered && benefit?.details && <div style={{ fontSize: '10px', color: '#8C8C8C', marginTop: '2px' }}>{benefit.details}</div>}
                   </div>
                 );
               })}
@@ -194,7 +194,7 @@ export default function PlanDetailsModal({
           </div>
 
           {/* Plan Info */}
-          <div style={{ background: '#FAF9F5', borderRadius: '10px', padding: '12px 16px', marginBottom: '20px' }}>
+          <div style={{ background: '#F9F9F9', borderRadius: '10px', padding: '12px 16px', marginBottom: '20px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
               {[
                 ['Contract ID', `${plan.contractId}/${plan.planId}`],
@@ -203,8 +203,8 @@ export default function PlanDetailsModal({
                 ['Effective Date', plan.effectiveDate],
               ].map(([label, val]) => (
                 <div key={label}>
-                  <span style={{ color: '#7A9BA6' }}>{label}: </span>
-                  <span style={{ color: '#3E5560', fontWeight: 600 }}>{val}</span>
+                  <span style={{ color: '#8C8C8C' }}>{label}: </span>
+                  <span style={{ color: '#303030', fontWeight: 600 }}>{val}</span>
                 </div>
               ))}
             </div>
@@ -212,20 +212,20 @@ export default function PlanDetailsModal({
         </div>
 
         {/* Sticky Footer */}
-        <div style={{ position: 'sticky', bottom: 0, background: 'white', borderTop: '1px solid #E2EAED', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', borderRadius: '0 0 10px 10px' }}>
+        <div style={{ position: 'sticky', bottom: 0, background: 'white', borderTop: '1px solid #E8E8E8', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', borderRadius: '0 0 10px 10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
               onClick={() => hasPrev && onChangeIndex(selectedIndex! - 1)}
               disabled={!hasPrev}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '8px', border: '1px solid #E2EAED', background: hasPrev ? 'white' : '#F9FAFB', color: hasPrev ? '#1C3A48' : '#D1D5DB', fontSize: '13px', fontWeight: 600, cursor: hasPrev ? 'pointer' : 'not-allowed' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '8px', border: '1px solid #E8E8E8', background: hasPrev ? 'white' : '#F9FAFB', color: hasPrev ? '#00353E' : '#D1D5DB', fontSize: '13px', fontWeight: 600, cursor: hasPrev ? 'pointer' : 'not-allowed' }}
             >
               <ChevronLeft size={15} /> Previous
             </button>
-            <span style={{ fontSize: '12px', color: '#7A9BA6' }}>{selectedIndex! + 1} of {plans.length}</span>
+            <span style={{ fontSize: '12px', color: '#8C8C8C' }}>{selectedIndex! + 1} of {plans.length}</span>
             <button
               onClick={() => hasNext && onChangeIndex(selectedIndex! + 1)}
               disabled={!hasNext}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '8px', border: '1px solid #E2EAED', background: hasNext ? 'white' : '#F9FAFB', color: hasNext ? '#1C3A48' : '#D1D5DB', fontSize: '13px', fontWeight: 600, cursor: hasNext ? 'pointer' : 'not-allowed' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '8px', border: '1px solid #E8E8E8', background: hasNext ? 'white' : '#F9FAFB', color: hasNext ? '#00353E' : '#D1D5DB', fontSize: '13px', fontWeight: 600, cursor: hasNext ? 'pointer' : 'not-allowed' }}
             >
               Next <ChevronRight size={15} />
             </button>
@@ -233,13 +233,13 @@ export default function PlanDetailsModal({
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
               onClick={onClose}
-              style={{ padding: '10px 20px', borderRadius: '8px', border: '1.5px solid #E2EAED', background: 'white', color: '#3E5560', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+              style={{ padding: '10px 20px', borderRadius: '8px', border: '1.5px solid #E8E8E8', background: 'white', color: '#303030', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
             >
               Back to Plans
             </button>
             <button
               onClick={() => { onEnroll(plan); onClose(); }}
-              style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#1C3A48', color: 'white', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}
+              style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#00353E', color: 'white', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}
             >
               Enroll Now
             </button>

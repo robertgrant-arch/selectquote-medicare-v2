@@ -50,8 +50,8 @@ export default function MAHMOPlans() {
             desc: "Instead of meeting a large deductible first, most HMO plans charge set copays per visit — e.g., $0 for primary care, $35–$40 for specialists — making costs easy to predict.",
           },
         ].map((item) => (
-          <div key={item.step} className="flex gap-3 rounded-lg p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
-            <div className="w-6 h-6 rounded-full bg-[#E8F2F5] text-[#1C3A48] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+          <div key={item.step} className="flex gap-3 rounded-lg p-4 border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8" }}>
+            <div className="w-6 h-6 rounded-full bg-[#E6F7F9] text-[#00353E] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
               {item.step[0]}
             </div>
             <div>
@@ -67,11 +67,11 @@ export default function MAHMOPlans() {
         Pros and Cons of HMO Plans
       </h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
-        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
-          <h3 className="font-bold text-sm mb-2 flex items-center gap-1.5" style={{ color: "#1C3A48" }}>
+        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
+          <h3 className="font-bold text-sm mb-2 flex items-center gap-1.5" style={{ color: "#00353E" }}>
             <CheckCircle2 size={14} /> Advantages
           </h3>
-          <ul className="space-y-1.5 text-sm" style={{ color: "#3E5560" }}>
+          <ul className="space-y-1.5 text-sm" style={{ color: "#303030" }}>
             {[
               "Often $0 monthly premium",
               "Lower copays and out-of-pocket costs",
@@ -81,17 +81,17 @@ export default function MAHMOPlans() {
               "Annual out-of-pocket maximum protects you",
             ].map((item) => (
               <li key={item} className="flex items-start gap-1.5">
-                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#237A92" }} />
+                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#00859A" }} />
                 {item}
               </li>
             ))}
           </ul>
         </div>
-        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
-          <h3 className="font-bold text-sm mb-2 flex items-center gap-1.5" style={{ color: "#3E5560" }}>
+        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8" }}>
+          <h3 className="font-bold text-sm mb-2 flex items-center gap-1.5" style={{ color: "#303030" }}>
             <AlertCircle size={14} /> Limitations
           </h3>
-          <ul className="space-y-1.5 text-sm" style={{ color: "#3E5560" }}>
+          <ul className="space-y-1.5 text-sm" style={{ color: "#303030" }}>
             {[
               "Must use in-network providers",
               "Referrals required for specialists",
@@ -101,7 +101,7 @@ export default function MAHMOPlans() {
               "Prior authorization may be needed for some services",
             ].map((item) => (
               <li key={item} className="flex items-start gap-1.5">
-                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#7A9BA6" }} />
+                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#8C8C8C" }} />
                 {item}
               </li>
             ))}
@@ -116,7 +116,7 @@ export default function MAHMOPlans() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr style={{ backgroundColor: "#EEF5F7" }}>
+            <tr style={{ backgroundColor: "#E6F7F9" }}>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Cost Item</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Typical Range</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Notes</th>
@@ -133,7 +133,7 @@ export default function MAHMOPlans() {
               { item: "Max Out-of-Pocket", range: "$3,400 – $8,850", note: "Average MOOP increased to ~$5,100 in 2025" },
               { item: "Inpatient Hospital (days 1–5)", range: "$250 – $350/day", note: "After day 5, often $0" },
             ].map((row) => (
-              <tr key={row.item} className="border border-gray-200" style={{ transition: "background-color 0.1s" }} onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#FAF9F5")} onMouseLeave={e => (e.currentTarget.style.backgroundColor = "")}>
+              <tr key={row.item} className="border border-gray-200" style={{ transition: "background-color 0.1s" }} onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#F9F9F9")} onMouseLeave={e => (e.currentTarget.style.backgroundColor = "")}>
                 <td className="p-3 font-medium text-gray-800">{row.item}</td>
                 <td className="p-3 text-gray-700 font-semibold">{row.range}</td>
                 <td className="p-3 text-gray-500 text-xs">{row.note}</td>
@@ -163,7 +163,7 @@ export default function MAHMOPlans() {
           { benefit: "Meals", detail: "Post-hospitalization meal delivery (some plans)" },
           { benefit: "Part B Giveback", detail: "Some plans reduce your Part B premium by $10–$100/month" },
         ].map((b) => (
-          <div key={b.benefit} className="rounded-lg p-3 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
+          <div key={b.benefit} className="rounded-lg p-3 border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8" }}>
             <div className="font-semibold text-gray-800 text-sm mb-1">{b.benefit}</div>
             <div className="text-gray-500 text-xs leading-relaxed">{b.detail}</div>
           </div>
@@ -186,15 +186,15 @@ export default function MAHMOPlans() {
           "Are comfortable with coordinated care and referral processes",
         ].map((item) => (
           <li key={item} className="flex items-start gap-2">
-            <CheckCircle2 size={14} className="shrink-0 mt-0.5" style={{ color: "#237A92" }} />
+            <CheckCircle2 size={14} className="shrink-0 mt-0.5" style={{ color: "#00859A" }} />
             {item}
           </li>
         ))}
       </ul>
 
-      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0", color: "#3E5560" }}>
+      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8", color: "#303030" }}>
         <div className="flex items-start gap-2">
-          <HelpCircle size={15} className="shrink-0 mt-0.5" style={{ color: "#237A92" }} />
+          <HelpCircle size={15} className="shrink-0 mt-0.5" style={{ color: "#00859A" }} />
           <div>
             <strong>Before you enroll:</strong> Always verify that your current doctors and preferred
             hospitals are in the plan's network. Use the plan's online provider directory or call
@@ -207,14 +207,14 @@ export default function MAHMOPlans() {
         <Link
           href="/plans?zip=64106"
           className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white"
-          style={{ backgroundColor: "#1C3A48" }}
+          style={{ backgroundColor: "#00353E" }}
         >
           Browse HMO Plans in Your Area →
         </Link>
         <Link
           href="/medicare-advantage/ppo"
           className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border"
-          style={{ color: "#1C3A48", borderColor: "#1C3A48" }}
+          style={{ color: "#00353E", borderColor: "#00353E" }}
         >
           Compare with PPO Plans
         </Link>

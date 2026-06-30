@@ -23,28 +23,9 @@ import Logo from "@/components/brand/Logo";
 import { useQuoteHandoff } from "@/contexts/QuoteHandoffContext";
 import { trpc } from "@/lib/trpc";
 import type { Doctor } from "@/lib/types";
+import { T, F } from "@/lib/brand";
 
-// ─── Design tokens ────────────────────────────────────────────────────────────
-const T = {
-  ink:   "#0B1B24",
-  dark:  "#1C3A48",
-  teal:  "#237A92",
-  tealL: "#2E96B0",
-  body:  "#3E5560",
-  sub:   "#7A9BA6",
-  rule:  "#E2EAED",
-  warm:  "#FAF9F5",
-  night: "#0A1820",
-  ftr:   "#060E14",
-  err:   "#C0392B",
-} as const;
-
-// Lora: editorial serif with a beautiful italic. Authority without severity.
-// DM Sans: clean DTC body copy, optically sized, pairs naturally with Lora.
-const F = {
-  serif: "'Lora', Georgia, 'Times New Roman', serif",
-  sans:  "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
-} as const;
+const ERR = "#C0392B";
 
 // ─── Page data ────────────────────────────────────────────────────────────────
 const BENEFITS = [
@@ -234,7 +215,7 @@ export default function Home() {
       </a>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
         #hm .hm-skip:focus { top: 0 !important; }
 
@@ -259,12 +240,12 @@ export default function Home() {
           outline: none;
         }
         #hm .btn-primary { transition: background-color 0.14s; }
-        #hm .btn-primary:hover { background-color: #112333 !important; }
+        #hm .btn-primary:hover { background-color: #014951 !important; }
         #hm .btn-primary:focus-visible { outline: 2px solid ${T.teal}; outline-offset: 2px; }
         #hm .btn-teal { transition: background-color 0.14s; }
-        #hm .btn-teal:hover { background-color: ${T.tealL} !important; }
+        #hm .btn-teal:hover { background-color: ${T.teal} !important; }
         #hm .btn-teal:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-        #hm .text-link:hover  { color: ${T.tealL} !important; }
+        #hm .text-link:hover  { color: ${T.teal} !important; }
         #hm .footer-link:hover { color: rgba(255,255,255,0.7) !important; }
         #hm .phone-link:hover  { color: rgba(235,245,248,0.75) !important; }
 
@@ -304,7 +285,7 @@ export default function Home() {
       {showResumeBanner && !showMBIModal && (
         <div
           className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-4 px-5 py-3.5 rounded-xl shadow-lg"
-          style={{ backgroundColor: "#1C3A48", border: "1px solid #2E5266", maxWidth: "480px", width: "calc(100% - 32px)" }}
+          style={{ backgroundColor: "#00353E", border: "1px solid #2E5266", maxWidth: "480px", width: "calc(100% - 32px)" }}
         >
           <RotateCcw size={18} className="shrink-0 text-white/80" />
           <div className="flex-1 min-w-0">
@@ -318,7 +299,7 @@ export default function Home() {
           <button
             onClick={handleResumeAccept}
             className="shrink-0 px-3 py-1.5 text-xs font-bold rounded-lg"
-            style={{ backgroundColor: "#237A92", color: "white" }}
+            style={{ backgroundColor: "#00859A", color: "white" }}
           >
             Resume
           </button>
@@ -389,7 +370,7 @@ export default function Home() {
                         flex: 1, fontFamily: F.sans,
                         padding: "17px 20px", fontSize: "17px", fontWeight: 500,
                         color: T.ink, backgroundColor: "#fff",
-                        border: `1.5px solid ${inputError ? T.err : "#D4DDE1"}`,
+                        border: `1.5px solid ${inputError ? ERR : "#D4DDE1"}`,
                         borderRadius: "6px", outline: "none",
                         transition: "border-color 0.15s, box-shadow 0.15s",
                         boxSizing: "border-box",
@@ -401,7 +382,7 @@ export default function Home() {
                       className="btn-primary"
                       style={{
                         fontFamily: F.sans, padding: "17px 26px",
-                        backgroundColor: T.dark, color: "#fff",
+                        backgroundColor: T.orange, color: "#fff",
                         fontWeight: 600, fontSize: "15px",
                         borderRadius: "6px", border: "none",
                         cursor: "pointer", flexShrink: 0,
@@ -418,7 +399,7 @@ export default function Home() {
                     id="zip-err"
                     role="alert" aria-live="assertive" aria-atomic="true"
                     style={{
-                      fontFamily: F.sans, fontSize: "13px", color: T.err,
+                      fontFamily: F.sans, fontSize: "13px", color: ERR,
                       minHeight: "20px", marginTop: "8px",
                       display: "flex", alignItems: "center", gap: "5px",
                     }}
@@ -824,7 +805,7 @@ export default function Home() {
                   onClick={handleSearch}
                   style={{
                     fontFamily: F.sans, padding: "16px 24px",
-                    backgroundColor: T.teal, color: "#fff",
+                    backgroundColor: T.orange, color: "#fff",
                     fontWeight: 600, fontSize: "14px",
                     borderRadius: "6px", border: "none",
                     cursor: "pointer", flexShrink: 0,
@@ -862,7 +843,7 @@ export default function Home() {
       </main>
 
       {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <footer aria-label="Site footer" style={{ backgroundColor: T.ftr, fontFamily: F.sans, padding: "80px 0 52px" }}>
+      <footer aria-label="Site footer" style={{ backgroundColor: T.footer, fontFamily: F.sans, padding: "80px 0 52px" }}>
         <div style={{ maxWidth: "1160px", margin: "0 auto", padding: "0 40px" }}>
           <div
             className="footer-g"

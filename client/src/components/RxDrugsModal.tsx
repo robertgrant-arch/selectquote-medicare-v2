@@ -153,7 +153,7 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
         {/* Header */}
         <div
           className="flex items-center justify-between p-5"
-          style={{ backgroundColor: "#1C3A48", borderRadius: "10px 10px 0 0" }}
+          style={{ backgroundColor: "#00353E", borderRadius: "10px 10px 0 0" }}
         >
           <div className="flex items-center gap-3">
             <div
@@ -163,7 +163,7 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
               <Pill size={18} className="text-white" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              <h2 className="text-base font-bold text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>
                 Add Your Prescriptions
               </h2>
               <p className="text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>
@@ -183,12 +183,12 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
         </div>
 
         {/* Search */}
-        <div className="p-4" style={{ borderBottom: "1px solid #E2EAED" }}>
+        <div className="p-4" style={{ borderBottom: "1px solid #E8E8E8" }}>
           <div className="relative">
             {isLoading ? (
-              <Loader2 size={15} className="absolute left-3 top-1/2 -translate-y-1/2 animate-spin" style={{ color: "#7A9BA6" }} />
+              <Loader2 size={15} className="absolute left-3 top-1/2 -translate-y-1/2 animate-spin" style={{ color: "#8C8C8C" }} />
             ) : (
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "#7A9BA6" }} />
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "#8C8C8C" }} />
             )}
             <input
               type="text"
@@ -196,14 +196,14 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search any drug name (e.g. Crestor, Metformin)..."
               className="w-full pl-9 pr-4 py-2.5 text-sm rounded-lg"
-              style={{ border: "1.5px solid #E2EAED", color: "#1C3A48", fontFamily: "'DM Sans', sans-serif", outline: "none" }}
-              onFocus={e => { e.currentTarget.style.borderColor = "#237A92"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(35,122,146,0.14)"; }}
-              onBlur={e => { e.currentTarget.style.borderColor = "#E2EAED"; e.currentTarget.style.boxShadow = "none"; }}
+              style={{ border: "1.5px solid #E8E8E8", color: "#00353E", fontFamily: "'Montserrat', sans-serif", outline: "none" }}
+              onFocus={e => { e.currentTarget.style.borderColor = "#00859A"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(35,122,146,0.14)"; }}
+              onBlur={e => { e.currentTarget.style.borderColor = "#E8E8E8"; e.currentTarget.style.boxShadow = "none"; }}
               autoFocus
             />
           </div>
           {search.length > 0 && search.length < 2 && (
-            <p className="text-xs mt-1 ml-1" style={{ color: "#7A9BA6" }}>Type at least 2 characters to search</p>
+            <p className="text-xs mt-1 ml-1" style={{ color: "#8C8C8C" }}>Type at least 2 characters to search</p>
           )}
         </div>
 
@@ -212,20 +212,20 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
           {/* Added drugs */}
           {drugs.length > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#7A9BA6" }}>
+              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#8C8C8C" }}>
                 Your Medications ({drugs.length})
               </p>
               {drugs.map((drug) => (
                 <div
                   key={drug.id}
                   className="flex items-center justify-between p-3 rounded-lg mb-2"
-                  style={{ backgroundColor: "#EEF5F7", border: "1px solid #C6DAE0" }}
+                  style={{ backgroundColor: "#E6F7F9", border: "1px solid #E8E8E8" }}
                 >
                   <div className="flex items-center gap-3">
                     <CheckCircle2 size={16} style={{ color: "#059669", flexShrink: 0 }} />
                     <div>
-                      <p className="text-sm font-semibold" style={{ color: "#0B1B24" }}>{drug.name}</p>
-                      <p className="text-xs" style={{ color: "#7A9BA6" }}>
+                      <p className="text-sm font-semibold" style={{ color: "#1A1A1A" }}>{drug.name}</p>
+                      <p className="text-xs" style={{ color: "#8C8C8C" }}>
                         {drug.dosage} {drug.dosage && drug.frequency ? " · " : ""}{drug.frequency}
                         {drug.isGeneric && (
                           <span className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ color: "#15803D", backgroundColor: "#F0FDF4" }}>Generic</span>
@@ -236,9 +236,9 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
                   <button
                     onClick={() => removeDrug(drug.id)}
                     className="p-1.5 rounded-lg transition-colors"
-                    style={{ color: "#7A9BA6" }}
+                    style={{ color: "#8C8C8C" }}
                     onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "#DC2626"; (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#FEF2F2"; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "#7A9BA6"; (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "#8C8C8C"; (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
                   >
                     <Trash2 size={14} />
                   </button>
@@ -250,7 +250,7 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
           {/* API Search Results */}
           {hasSearched && apiResults.length > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#7A9BA6" }}>
+              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#8C8C8C" }}>
                 Search Results
               </p>
               {apiResults.map((result) => {
@@ -260,7 +260,7 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
                   <div key={result.displayName} className="mb-2">
                     <div
                       className="flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer"
-                      style={{ border: "1px solid #E2EAED" }}
+                      style={{ border: "1px solid #E8E8E8" }}
                       onClick={() => {
                         if (result.strengths.length > 1) {
                           setExpandedDrug(isExpanded ? null : result.displayName);
@@ -268,27 +268,27 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
                           addFromApi(result, result.strengths[0], result.rxcuis[0]);
                         }
                       }}
-                      onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#FAF9F5")}
+                      onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#F9F9F9")}
                       onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
                     >
                       <div className="flex items-center gap-3">
                         <div
                           className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                          style={{ backgroundColor: "#E8F2F5" }}
+                          style={{ backgroundColor: "#E6F7F9" }}
                         >
-                          <Pill size={14} style={{ color: "#1C3A48" }} />
+                          <Pill size={14} style={{ color: "#00353E" }} />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold" style={{ color: "#0B1B24" }}>{name}</p>
-                          <p className="text-xs" style={{ color: "#7A9BA6" }}>
+                          <p className="text-sm font-semibold" style={{ color: "#1A1A1A" }}>{name}</p>
+                          <p className="text-xs" style={{ color: "#8C8C8C" }}>
                             {route}{result.strengths.length > 1 ? ` · ${result.strengths.length} strengths` : result.strengths[0] ? ` · ${result.strengths[0]}` : ""}
                           </p>
                         </div>
                       </div>
                       <button
                         className="p-1.5 rounded-full transition-colors"
-                        style={{ color: "#237A92" }}
-                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#EEF5F7")}
+                        style={{ color: "#00859A" }}
+                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#E6F7F9")}
                         onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
                       >
                         <Plus size={16} />
@@ -301,8 +301,8 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
                             key={strength}
                             onClick={() => addFromApi(result, strength, result.rxcuis[idx])}
                             className="w-full text-left px-3 py-2 text-xs rounded-lg transition-colors"
-                            style={{ color: "#3E5560" }}
-                            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#EEF5F7")}
+                            style={{ color: "#303030" }}
+                            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#E6F7F9")}
                             onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
                           >
                             {strength.trim()}
@@ -319,39 +319,39 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
           {/* No results */}
           {hasSearched && apiResults.length === 0 && !isLoading && (
             <div className="text-center py-8">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: "#EEF5F7" }}>
-                <Pill size={22} style={{ color: "#C6DAE0" }} />
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: "#E6F7F9" }}>
+                <Pill size={22} style={{ color: "#E8E8E8" }} />
               </div>
-              <p className="text-sm font-medium" style={{ color: "#3E5560" }}>No results for "{search}"</p>
-              <p className="text-xs mt-1" style={{ color: "#7A9BA6" }}>Try a different name or spelling</p>
+              <p className="text-sm font-medium" style={{ color: "#303030" }}>No results for "{search}"</p>
+              <p className="text-xs mt-1" style={{ color: "#8C8C8C" }}>Try a different name or spelling</p>
             </div>
           )}
 
           {/* Common Medications */}
           {!hasSearched && !search && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#7A9BA6" }}>
+              <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "#8C8C8C" }}>
                 Common Medications
               </p>
               {commonDrugs.map((drug) => (
                 <div
                   key={drug.id}
                   className="flex items-center justify-between p-3 rounded-lg mb-2 transition-colors cursor-pointer"
-                  style={{ border: "1px solid #E2EAED" }}
+                  style={{ border: "1px solid #E8E8E8" }}
                   onClick={() => addDrug(drug)}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#FAF9F5")}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#F9F9F9")}
                   onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: "#E8F2F5" }}
+                      style={{ backgroundColor: "#E6F7F9" }}
                     >
-                      <Pill size={14} style={{ color: "#1C3A48" }} />
+                      <Pill size={14} style={{ color: "#00353E" }} />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold" style={{ color: "#0B1B24" }}>{drug.name}</p>
-                      <p className="text-xs" style={{ color: "#7A9BA6" }}>
+                      <p className="text-sm font-semibold" style={{ color: "#1A1A1A" }}>{drug.name}</p>
+                      <p className="text-xs" style={{ color: "#8C8C8C" }}>
                         {drug.dosage} · {drug.frequency}
                         {drug.isGeneric && (
                           <span className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ color: "#15803D", backgroundColor: "#F0FDF4" }}>Generic available</span>
@@ -361,9 +361,9 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
                   </div>
                   <button
                     className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
-                    style={{ color: "#237A92", border: "1px solid #C6DAE0", backgroundColor: "#EEF5F7" }}
-                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#E8F2F5")}
-                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#EEF5F7")}
+                    style={{ color: "#00859A", border: "1px solid #E8E8E8", backgroundColor: "#E6F7F9" }}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#E6F7F9")}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#E6F7F9")}
                   >
                     + Add
                   </button>
@@ -376,27 +376,27 @@ export default function RxDrugsModal({ open, onClose, selectedDrugs, onSave }: R
         {/* Footer */}
         <div
           className="flex items-center justify-between p-4"
-          style={{ borderTop: "1px solid #E2EAED", backgroundColor: "#FAF9F5", borderRadius: "0 0 10px 10px" }}
+          style={{ borderTop: "1px solid #E8E8E8", backgroundColor: "#F9F9F9", borderRadius: "0 0 10px 10px" }}
         >
-          <p className="text-xs" style={{ color: "#7A9BA6" }}>
+          <p className="text-xs" style={{ color: "#8C8C8C" }}>
             {drugs.length} medication{drugs.length !== 1 ? "s" : ""} added
           </p>
           <div className="flex gap-2">
             <button
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium rounded-lg transition-colors"
-              style={{ color: "#3E5560", border: "1.5px solid #E2EAED", background: "white" }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#237A92"; (e.currentTarget as HTMLButtonElement).style.color = "#237A92"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#E2EAED"; (e.currentTarget as HTMLButtonElement).style.color = "#3E5560"; }}
+              style={{ color: "#303030", border: "1.5px solid #E8E8E8", background: "white" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#00859A"; (e.currentTarget as HTMLButtonElement).style.color = "#00859A"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#E8E8E8"; (e.currentTarget as HTMLButtonElement).style.color = "#303030"; }}
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               className="px-5 py-2 text-sm font-bold text-white rounded-lg transition-colors"
-              style={{ backgroundColor: "#1C3A48" }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#112333")}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#1C3A48")}
+              style={{ backgroundColor: "#00353E" }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#014951")}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#00353E")}
             >
               Save {drugs.length > 0 ? `(${drugs.length}) ` : ""}Medications
             </button>

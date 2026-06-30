@@ -154,7 +154,7 @@ export function DrugFormularySearch() {
       </h2>
       <div className="space-y-2 mb-6">
         {[
-          { tier: "Tier 1 — Preferred Generics", copay: "$0 – $5", color: "bg-[#E8F2F5] border-[#C8D8F5]", textColor: "text-green-800", examples: "Metformin, lisinopril, atorvastatin, amlodipine, omeprazole, sertraline, levothyroxine" },
+          { tier: "Tier 1 — Preferred Generics", copay: "$0 – $5", color: "bg-[#E6F7F9] border-[#C8D8F5]", textColor: "text-green-800", examples: "Metformin, lisinopril, atorvastatin, amlodipine, omeprazole, sertraline, levothyroxine" },
           { tier: "Tier 2 — Non-Preferred Generics", copay: "$5 – $15", color: "bg-teal-50 border-teal-200", textColor: "text-teal-800", examples: "Higher-cost generics without a preferred generic equivalent" },
           { tier: "Tier 3 — Preferred Brand-Name", copay: "$35 – $50", color: "bg-blue-50 border-blue-200", textColor: "text-blue-800", examples: "Eliquis, Jardiance, Xarelto, Ozempic, Trulicity, Entresto" },
           { tier: "Tier 4 — Non-Preferred Brand-Name", copay: "$80 – $100", color: "bg-orange-50 border-orange-200", textColor: "text-orange-800", examples: "Brand drugs with available generic alternatives; newer brand drugs" },
@@ -288,7 +288,7 @@ export function ExtraHelpPrograms() {
             ].map((row) => (
               <tr key={row.req} className="border border-gray-200 hover:bg-gray-50">
                 <td className="p-3 font-medium text-gray-800">{row.req}</td>
-                <td className="p-3 text-[#1C3A48] font-medium">{row.full}</td>
+                <td className="p-3 text-[#00353E] font-medium">{row.full}</td>
                 <td className="p-3 text-blue-700">{row.partial}</td>
               </tr>
             ))}

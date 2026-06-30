@@ -2,24 +2,7 @@ import { Link } from "wouter";
 import { ChevronRight } from "lucide-react";
 import Header from "@/components/Header";
 import SiteFooter from "@/components/brand/SiteFooter";
-
-// ── Design tokens (mirrors Home.tsx) ─────────────────────────────────────────
-const T = {
-  ink:   "#0B1B24",
-  dark:  "#1C3A48",
-  teal:  "#237A92",
-  body:  "#3E5560",
-  sub:   "#7A9BA6",
-  rule:  "#E2EAED",
-  warm:  "#FAF9F5",
-  night: "#0A1820",
-  ftr:   "#060E14",
-} as const;
-
-const F = {
-  serif: "'Lora', Georgia, 'Times New Roman', serif",
-  sans:  "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
-} as const;
+import { T, F } from "@/lib/brand";
 
 export interface InfoPageProps {
   section: string;
@@ -42,9 +25,8 @@ export default function InfoPage({
     <div style={{ minHeight: "100vh", backgroundColor: T.warm, fontFamily: F.sans, color: T.body }}>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap');
         .ip-nav-link:hover { color: rgba(255,255,255,0.9) !important; }
-        .ip-cta-btn:hover  { background-color: #2E96B0 !important; }
+        .ip-cta-btn:hover  { background-color: ${T.orangeD} !important; }
       `}</style>
 
       <Header />
@@ -177,7 +159,7 @@ export default function InfoPage({
               style={{
                 display: "inline-flex", alignItems: "center", gap: "8px",
                 fontFamily: F.sans, fontSize: "15px", fontWeight: 600,
-                backgroundColor: T.teal, color: "#fff",
+                backgroundColor: T.orange, color: "#fff",
                 padding: "16px 28px", borderRadius: "6px",
                 textDecoration: "none",
                 transition: "background-color 0.14s",

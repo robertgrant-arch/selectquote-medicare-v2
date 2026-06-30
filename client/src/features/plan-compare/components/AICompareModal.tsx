@@ -103,7 +103,7 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
         style={{ width:'100%', maxWidth:'620px', maxHeight:'90vh', backgroundColor:'#fff', borderRadius:'12px 12px 0 0', display:'flex', flexDirection:'column', boxShadow:'0 -4px 32px rgba(11,27,36,0.14)', overflowY:'auto' }}
       >
         {/* Header */}
-        <div style={{ position:'sticky', top:0, zIndex:10, flexShrink:0, backgroundColor:'#1C3A48', padding:'14px 16px' }}>
+        <div style={{ position:'sticky', top:0, zIndex:10, flexShrink:0, backgroundColor:'#00353E', padding:'14px 16px' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'6px' }}>
             <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
               <Sparkles size={15} style={{ color:'#93C5FD' }} aria-hidden="true" />
@@ -135,12 +135,12 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
 
           {/* Loading / streaming */}
           {(isLoading || isStreaming) && (
-            <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px 0 14px', color:'#1C3A48' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px 0 14px', color:'#00353E' }}>
               <Loader2 size={16} style={{ animation:'spin 1s linear infinite', flexShrink:0 }} aria-hidden="true" />
               <span style={{ fontSize:'12px', fontWeight:600 }}>
                 {isLoading ? 'Connecting to AI…' : 'Analyzing plans…'}
               </span>
-              <span style={{ fontSize:'10px', color:'#7A9BA6', marginLeft:'auto' }}>30s max</span>
+              <span style={{ fontSize:'10px', color:'#8C8C8C', marginLeft:'auto' }}>30s max</span>
             </div>
           )}
 
@@ -184,7 +184,7 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
                     </button>
                     {isOpen && (
                       <div id={`section-${sec.key.replace(/\s/g,'-')}`} style={{ padding:'0 14px 12px' }}>
-                        <p style={{ fontSize:'12px', color:'#3E5560', margin:0, lineHeight:1.65, whiteSpace:'pre-wrap' }}>{content}</p>
+                        <p style={{ fontSize:'12px', color:'#303030', margin:0, lineHeight:1.65, whiteSpace:'pre-wrap' }}>{content}</p>
                       </div>
                     )}
                   </div>
@@ -192,7 +192,7 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
               })}
 
               {isDone && (
-                <p style={{ fontSize:'9px', color:'#7A9BA6', textAlign:'center', marginTop:'8px', lineHeight:1.4 }}>
+                <p style={{ fontSize:'9px', color:'#8C8C8C', textAlign:'center', marginTop:'8px', lineHeight:1.4 }}>
                   AI analysis is for comparison purposes only. Verify all plan details with the carrier before enrolling.
                   Not affiliated with Medicare.gov or CMS.
                 </p>
@@ -203,8 +203,8 @@ export default function AICompareModal({ open, plans, onClose }: Props) {
 
         {/* Retry button when done */}
         {isDone && (
-          <div style={{ position:'sticky', bottom:0, backgroundColor:'#fff', borderTop:'1px solid #E2EAED', padding:'10px 16px', display:'flex', gap:'8px' }}>
-            <button onClick={handleRetry} style={{ display:'flex', alignItems:'center', gap:'5px', padding:'8px 14px', borderRadius:'8px', backgroundColor:'#FAF9F5', border:'1px solid #E2EAED', cursor:'pointer', fontSize:'11px', fontWeight:600, color:'#3E5560' }}>
+          <div style={{ position:'sticky', bottom:0, backgroundColor:'#fff', borderTop:'1px solid #E8E8E8', padding:'10px 16px', display:'flex', gap:'8px' }}>
+            <button onClick={handleRetry} style={{ display:'flex', alignItems:'center', gap:'5px', padding:'8px 14px', borderRadius:'8px', backgroundColor:'#F9F9F9', border:'1px solid #E8E8E8', cursor:'pointer', fontSize:'11px', fontWeight:600, color:'#303030' }}>
               <RotateCcw size={12} aria-hidden="true" /> Refresh
             </button>
           </div>

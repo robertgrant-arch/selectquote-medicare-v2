@@ -90,7 +90,7 @@ export default function CarrierLogo({ carrier, bgColor, textColor, size = "md" }
         color: text,
         width: dimensions.width,
         height: dimensions.height,
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Montserrat', sans-serif",
         flexShrink: 0,
       }}
     >

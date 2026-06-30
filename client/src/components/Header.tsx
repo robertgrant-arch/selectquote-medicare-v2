@@ -1,24 +1,9 @@
-// Medicare Advantage Quote Engine — Header v10 (production)
+// Medicare Advantage Quote Engine — Header
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
 import Logo from "@/components/brand/Logo";
-
-const T = {
-  ink:   "#0B1B24",
-  dark:  "#1C3A48",
-  teal:  "#237A92",
-  tealL: "#2E96B0",
-  body:  "#3E5560",
-  sub:   "#7A9BA6",
-  rule:  "#E2EAED",
-  warm:  "#FAF9F5",
-} as const;
-
-const F = {
-  serif: "'Lora', Georgia, 'Times New Roman', serif",
-  sans:  "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
-} as const;
+import { T, F } from "@/lib/brand";
 
 // ── Nav data ──────────────────────────────────────────────────────────────────
 interface NavItem {
@@ -304,8 +289,6 @@ export default function Header() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap');
-
         @keyframes hdr-drop-in {
           from { opacity: 0; transform: translateY(-6px); }
           to   { opacity: 1; transform: translateY(0);    }
@@ -317,18 +300,18 @@ export default function Header() {
 
         .hdr-dropdown-panel { animation: hdr-drop-in 0.15s ease-out both; }
 
-        .hdr-navbtn:hover                    { color: ${T.teal}  !important; }
-        .hdr-navbtn[data-active="true"]:hover { color: ${T.tealL} !important; }
+        .hdr-navbtn:hover                     { color: ${T.teal}   !important; }
+        .hdr-navbtn[data-active="true"]:hover  { color: ${T.tealD}  !important; }
 
         .hdr-dropitem:hover { background-color: ${T.warm} !important; }
 
         .hdr-signin:hover { color: ${T.body} !important; }
 
-        .hdr-cta:hover         { background-color: #112333 !important; }
-        .hdr-cta:focus-visible { outline: 2px solid ${T.teal}; outline-offset: 2px; }
+        .hdr-cta:hover         { background-color: ${T.orangeD} !important; }
+        .hdr-cta:focus-visible { outline: 2px solid ${T.orange}; outline-offset: 2px; }
 
-        .hdr-mob-cta:hover         { background-color: #112333 !important; }
-        .hdr-mob-cta:focus-visible { outline: 2px solid ${T.teal}; outline-offset: 2px; }
+        .hdr-mob-cta:hover         { background-color: ${T.orangeD} !important; }
+        .hdr-mob-cta:focus-visible { outline: 2px solid ${T.orange}; outline-offset: 2px; }
 
         .hdr-ham:hover { background-color: ${T.warm} !important; }
 
@@ -361,8 +344,8 @@ export default function Header() {
           zIndex:          50,
           transition:      "box-shadow 0.2s ease",
           boxShadow:       scrolled
-            ? "0 1px 0 rgba(11,27,36,0.08), 0 4px 20px rgba(11,27,36,0.07)"
-            : "0 1px 0 rgba(11,27,36,0.08)",
+            ? "0 1px 0 rgba(26,26,26,0.08), 0 4px 20px rgba(26,26,26,0.07)"
+            : "0 1px 0 rgba(26,26,26,0.08)",
         }}
       >
         {/* ── Desktop / tablet bar ─────────────────────────────────── */}
@@ -453,7 +436,7 @@ export default function Header() {
                   fontWeight:      600,
                   letterSpacing:   "0.005em",
                   color:           "#fff",
-                  backgroundColor: T.dark,
+                  backgroundColor: T.orange,
                   borderRadius:    "6px",
                   textDecoration:  "none",
                   transition:      "background-color 0.14s",
@@ -534,7 +517,7 @@ export default function Header() {
                     fontWeight:      600,
                     letterSpacing:   "0.005em",
                     color:           "#fff",
-                    backgroundColor: T.dark,
+                    backgroundColor: T.orange,
                     borderRadius:    "6px",
                     textDecoration:  "none",
                     transition:      "background-color 0.14s",

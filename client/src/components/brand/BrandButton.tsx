@@ -21,7 +21,7 @@ const BASE: CSSProperties = {
   display:        "inline-flex",
   alignItems:     "center",
   justifyContent: "center",
-  fontFamily:     F.sans,
+  fontFamily:     F.serif,   // Poppins for buttons per brand spec
   fontWeight:     600,
   fontSize:       "15px",
   letterSpacing:  "0.005em",
@@ -38,7 +38,7 @@ const BASE: CSSProperties = {
 
 const VARIANTS: Record<ButtonVariant, CSSProperties> = {
   primary: {
-    backgroundColor: T.dark,
+    backgroundColor: T.orange,  // Orange CTA — brand primary on white/light bg
     color:           "#fff",
   },
   secondary: {
@@ -48,7 +48,7 @@ const VARIANTS: Record<ButtonVariant, CSSProperties> = {
   ghost: {
     backgroundColor: "transparent",
     color:           T.body,
-    border:          `1px solid ${T.rule}`,
+    border:          `1px solid ${T.border}`,
   },
   cta: {
     backgroundColor: T.teal,

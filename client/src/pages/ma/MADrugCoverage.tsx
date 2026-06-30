@@ -100,7 +100,7 @@ export default function MADrugCoverage() {
               <tr key={row.tier} className={`border border-gray-200 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
                 <td className="p-3 font-bold text-gray-800">{row.tier}</td>
                 <td className="p-3 text-gray-700">{row.type}</td>
-                <td className="p-3 text-[#1C3A48] font-medium">{row.copay}</td>
+                <td className="p-3 text-[#00353E] font-medium">{row.copay}</td>
                 <td className="p-3 text-gray-500 text-xs">{row.examples}</td>
               </tr>
             ))}
@@ -173,14 +173,14 @@ export default function MADrugCoverage() {
         <Link
           href="/plans?zip=64106"
           className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white"
-          style={{ backgroundColor: "#1C3A48" }}
+          style={{ backgroundColor: "#00353E" }}
         >
           Compare Plans with Drug Coverage <ArrowRight size={14} />
         </Link>
         <Link
           href="/part-d/formulary"
           className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border"
-          style={{ color: "#1C3A48", borderColor: "#1C3A48" }}
+          style={{ color: "#00353E", borderColor: "#00353E" }}
         >
           Drug Formulary Search
         </Link>

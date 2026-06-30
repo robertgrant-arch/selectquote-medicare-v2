@@ -1,5 +1,5 @@
 // Medicare Advantage Quote Engine — Plans Results Page
-// Design: Chapter-style | Navy #1C3A48 | Red #C41E3A | Light Blue #E8F2F5
+// Design: Chapter-style | Navy #00353E | Red #C41E3A | Light Blue #E6F7F9
 // Layout: Sticky top bar + horizontal quick filters + 2-col plan grid + left filter sidebar
 
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
@@ -463,11 +463,11 @@ export default function Plans() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FAF9F5", fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#F9F9F9", fontFamily: "'Montserrat', sans-serif" }}>
       <Header />
 
       {/* ── Results Header Bar ────────────────────────────────────────────── */}
-      <div className="sticky top-0 z-40 border-b" style={{ backgroundColor: "white", borderColor: "#E2EAED", boxShadow: "0 1px 0 rgba(11,27,36,0.06)" }}>
+      <div className="sticky top-0 z-40 border-b" style={{ backgroundColor: "white", borderColor: "#E8E8E8", boxShadow: "0 1px 0 rgba(11,27,36,0.06)" }}>
         <div className="max-w-screen-xl mx-auto px-4 py-3 flex items-center gap-3 flex-wrap">
 
           {/* Breadcrumb + location */}
@@ -475,16 +475,16 @@ export default function Plans() {
             <Link
               href="/"
               className="flex items-center gap-1 text-xs font-semibold transition-colors"
-              style={{ color: "#7A9BA6" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#1C3A48"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#7A9BA6"; }}
+              style={{ color: "#8C8C8C" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#00353E"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "#8C8C8C"; }}
             >
               <ArrowLeft className="w-3.5 h-3.5" />&nbsp;Back
             </Link>
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "#3E5560" }}>
-            <MapPin className="w-3.5 h-3.5" style={{ color: "#237A92" }} />
+          <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "#303030" }}>
+            <MapPin className="w-3.5 h-3.5" style={{ color: "#00859A" }} />
             ZIP {zip} &middot; {countyName}
           </div>
 
@@ -492,8 +492,8 @@ export default function Plans() {
           <div className="flex items-center gap-2 ml-auto flex-wrap">
 
             {/* ZIP input */}
-            <div className="flex items-center border rounded-lg overflow-hidden" style={{ borderColor: "#E2EAED" }}>
-              <Search className="w-3.5 h-3.5 ml-2.5" style={{ color: "#7A9BA6" }} />
+            <div className="flex items-center border rounded-lg overflow-hidden" style={{ borderColor: "#E8E8E8" }}>
+              <Search className="w-3.5 h-3.5 ml-2.5" style={{ color: "#8C8C8C" }} />
               <input
                 type="text"
                 inputMode="numeric"
@@ -502,27 +502,27 @@ export default function Plans() {
                 onChange={(e) => setZipInput(e.target.value.replace(/\D/g, ""))}
                 onKeyDown={(e) => e.key === "Enter" && handleZipSearch()}
                 className="w-20 px-2.5 py-1.5 text-sm font-semibold focus:outline-none"
-                style={{ fontFamily: "'DM Sans', sans-serif", color: "#1C3A48" }}
+                style={{ fontFamily: "'Montserrat', sans-serif", color: "#00353E" }}
               />
             </div>
 
             {/* Add Rx */}
             <button onClick={() => setRxModalOpen(true)} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all"
-              style={{ borderColor: rxDrugs.length > 0 ? "#1C3A48" : "#E2EAED", color: rxDrugs.length > 0 ? "#1C3A48" : "#3E5560", backgroundColor: rxDrugs.length > 0 ? "#E8F2F5" : "white" }}>
+              style={{ borderColor: rxDrugs.length > 0 ? "#00353E" : "#E8E8E8", color: rxDrugs.length > 0 ? "#00353E" : "#303030", backgroundColor: rxDrugs.length > 0 ? "#E6F7F9" : "white" }}>
               <Pill className="w-3.5 h-3.5" />
               {rxDrugs.length > 0 ? `${rxDrugs.length} Drug${rxDrugs.length > 1 ? "s" : ""}` : "Add Rx Drugs"}
             </button>
 
             {/* Add Doctors */}
             <button onClick={() => setDoctorsModalOpen(true)} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all"
-              style={{ borderColor: doctors.length > 0 ? "#1C3A48" : "#E2EAED", color: doctors.length > 0 ? "#1C3A48" : "#3E5560", backgroundColor: doctors.length > 0 ? "#E8F2F5" : "white" }}>
+              style={{ borderColor: doctors.length > 0 ? "#00353E" : "#E8E8E8", color: doctors.length > 0 ? "#00353E" : "#303030", backgroundColor: doctors.length > 0 ? "#E6F7F9" : "white" }}>
               <UserRound className="w-3.5 h-3.5" />
               {doctors.length > 0 ? `${doctors.length} Doctor${doctors.length > 1 ? "s" : ""}` : "Add Doctors"}
             </button>
 
             {/* Saved plans */}
             <button onClick={() => setShowFavoritesOnly(!showFavoritesOnly)} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all"
-              style={{ borderColor: showFavoritesOnly ? "#237A92" : "#E2EAED", color: showFavoritesOnly ? "#237A92" : "#3E5560", backgroundColor: showFavoritesOnly ? "#EEF5F7" : "white" }}>
+              style={{ borderColor: showFavoritesOnly ? "#00859A" : "#E8E8E8", color: showFavoritesOnly ? "#00859A" : "#303030", backgroundColor: showFavoritesOnly ? "#E6F7F9" : "white" }}>
               <Heart className="w-3.5 h-3.5" />
               {favorites.size > 0 ? `Saved (${favorites.size})` : "Saved"}
             </button>
@@ -539,19 +539,19 @@ export default function Plans() {
           ))}
 
           {/* Mobile filter toggle */}
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all" style={{ borderColor: "#E2EAED", color: "#3E5560" }}>
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all" style={{ borderColor: "#E8E8E8", color: "#303030" }}>
             <SlidersHorizontal className="w-3.5 h-3.5" /> Filters
-            {activeFilterCount > 0 && (<span className="ml-1 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{ backgroundColor: "#237A92" }}>{activeFilterCount}</span>)}
+            {activeFilterCount > 0 && (<span className="ml-1 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{ backgroundColor: "#00859A" }}>{activeFilterCount}</span>)}
           </button>
 
           {/* View mode toggle */}
-          <div className="ml-auto flex rounded-lg overflow-hidden border" style={{ borderColor: "#E2EAED" }}>
+          <div className="ml-auto flex rounded-lg overflow-hidden border" style={{ borderColor: "#E8E8E8" }}>
             <button onClick={() => setViewMode("grid")} className="p-1.5 transition-colors"
-              style={{ backgroundColor: viewMode === "grid" ? "#1C3A48" : "white", color: viewMode === "grid" ? "white" : "#7A9BA6" }}>
+              style={{ backgroundColor: viewMode === "grid" ? "#00353E" : "white", color: viewMode === "grid" ? "white" : "#8C8C8C" }}>
               <LayoutGrid className="w-4 h-4" />
             </button>
             <button onClick={() => setViewMode("list")} className="p-1.5 transition-colors"
-              style={{ backgroundColor: viewMode === "list" ? "#1C3A48" : "white", color: viewMode === "list" ? "white" : "#7A9BA6" }}>
+              style={{ backgroundColor: viewMode === "list" ? "#00353E" : "white", color: viewMode === "list" ? "white" : "#8C8C8C" }}>
               <List className="w-4 h-4" />
             </button>
           </div>
@@ -572,21 +572,21 @@ export default function Plans() {
           {/* Results summary */}
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <div>
-              <h1 className="text-2xl font-semibold" style={{ color: "#0B1B24", fontFamily: "'Lora', serif" }}>
+              <h1 className="text-2xl font-semibold" style={{ color: "#1A1A1A", fontFamily: "'Poppins', serif" }}>
                 {showFavoritesOnly ? "Saved Plans" : "Medicare Advantage Plans"}
               </h1>
-              <p className="mt-0.5" style={{ color: "#7A9BA6", fontSize: "13px" }}>
+              <p className="mt-0.5" style={{ color: "#8C8C8C", fontSize: "13px" }}>
                 {filteredPlans.length} plan{filteredPlans.length !== 1 ? "s" : ""} available
                 {showFavoritesOnly ? " (saved)" : ` in ${countyName}`}
                 {activeFilterCount > 0 && (
-                  <span style={{ color: "#237A92" }}> &middot; {activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""} applied</span>
+                  <span style={{ color: "#00859A" }}> &middot; {activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""} applied</span>
                 )}
               </p>
             </div>
 
             <div className="flex items-center gap-2">
               {activeFilterCount > 0 && (
-                <button onClick={() => setFilters(DEFAULT_FILTERS)} className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors" style={{ color: "#1C3A48", borderColor: "#E2EAED" }} onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#237A92"; (e.currentTarget as HTMLButtonElement).style.color = "#237A92"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#E2EAED"; (e.currentTarget as HTMLButtonElement).style.color = "#1C3A48"; }}>
+                <button onClick={() => setFilters(DEFAULT_FILTERS)} className="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors" style={{ color: "#00353E", borderColor: "#E8E8E8" }} onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#00859A"; (e.currentTarget as HTMLButtonElement).style.color = "#00859A"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#E8E8E8"; (e.currentTarget as HTMLButtonElement).style.color = "#00353E"; }}>
                   <X className="w-3 h-3" /> Clear Filters
                 </button>
               )}
@@ -595,17 +595,17 @@ export default function Plans() {
 
           {/* ── Current Plan Banner ────────────────── */}
           {eligibility?.currentPlan && showCurrentPlanBanner && (
-            <div className="mb-4 p-4 rounded-xl border" style={{ borderColor: "#237A92", backgroundColor: "#EEF5F7" }}>
+            <div className="mb-4 p-4 rounded-xl border" style={{ borderColor: "#00859A", backgroundColor: "#E6F7F9" }}>
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Shield className="w-4 h-4" style={{ color: "#1C3A48" }} />
-                    <span className="text-sm font-bold" style={{ color: "#1C3A48" }}>Your Current Plan</span>
-                    <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: "#EEF5F7", color: "#237A92", border: "1px solid #C6DAE0" }}>Active Coverage</span>
+                    <Shield className="w-4 h-4" style={{ color: "#00353E" }} />
+                    <span className="text-sm font-bold" style={{ color: "#00353E" }}>Your Current Plan</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{ backgroundColor: "#E6F7F9", color: "#00859A", border: "1px solid #E8E8E8" }}>Active Coverage</span>
                     {eligibility.isMockData && (<span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">Demo data</span>)}
                   </div>
-                  <h3 className="font-bold text-base" style={{ color: "#1C3A48" }}>{eligibility.currentPlan.planName}</h3>
-                  <p className="text-xs mt-0.5" style={{ color: "#7A9BA6" }}>{eligibility.currentPlan.carrier} &middot; Plan ID: {eligibility.currentPlan.planId}</p>
+                  <h3 className="font-bold text-base" style={{ color: "#00353E" }}>{eligibility.currentPlan.planName}</h3>
+                  <p className="text-xs mt-0.5" style={{ color: "#8C8C8C" }}>{eligibility.currentPlan.carrier} &middot; Plan ID: {eligibility.currentPlan.planId}</p>
                   <div className="flex gap-4 mt-2">
                     {[
                       { icon: DollarSign, label: "Premium", value: eligibility.currentPlan.premium === 0 ? "$0/mo" : `$${eligibility.currentPlan.premium}/mo` },
@@ -613,14 +613,14 @@ export default function Plans() {
                       { icon: CheckCircle2, label: "Deductible", value: eligibility.currentPlan.deductible === 0 ? "$0" : `$${eligibility.currentPlan.deductible}` },
                     ].map(({ icon: Icon, label, value }) => (
                       <div key={label} className="flex items-center gap-1 text-xs">
-                        <Icon className="w-3.5 h-3.5" style={{ color: "#7A9BA6" }} />
-                        <span style={{ color: "#7A9BA6" }}>{label}:</span>&nbsp;<span className="font-bold" style={{ color: "#1C3A48" }}>{value}</span>
+                        <Icon className="w-3.5 h-3.5" style={{ color: "#8C8C8C" }} />
+                        <span style={{ color: "#8C8C8C" }}>{label}:</span>&nbsp;<span className="font-bold" style={{ color: "#00353E" }}>{value}</span>
                       </div>
                     ))}
                   </div>
-                  <p className="text-xs mt-2" style={{ color: "#7A9BA6" }}>Plans below are compared against your current coverage. Look for better benefits or lower costs.</p>
+                  <p className="text-xs mt-2" style={{ color: "#8C8C8C" }}>Plans below are compared against your current coverage. Look for better benefits or lower costs.</p>
                 </div>
-                <button onClick={() => setShowCurrentPlanBanner(false)} className="transition-colors shrink-0" style={{ color: "#7A9BA6" }} onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#1C3A48"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#7A9BA6"; }}>
+                <button onClick={() => setShowCurrentPlanBanner(false)} className="transition-colors shrink-0" style={{ color: "#8C8C8C" }} onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#00353E"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#8C8C8C"; }}>
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -645,15 +645,15 @@ export default function Plans() {
 
           {/* Personalization banner */}
           {(rxDrugs.length > 0 || doctors.length > 0) && (
-            <div className="mb-4 px-4 py-2.5 rounded-lg flex items-center gap-3" style={{ backgroundColor: "#EEF5F7", border: "1px solid #C6DAE0" }}>
-              <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "#237A92" }} />
-              <p className="text-xs flex-1" style={{ color: "#3E5560" }}>
-                <span className="font-semibold" style={{ color: "#1C3A48" }}>Personalized results —</span>{" "}
+            <div className="mb-4 px-4 py-2.5 rounded-lg flex items-center gap-3" style={{ backgroundColor: "#E6F7F9", border: "1px solid #E8E8E8" }}>
+              <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "#00859A" }} />
+              <p className="text-xs flex-1" style={{ color: "#303030" }}>
+                <span className="font-semibold" style={{ color: "#00353E" }}>Personalized results —</span>{" "}
                 {rxDrugs.length > 0 && `${rxDrugs.length} medication${rxDrugs.length > 1 ? "s" : ""}`}
                 {rxDrugs.length > 0 && doctors.length > 0 && " \u00b7 "}
                 {doctors.length > 0 && `${doctors.length} doctor${doctors.length > 1 ? "s" : ""}`}
               </p>
-              <button onClick={() => { setRxDrugs([]); setDoctors([]); }} className="shrink-0 transition-colors" style={{ color: "#7A9BA6" }} onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#1C3A48"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#7A9BA6"; }}>
+              <button onClick={() => { setRxDrugs([]); setDoctors([]); }} className="shrink-0 transition-colors" style={{ color: "#8C8C8C" }} onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#00353E"; }} onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#8C8C8C"; }}>
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -661,8 +661,8 @@ export default function Plans() {
 
           {/* Extra Help "Not Sure" banner */}
           {extraHelp === "not-sure" && (
-            <div className="mb-4 p-3 rounded-xl" style={{ backgroundColor: "#FAF9F5", border: "1px solid #E2EAED" }}>
-              <p className="text-xs" style={{ color: "#3E5560" }}>
+            <div className="mb-4 p-3 rounded-xl" style={{ backgroundColor: "#F9F9F9", border: "1px solid #E8E8E8" }}>
+              <p className="text-xs" style={{ color: "#303030" }}>
                 Your results include all available plans.{" "}
                 If you receive Extra Help from Medicare, you may qualify for lower costs on some plans — particularly those marked as D-SNP (Dual Special Needs Plans).
               </p>
@@ -672,29 +672,29 @@ export default function Plans() {
           {/* Loading state */}
           {plansLoading && (
             <div className="text-center py-16">
-              <div className="animate-spin w-8 h-8 border-2 rounded-full mx-auto mb-4" style={{ borderColor: "#E2EAED", borderTopColor: "#237A92" }} />
-              <p className="text-sm font-semibold" style={{ color: "#1C3A48" }}>Loading Medicare Advantage plans for ZIP {zip}\u2026</p>
-              <p className="text-xs mt-1" style={{ color: "#7A9BA6" }}>Fetching real CMS 2026 data \u2014 this may take 10\u201320 seconds on first load</p>
+              <div className="animate-spin w-8 h-8 border-2 rounded-full mx-auto mb-4" style={{ borderColor: "#E8E8E8", borderTopColor: "#00859A" }} />
+              <p className="text-sm font-semibold" style={{ color: "#00353E" }}>Loading Medicare Advantage plans for ZIP {zip}\u2026</p>
+              <p className="text-xs mt-1" style={{ color: "#8C8C8C" }}>Fetching real CMS 2026 data \u2014 this may take 10\u201320 seconds on first load</p>
             </div>
           )}
 
           {/* Error state */}
           {plansError && (
             <div className="text-center py-16">
-              <Info className="w-10 h-10 mx-auto mb-3" style={{ color: "#C6DAE0" }} />
-              <h3 className="font-semibold text-base" style={{ color: "#1C3A48", fontFamily: "'Lora', serif" }}>No Plans Found</h3>
-              <p className="text-sm mt-1" style={{ color: "#7A9BA6" }}>{plansError}</p>
-              <p className="text-xs mt-1" style={{ color: "#7A9BA6" }}>Try a different ZIP code or check back later.</p>
+              <Info className="w-10 h-10 mx-auto mb-3" style={{ color: "#E8E8E8" }} />
+              <h3 className="font-semibold text-base" style={{ color: "#00353E", fontFamily: "'Poppins', serif" }}>No Plans Found</h3>
+              <p className="text-sm mt-1" style={{ color: "#8C8C8C" }}>{plansError}</p>
+              <p className="text-xs mt-1" style={{ color: "#8C8C8C" }}>Try a different ZIP code or check back later.</p>
             </div>
           )}
 
           {/* No results */}
           {!plansLoading && !plansError && filteredPlans.length === 0 ? (
             <div className="text-center py-16">
-              <Info className="w-10 h-10 mx-auto mb-3" style={{ color: "#C6DAE0" }} />
-              <h3 className="font-semibold text-base" style={{ color: "#1C3A48", fontFamily: "'Lora', serif" }}>No plans match your filters</h3>
-              <p className="text-sm mt-1" style={{ color: "#7A9BA6" }}>Try adjusting your filters or clearing them to see all available plans.</p>
-              <button onClick={() => setFilters(DEFAULT_FILTERS)} className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white mt-4" style={{ backgroundColor: "#1C3A48", fontFamily: "'DM Sans', sans-serif" }}>
+              <Info className="w-10 h-10 mx-auto mb-3" style={{ color: "#E8E8E8" }} />
+              <h3 className="font-semibold text-base" style={{ color: "#00353E", fontFamily: "'Poppins', serif" }}>No plans match your filters</h3>
+              <p className="text-sm mt-1" style={{ color: "#8C8C8C" }}>Try adjusting your filters or clearing them to see all available plans.</p>
+              <button onClick={() => setFilters(DEFAULT_FILTERS)} className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white mt-4" style={{ backgroundColor: "#00353E", fontFamily: "'Montserrat', sans-serif" }}>
                 Clear All Filters
               </button>
             </div>
@@ -720,11 +720,11 @@ export default function Plans() {
                   <div key={plan.id} className="relative">
                     {showSnpHeader && (
                       <div className="col-span-full mb-2 mt-4">
-                        <h3 className="text-sm font-bold" style={{ color: "#1C3A48" }}>{SNP_LABELS[plan.snpCategory!] || "Special Needs Plans"}</h3>
-                        <p className="text-xs" style={{ color: "#7A9BA6" }}>
+                        <h3 className="text-sm font-bold" style={{ color: "#00353E" }}>{SNP_LABELS[plan.snpCategory!] || "Special Needs Plans"}</h3>
+                        <p className="text-xs" style={{ color: "#8C8C8C" }}>
                           <span className="font-semibold">{filteredPlans.filter((p) => p.snpCategory === plan.snpCategory).length} plan{filteredPlans.filter((p) => p.snpCategory === plan.snpCategory).length !== 1 ? "s" : ""}</span>
                         </p>
-                        <p className="text-xs mt-0.5" style={{ color: "#7A9BA6" }}>
+                        <p className="text-xs mt-0.5" style={{ color: "#8C8C8C" }}>
                           {plan.snpCategory === "DSNP" && "For beneficiaries eligible for both Medicare and Medicaid"}
                           {plan.snpCategory === "CSNP" && "For beneficiaries with specific chronic conditions"}
                           {plan.snpCategory === "ISNP" && "For beneficiaries in institutional settings"}
@@ -734,7 +734,7 @@ export default function Plans() {
                     )}
 
                     {cp && (hasBetterPremium || hasBetterOOP) && (
-                      <div className="absolute -top-2 right-4 z-10 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#EEF5F7", color: "#237A92", border: "1px solid #C6DAE0" }}>
+                      <div className="absolute -top-2 right-4 z-10 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#E6F7F9", color: "#00859A", border: "1px solid #E8E8E8" }}>
                         {hasBetterBoth ? `Save $${Math.abs(premiumDiff!)}/mo + lower OOP` : hasBetterPremium ? `Save $${Math.abs(premiumDiff!)}/mo vs current` : `Lower max OOP by $${Math.abs(oopDiff!).toLocaleString()}`}
                       </div>
                     )}
@@ -763,7 +763,7 @@ export default function Plans() {
           )}
 
           {/* Bottom disclaimer */}
-          <div className="mt-8 p-4 rounded-xl border text-xs" style={{ borderColor: "#E2EAED", backgroundColor: "#FAF9F5", color: "#7A9BA6" }}>
+          <div className="mt-8 p-4 rounded-xl border text-xs" style={{ borderColor: "#E8E8E8", backgroundColor: "#F9F9F9", color: "#8C8C8C" }}>
             <p><strong>Data Source:</strong> Plan information is sourced from the CMS CY2026 Medicare Advantage Landscape file. Benefit details are AI-estimated. Always verify plan details directly with the insurance carrier before enrolling. Medicare has neither reviewed nor endorsed this information.</p>
           </div>
         </main>
@@ -783,9 +783,9 @@ export default function Plans() {
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0" style={{ backgroundColor: "rgba(11,27,36,0.5)", backdropFilter: "blur(3px)" }} onClick={() => setSidebarOpen(false)} />
           <div className="relative w-80 max-w-full overflow-y-auto" style={{ backgroundColor: "#fff", boxShadow: "4px 0 24px rgba(11,27,36,0.12)" }}>
-            <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: "#E2EAED" }}>
-              <span className="text-sm font-bold" style={{ color: "#1C3A48" }}>Filter Plans</span>
-              <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-full hover:bg-[#EEF5F7] transition-colors">
+            <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: "#E8E8E8" }}>
+              <span className="text-sm font-bold" style={{ color: "#00353E" }}>Filter Plans</span>
+              <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-full hover:bg-[#E6F7F9] transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>

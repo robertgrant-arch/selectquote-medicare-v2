@@ -20,7 +20,7 @@ import {
 import Header from "@/components/Header";
 import SiteFooter from "@/components/brand/SiteFooter";
 
-const ACCENT = "#1C3A48";
+const ACCENT = "#00353E";
 
 // ── Shared accordion section component ───────────────────────────────────────
 interface AccordionSectionProps {
@@ -41,8 +41,8 @@ function AccordionSection({ title, isOpen, onToggle, children, icon, badge }: Ac
         onClick={onToggle}
         className="w-full flex items-center justify-between px-6 py-5 text-left transition-colors focus:outline-none"
         style={{
-          backgroundColor: isOpen ? "#EEF5F7" : "#FFFFFF",
-          borderBottom: isOpen ? "1px solid #C6DAE0" : "none",
+          backgroundColor: isOpen ? "#E6F7F9" : "#FFFFFF",
+          borderBottom: isOpen ? "1px solid #E8E8E8" : "none",
         }}
         aria-expanded={isOpen}
       >
@@ -50,7 +50,7 @@ function AccordionSection({ title, isOpen, onToggle, children, icon, badge }: Ac
           {icon && (
             <div
               className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-              style={{ backgroundColor: isOpen ? "#E8F2F5" : "#EEF5F7" }}
+              style={{ backgroundColor: isOpen ? "#E6F7F9" : "#E6F7F9" }}
             >
               {icon}
             </div>
@@ -66,7 +66,7 @@ function AccordionSection({ title, isOpen, onToggle, children, icon, badge }: Ac
               {badge && (
                 <span
                   className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: "#E8F2F5", color: ACCENT }}
+                  style={{ backgroundColor: "#E6F7F9", color: ACCENT }}
                 >
                   {badge}
                 </span>
@@ -100,7 +100,7 @@ function CompleteMedicareGuideContent() {
     <div className="space-y-8">
       {/* Overview */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           What Is Medicare?
         </h3>
         <p className="text-gray-600 text-sm leading-relaxed mb-3">
@@ -116,12 +116,12 @@ function CompleteMedicareGuideContent() {
             { part: "Part C", label: "Medicare Advantage", desc: "Private plans that bundle Parts A, B, and usually D. Often include dental, vision, hearing. Many $0 premium options." },
             { part: "Part D", label: "Prescription Drugs", desc: "Prescription drug coverage offered by private insurers. New $2,000 annual out-of-pocket cap in 2025." },
           ].map((item) => (
-            <div key={item.part} className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
+            <div key={item.part} className="rounded-xl p-4 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-white text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#1C3A48" }}>{item.part}</span>
-                <span className="text-sm font-semibold" style={{ color: "#1C3A48" }}>{item.label}</span>
+                <span className="text-white text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#00353E" }}>{item.part}</span>
+                <span className="text-sm font-semibold" style={{ color: "#00353E" }}>{item.label}</span>
               </div>
-              <p className="text-xs leading-relaxed" style={{ color: "#3E5560" }}>{item.desc}</p>
+              <p className="text-xs leading-relaxed" style={{ color: "#303030" }}>{item.desc}</p>
             </div>
           ))}
         </div>
@@ -129,7 +129,7 @@ function CompleteMedicareGuideContent() {
 
       {/* Eligibility */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           Who Is Eligible?
         </h3>
         <div className="space-y-2">
@@ -139,8 +139,8 @@ function CompleteMedicareGuideContent() {
             { group: "End-Stage Renal Disease (ESRD)", detail: "Permanent kidney failure requiring dialysis or a transplant, at any age." },
             { group: "ALS (Lou Gehrig's disease)", detail: "Medicare begins the same month SSDI starts — no 24-month waiting period." },
           ].map((item) => (
-            <div key={item.group} className="flex gap-3 p-3 rounded-xl border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
-              <CheckCircle2 size={15} className="shrink-0 mt-0.5" style={{ color: "#1C3A48" }} />
+            <div key={item.group} className="flex gap-3 p-3 rounded-xl border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8" }}>
+              <CheckCircle2 size={15} className="shrink-0 mt-0.5" style={{ color: "#00353E" }} />
               <div>
                 <div className="text-sm font-semibold text-gray-800">{item.group}</div>
                 <div className="text-xs text-gray-500 leading-relaxed">{item.detail}</div>
@@ -152,13 +152,13 @@ function CompleteMedicareGuideContent() {
 
       {/* 2025 Key Costs */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           Key 2025 Medicare Costs
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ backgroundColor: "#EEF5F7" }}>
+              <tr style={{ backgroundColor: "#E6F7F9" }}>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Cost Item</th>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">2025 Amount</th>
               </tr>
@@ -185,7 +185,7 @@ function CompleteMedicareGuideContent() {
 
       {/* Enrollment Periods */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           Key Enrollment Periods
         </h3>
         <div className="space-y-3">
@@ -211,7 +211,7 @@ function CompleteMedicareGuideContent() {
               desc: "Enroll in Part A and/or Part B if you missed your IEP. Coverage begins July 1. Late enrollment penalties may apply.",
             },
           ].map((period) => (
-            <div key={period.name} className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
+            <div key={period.name} className="rounded-xl p-4 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
               <div className="flex items-start justify-between gap-2 mb-1">
                 <div className="text-sm font-bold text-gray-800">{period.name}</div>
                 <div className="text-xs font-semibold text-gray-500 shrink-0 flex items-center gap-1">
@@ -227,12 +227,12 @@ function CompleteMedicareGuideContent() {
 
       {/* Original Medicare vs MA */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           Original Medicare vs. Medicare Advantage
         </h3>
         <div className="grid sm:grid-cols-2 gap-4">
-          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
-            <div className="text-sm font-bold mb-2" style={{ color: "#1C3A48" }}>Original Medicare (Parts A + B)</div>
+          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
+            <div className="text-sm font-bold mb-2" style={{ color: "#00353E" }}>Original Medicare (Parts A + B)</div>
             <ul className="space-y-1.5">
               {[
                 "Administered by the federal government",
@@ -243,15 +243,15 @@ function CompleteMedicareGuideContent() {
                 "Add Medigap to limit cost-sharing",
                 "Add standalone Part D for drugs",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
-                  <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#7A9BA6" }} />
+                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#303030" }}>
+                  <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#8C8C8C" }} />
                   {item}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
-            <div className="text-sm font-bold mb-2" style={{ color: "#1C3A48" }}>Medicare Advantage (Part C)</div>
+          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8" }}>
+            <div className="text-sm font-bold mb-2" style={{ color: "#00353E" }}>Medicare Advantage (Part C)</div>
             <ul className="space-y-1.5">
               {[
                 "Managed by private insurers approved by CMS",
@@ -262,8 +262,8 @@ function CompleteMedicareGuideContent() {
                 "Often $0 premium (still pay Part B)",
                 "Care coordination through PCP (HMO) or direct (PPO)",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
-                  <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#237A92" }} />
+                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#303030" }}>
+                  <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#00859A" }} />
                   {item}
                 </li>
               ))}
@@ -274,12 +274,12 @@ function CompleteMedicareGuideContent() {
 
       {/* Late Enrollment Penalties */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           Late Enrollment Penalties
         </h3>
-        <div className="rounded-xl p-4 mb-3 flex gap-2 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
-          <AlertCircle size={15} className="shrink-0 mt-0.5" style={{ color: "#1C3A48" }} />
-          <p className="text-xs leading-relaxed" style={{ color: "#3E5560" }}>
+        <div className="rounded-xl p-4 mb-3 flex gap-2 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
+          <AlertCircle size={15} className="shrink-0 mt-0.5" style={{ color: "#00353E" }} />
+          <p className="text-xs leading-relaxed" style={{ color: "#303030" }}>
             Late enrollment penalties are <strong>permanent</strong> for Part B and Part D — they stay
             with you for life. Avoid them by enrolling during your IEP or maintaining creditable coverage.
           </p>
@@ -287,7 +287,7 @@ function CompleteMedicareGuideContent() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ backgroundColor: "#EEF5F7" }}>
+              <tr style={{ backgroundColor: "#E6F7F9" }}>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Part</th>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Penalty</th>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">How to Avoid</th>
@@ -315,7 +315,7 @@ function CompleteMedicareGuideContent() {
         <Link href="/resources/enrollment-periods" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white" style={{ backgroundColor: ACCENT }}>
           Enrollment Periods Guide <ArrowRight size={14} />
         </Link>
-        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1C3A48", borderColor: "#1C3A48" }}>
+        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#00353E", borderColor: "#00353E" }}>
           Compare Plans Near You
         </Link>
       </div>
@@ -329,7 +329,7 @@ function ExtraHelpContent() {
     <div className="space-y-8">
       {/* What is Extra Help */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           What Is Extra Help?
         </h3>
         <p className="text-gray-600 text-sm leading-relaxed mb-3">
@@ -338,9 +338,9 @@ function ExtraHelpContent() {
           Part D prescription drug costs. In 2025, approximately 14 million Medicare beneficiaries
           receive Extra Help, but millions more are eligible and not enrolled.
         </p>
-        <div className="rounded-xl p-4 flex gap-2 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
-          <DollarSign size={15} className="shrink-0 mt-0.5" style={{ color: "#1C3A48" }} />
-          <p className="text-sm leading-relaxed" style={{ color: "#3E5560" }}>
+        <div className="rounded-xl p-4 flex gap-2 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
+          <DollarSign size={15} className="shrink-0 mt-0.5" style={{ color: "#00353E" }} />
+          <p className="text-sm leading-relaxed" style={{ color: "#303030" }}>
             If you qualify, Extra Help can save you <strong>$5,000 or more per year</strong> on
             prescription drug costs — covering premiums, deductibles, copays, and coinsurance.
           </p>
@@ -349,13 +349,13 @@ function ExtraHelpContent() {
 
       {/* 2025 Eligibility */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           2025 Eligibility Requirements
         </h3>
         <div className="overflow-x-auto mb-3">
           <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ backgroundColor: "#EEF5F7" }}>
+              <tr style={{ backgroundColor: "#E6F7F9" }}>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Requirement</th>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Full Extra Help</th>
                 <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Partial Extra Help</th>
@@ -371,16 +371,16 @@ function ExtraHelpContent() {
               ].map((row, i) => (
                 <tr key={row.req} className={`border border-gray-200 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
                   <td className="p-3 text-gray-700">{row.req}</td>
-                  <td className="p-3 font-semibold text-[#1C3A48]">{row.full}</td>
-                  <td className="p-3 font-semibold" style={{ color: "#237A92" }}>{row.partial}</td>
+                  <td className="p-3 font-semibold text-[#00353E]">{row.full}</td>
+                  <td className="p-3 font-semibold" style={{ color: "#00859A" }}>{row.partial}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div className="rounded-xl p-3 flex gap-2 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
-          <Info size={14} className="shrink-0 mt-0.5" style={{ color: "#7A9BA6" }} />
-          <p className="text-xs leading-relaxed" style={{ color: "#3E5560" }}>
+        <div className="rounded-xl p-3 flex gap-2 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
+          <Info size={14} className="shrink-0 mt-0.5" style={{ color: "#8C8C8C" }} />
+          <p className="text-xs leading-relaxed" style={{ color: "#303030" }}>
             Resources include bank accounts, stocks, and bonds — but <strong>NOT</strong> your home,
             car, personal belongings, or life insurance. Income limits are adjusted annually.
           </p>
@@ -389,12 +389,12 @@ function ExtraHelpContent() {
 
       {/* What Extra Help Pays For */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           What Extra Help Pays For
         </h3>
         <div className="grid sm:grid-cols-2 gap-4">
-          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
-            <div className="text-sm font-bold mb-2" style={{ color: "#1C3A48" }}>Full Extra Help (Level 1)</div>
+          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
+            <div className="text-sm font-bold mb-2" style={{ color: "#00353E" }}>Full Extra Help (Level 1)</div>
             <ul className="space-y-1.5">
               {[
                 "$0 Part D premium (benchmark plan)",
@@ -404,15 +404,15 @@ function ExtraHelpContent() {
                 "$0 copay at catastrophic coverage",
                 "No coverage gap",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
-                  <CheckCircle2 size={11} className="shrink-0 mt-0.5" style={{ color: "#237A92" }} />
+                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#303030" }}>
+                  <CheckCircle2 size={11} className="shrink-0 mt-0.5" style={{ color: "#00859A" }} />
                   {item}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
-            <div className="text-sm font-bold mb-2" style={{ color: "#1C3A48" }}>Partial Extra Help (Level 2)</div>
+          <div className="rounded-xl p-4 border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8" }}>
+            <div className="text-sm font-bold mb-2" style={{ color: "#00353E" }}>Partial Extra Help (Level 2)</div>
             <ul className="space-y-1.5">
               {[
                 "Reduced Part D premium (sliding scale)",
@@ -422,8 +422,8 @@ function ExtraHelpContent() {
                 "Reduced catastrophic coverage copays",
                 "Special Enrollment Period monthly",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
-                  <CheckCircle2 size={11} className="shrink-0 mt-0.5" style={{ color: "#7A9BA6" }} />
+                <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#303030" }}>
+                  <CheckCircle2 size={11} className="shrink-0 mt-0.5" style={{ color: "#8C8C8C" }} />
                   {item}
                 </li>
               ))}
@@ -434,7 +434,7 @@ function ExtraHelpContent() {
 
       {/* Automatic Enrollment */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           Automatic Enrollment — Who Qualifies Without Applying
         </h3>
         <p className="text-gray-600 text-sm leading-relaxed mb-3">
@@ -446,9 +446,9 @@ function ExtraHelpContent() {
             { label: "Supplemental Security Income (SSI)", icon: DollarSign },
             { label: "Medicare Savings Program (QMB, SLMB, QI, or QDWI)", icon: FileText },
           ].map(({ label, icon: Icon }) => (
-            <div key={label} className="flex items-center gap-3 p-3 rounded-xl border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#E8F2F5] shrink-0">
-                <Icon size={13} className="text-[#1C3A48]" />
+            <div key={label} className="flex items-center gap-3 p-3 rounded-xl border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8" }}>
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#E6F7F9] shrink-0">
+                <Icon size={13} className="text-[#00353E]" />
               </div>
               <span className="text-sm text-gray-700">{label}</span>
             </div>
@@ -458,7 +458,7 @@ function ExtraHelpContent() {
 
       {/* How to Apply */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           How to Apply for Extra Help
         </h3>
         <ol className="space-y-3">
@@ -494,7 +494,7 @@ function ExtraHelpContent() {
 
       {/* Medicare Savings Programs */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Lora', Georgia, 'Times New Roman', serif" }}>
+        <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Poppins', Georgia, 'Times New Roman', serif" }}>
           Medicare Savings Programs (MSPs)
         </h3>
         <p className="text-gray-600 text-sm leading-relaxed mb-3">
@@ -508,7 +508,7 @@ function ExtraHelpContent() {
             { name: "Qualifying Individual (QI)", covers: "Part B premium only (limited slots, first-come first-served)" },
             { name: "Qualified Disabled & Working Individuals (QDWI)", covers: "Part A premium only (for working disabled individuals)" },
           ].map((prog) => (
-            <div key={prog.name} className="p-3 rounded-xl border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
+            <div key={prog.name} className="p-3 rounded-xl border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8" }}>
               <div className="text-sm font-semibold text-gray-800 mb-0.5">{prog.name}</div>
               <div className="text-xs text-gray-500">Covers: {prog.covers}</div>
             </div>
@@ -531,7 +531,7 @@ function ExtraHelpContent() {
         >
           Apply at SSA.gov <ArrowRight size={14} />
         </a>
-        <Link href="/part-d/extra-help" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1C3A48", borderColor: "#1C3A48" }}>
+        <Link href="/part-d/extra-help" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#00353E", borderColor: "#00353E" }}>
           Full Extra Help Guide
         </Link>
       </div>
@@ -546,13 +546,13 @@ export default function MedicareGuide() {
   const [extraHelpOpen, setExtraHelpOpen] = useState(false); // collapsed by default
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#FAF9F5" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#F9F9F9" }}>
       <Header />
 
       {/* Hero — dark navy, matches AI Compare */}
       <section
         className="text-white"
-        style={{ backgroundColor: "#1C3A48", position: "relative", overflow: "hidden" }}
+        style={{ backgroundColor: "#00353E", position: "relative", overflow: "hidden" }}
       >
         {/* Subtle dot pattern overlay */}
         <div
@@ -574,7 +574,7 @@ export default function MedicareGuide() {
           </nav>
           <h1
             className="text-3xl lg:text-4xl font-bold mb-3"
-            style={{ fontFamily: "'DM Sans', sans-serif", letterSpacing: "-0.02em", color: "#fff" }}
+            style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.02em", color: "#fff" }}
           >
             Medicare Guide
           </h1>
@@ -624,7 +624,7 @@ export default function MedicareGuide() {
             title="Extra Help (Low Income Subsidy)"
             isOpen={extraHelpOpen}
             onToggle={() => setExtraHelpOpen((prev) => !prev)}
-            icon={<DollarSign size={16} style={{ color: "#1C3A48" }} />}
+            icon={<DollarSign size={16} style={{ color: "#00353E" }} />}
             badge="Free Program"
           >
             <ExtraHelpContent />
@@ -633,11 +633,11 @@ export default function MedicareGuide() {
           {/* Bottom CTA */}
           <div
             className="mt-6 rounded-2xl p-8 text-white text-center"
-            style={{ backgroundColor: "#0A1820" }}
+            style={{ backgroundColor: "#00353E" }}
           >
             <h2
               className="text-2xl font-bold mb-2"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
+              style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
               Ready to Compare Plans?
             </h2>
@@ -647,7 +647,7 @@ export default function MedicareGuide() {
             <Link
               href="/plans?zip=64106"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-bold no-underline"
-              style={{ backgroundColor: "#237A92", color: "white" }}
+              style={{ backgroundColor: "#00859A", color: "white" }}
             >
               See Plans Near You
               <ChevronRight size={16} />

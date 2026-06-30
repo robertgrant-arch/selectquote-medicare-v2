@@ -5,7 +5,7 @@ import { CheckCircle2, AlertCircle, ArrowRight, Info, Star } from "lucide-react"
 
 const SECTION = "Resources";
 const SECTION_HREF = "/resources";
-const ACCENT = "#1C3A48";
+const ACCENT = "#00353E";
 
 // ── Medicare 101 ─────────────────────────────────────────────────────────────
 export function Medicare101() {
@@ -57,9 +57,9 @@ export function Medicare101() {
             cost: "Average premium ~$46/month in 2025. Standard deductible up to $590. OOP cap: $2,000.",
           },
         ].map((item) => (
-          <div key={item.part} className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
+          <div key={item.part} className="rounded-xl p-4 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-white text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#1C3A48" }}>{item.badge}</span>
+              <span className="text-white text-xs font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: "#00353E" }}>{item.badge}</span>
               <div className="font-bold text-gray-800 text-sm">{item.part}</div>
             </div>
             <div className="grid sm:grid-cols-2 gap-3">
@@ -89,7 +89,7 @@ export function Medicare101() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr style={{ backgroundColor: "#EEF5F7" }}>
+            <tr style={{ backgroundColor: "#E6F7F9" }}>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Eligibility Group</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Requirements</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Part A Premium</th>
@@ -118,8 +118,8 @@ export function Medicare101() {
         Original Medicare vs. Medicare Advantage
       </h2>
       <div className="grid sm:grid-cols-2 gap-4 mb-6">
-        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0" }}>
-          <h3 className="font-bold text-sm mb-2" style={{ color: "#1C3A48" }}>Original Medicare (Parts A + B)</h3>
+        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8" }}>
+          <h3 className="font-bold text-sm mb-2" style={{ color: "#00353E" }}>Original Medicare (Parts A + B)</h3>
           <ul className="space-y-1.5">
             {[
               "Administered directly by the federal government",
@@ -130,15 +130,15 @@ export function Medicare101() {
               "Add standalone Part D for drug coverage",
               "Add Medigap to fill cost-sharing gaps",
             ].map((item) => (
-              <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
-                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#7A9BA6" }} />
+              <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#303030" }}>
+                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#8C8C8C" }} />
                 {item}
               </li>
             ))}
           </ul>
         </div>
-        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#FAF9F5", borderColor: "#E2EAED" }}>
-          <h3 className="font-bold text-sm mb-2" style={{ color: "#1C3A48" }}>Medicare Advantage (Part C)</h3>
+        <div className="rounded-xl p-4 border" style={{ backgroundColor: "#F9F9F9", borderColor: "#E8E8E8" }}>
+          <h3 className="font-bold text-sm mb-2" style={{ color: "#00353E" }}>Medicare Advantage (Part C)</h3>
           <ul className="space-y-1.5">
             {[
               "Managed by private insurers approved by Medicare",
@@ -149,8 +149,8 @@ export function Medicare101() {
               "Often $0 premium (must still pay Part B premium)",
               "Care coordination through PCP (HMO) or direct access (PPO)",
             ].map((item) => (
-              <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#3E5560" }}>
-                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#237A92" }} />
+              <li key={item} className="flex items-start gap-1.5 text-xs" style={{ color: "#303030" }}>
+                <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ backgroundColor: "#00859A" }} />
                 {item}
               </li>
             ))}
@@ -164,7 +164,7 @@ export function Medicare101() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr style={{ backgroundColor: "#EEF5F7" }}>
+            <tr style={{ backgroundColor: "#E6F7F9" }}>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Cost Item</th>
               <th className="p-3 font-semibold text-gray-700 border border-gray-200 text-center">2025 Amount</th>
             </tr>
@@ -194,7 +194,7 @@ export function Medicare101() {
         <Link href="/resources/enrollment-periods" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white" style={{ backgroundColor: ACCENT }}>
           Enrollment Periods Guide <ArrowRight size={14} />
         </Link>
-        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1C3A48", borderColor: "#1C3A48" }}>
+        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#00353E", borderColor: "#00353E" }}>
           Compare Medicare Advantage Plans
         </Link>
       </div>
@@ -257,7 +257,7 @@ export function EnrollmentPeriods() {
             note: "This SEP allows one plan switch per year to a 5-star rated plan, regardless of other enrollment periods.",
           },
         ].map((item) => (
-          <div key={item.name} className="rounded-xl p-4 border-l-4" style={{ backgroundColor: "#EEF5F7", borderLeftColor: "#1C3A48", borderTopColor: "#C6DAE0", borderRightColor: "#C6DAE0", borderBottomColor: "#C6DAE0" }}>
+          <div key={item.name} className="rounded-xl p-4 border-l-4" style={{ backgroundColor: "#E6F7F9", borderLeftColor: "#00353E", borderTopColor: "#E8E8E8", borderRightColor: "#E8E8E8", borderBottomColor: "#E8E8E8" }}>
             <div className="font-bold text-gray-800 text-sm mb-1">{item.name}</div>
             <div className="text-xs font-semibold text-gray-600 mb-1">When: {item.when}</div>
             <div className="text-sm text-gray-700 mb-2"><strong>What you can do:</strong> {item.what}</div>
@@ -274,7 +274,7 @@ export function EnrollmentPeriods() {
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr style={{ backgroundColor: "#EEF5F7" }}>
+            <tr style={{ backgroundColor: "#E6F7F9" }}>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Part</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Penalty</th>
               <th className="text-left p-3 font-semibold text-gray-700 border border-gray-200">Duration</th>
@@ -291,7 +291,7 @@ export function EnrollmentPeriods() {
                 <td className="p-3 font-bold text-gray-800">{row.part}</td>
                 <td className="p-3 text-red-700 text-xs">{row.penalty}</td>
                 <td className="p-3 text-gray-600 text-xs">{row.duration}</td>
-                <td className="p-3 text-[#1C3A48] text-xs">{row.avoid}</td>
+                <td className="p-3 text-[#00353E] text-xs">{row.avoid}</td>
               </tr>
             ))}
           </tbody>
@@ -355,7 +355,7 @@ export function StarRatingsGuide() {
           { stars: 2, label: "Below Average", desc: "Below-average quality. CMS may impose corrective action plans on these plans." },
           { stars: 1, label: "Poor", desc: "Poor quality. CMS may terminate contracts with plans that remain at 1 star for multiple years." },
         ].map((item) => (
-          <div key={item.stars} className="rounded-xl p-3 border flex items-start gap-3" style={{ backgroundColor: item.stars >= 4 ? "#EEF5F7" : item.stars === 3 ? "#FAF9F5" : "#FAF9F5", borderColor: "#E2EAED", color: "#3E5560" }}>
+          <div key={item.stars} className="rounded-xl p-3 border flex items-start gap-3" style={{ backgroundColor: item.stars >= 4 ? "#E6F7F9" : item.stars === 3 ? "#F9F9F9" : "#F9F9F9", borderColor: "#E8E8E8", color: "#303030" }}>
             <div className="flex shrink-0">
               {Array.from({ length: item.stars }).map((_, i) => (
                 <Star key={i} size={14} fill="currentColor" />
@@ -410,7 +410,7 @@ export function StarRatingsGuide() {
           <div key={item.domain} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
             <div className="flex items-start justify-between gap-2 mb-1">
               <div className="font-semibold text-gray-800 text-sm">{item.domain}</div>
-              <span className="text-xs px-2 py-0.5 rounded-full shrink-0" style={{ backgroundColor: "#E8F2F5", color: "#1C3A48" }}>{item.weight}</span>
+              <span className="text-xs px-2 py-0.5 rounded-full shrink-0" style={{ backgroundColor: "#E6F7F9", color: "#00353E" }}>{item.weight}</span>
             </div>
             <div className="text-gray-600 text-xs leading-relaxed">{item.measures}</div>
           </div>
@@ -430,13 +430,13 @@ export function StarRatingsGuide() {
           "Plans with 5 stars may offer richer benefits due to quality bonus payments from CMS",
         ].map((item) => (
           <li key={item} className="flex items-start gap-2">
-            <CheckCircle2 size={14} className="shrink-0 mt-0.5" style={{ color: "#237A92" }} />
+            <CheckCircle2 size={14} className="shrink-0 mt-0.5" style={{ color: "#00859A" }} />
             {item}
           </li>
         ))}
       </ul>
 
-      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0", color: "#3E5560" }}>
+      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8", color: "#303030" }}>
         <div className="flex items-start gap-2">
           <Info size={15} className="shrink-0 mt-0.5" />
           <div>
@@ -522,7 +522,7 @@ export function FAQ() {
         ))}
       </div>
 
-      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#EEF5F7", borderColor: "#C6DAE0", color: "#3E5560" }}>
+      <div className="rounded-xl p-4 text-sm mb-6 border" style={{ backgroundColor: "#E6F7F9", borderColor: "#E8E8E8", color: "#303030" }}>
         <div className="flex items-start gap-2">
           <Info size={15} className="shrink-0 mt-0.5" />
           <div>
@@ -537,7 +537,7 @@ export function FAQ() {
         <Link href="/resources/medicare-101" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg text-white" style={{ backgroundColor: ACCENT }}>
           Medicare 101 Guide <ArrowRight size={14} />
         </Link>
-        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#1C3A48", borderColor: "#1C3A48" }}>
+        <Link href="/plans?zip=64106" className="inline-flex items-center gap-2 text-sm font-semibold no-underline px-4 py-2 rounded-lg border" style={{ color: "#00353E", borderColor: "#00353E" }}>
           Compare Plans in Your Area
         </Link>
       </div>
