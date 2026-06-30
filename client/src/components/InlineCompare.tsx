@@ -916,7 +916,7 @@ export default function InlineCompare({ plan, isActive, onActivate }: InlineComp
             <p className="text-[9px] text-gray-400 leading-relaxed text-center">
               Your Medicare ID was used only for this one-time eligibility lookup and has been
               purged from memory. It was never stored in a database, log, or any persistent system.
-              Plan data shown is for illustrative purposes only.
+              Plan data is sourced from CMS.gov public datasets.
             </p>
           </div>
         </div>

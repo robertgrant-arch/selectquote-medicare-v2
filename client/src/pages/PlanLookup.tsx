@@ -887,7 +887,7 @@ export default function PlanLookup() {
           <span>
             Your Medicare ID is used only to perform a one-time eligibility lookup and is immediately
             purged from memory after use. It is never stored in a database, log, or any persistent
-            system. Plan data shown is for illustrative purposes only.
+            system. Plan data is sourced from CMS.gov public datasets.
           </span>
         </div>
       </div>
