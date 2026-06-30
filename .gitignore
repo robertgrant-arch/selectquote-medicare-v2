@@ -111,3 +111,5 @@ temp/
 server/cms-landscape.csv
 server/cms-landscape-cache.csv
 .vercel
+.env.vercel
+.claude/launch.json
