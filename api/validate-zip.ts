@@ -12,10 +12,15 @@ function toTitleCase(str: string): string {
     .replace(/\bThe\b/g, "the");
 }
 
-const ALLOWED_ORIGINS = [
-  'https://medicare-quote-app.vercel.app',
-  'http://localhost:5173',
-];
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ?? '')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean)
+  .concat([
+    'https://medicare-quote-app.vercel.app',
+    'https://selectquote-medicare-v2.vercel.app',
+    'http://localhost:5173',
+  ]);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const origin = req.headers.origin ?? '';

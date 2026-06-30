@@ -541,7 +541,9 @@ function parseDrugsParam(drugsParam: string | string[] | undefined): DrugInput[]
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const allowedOrigins = ['https://medicare-quote-app.vercel.app', 'http://localhost:5173'];
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? '')
+    .split(',').map(o => o.trim()).filter(Boolean)
+    .concat(['https://medicare-quote-app.vercel.app', 'https://selectquote-medicare-v2.vercel.app', 'http://localhost:5173']);
   const origin = req.headers.origin || '';
   res.setHeader('Access-Control-Allow-Origin', allowedOrigins.includes(origin) ? origin : allowedOrigins[0]);
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
