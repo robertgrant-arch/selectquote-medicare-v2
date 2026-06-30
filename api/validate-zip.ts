@@ -3,6 +3,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 const CMS_ZIP_API =
   "https://marketplace.api.healthcare.gov/api/v1/counties/by/zip";
 const CMS_API_KEY = process.env.CMS_MARKETPLACE_API_KEY ?? "";
+const PROXY_ORIGIN = "https://medicare-quote-app.vercel.app";
 
 function toTitleCase(str: string): string {
   return str
@@ -40,9 +41,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const upstream = await fetch(`${CMS_ZIP_API}/${zip}?apikey=${CMS_API_KEY}`, {
+    const upstreamUrl = CMS_API_KEY
+      ? `${CMS_ZIP_API}/${zip}?apikey=${CMS_API_KEY}`
+      : `${PROXY_ORIGIN}/api/validate-zip?zip=${zip}`;
+    const upstream = await fetch(upstreamUrl, {
       signal: AbortSignal.timeout(8000),
     });
+
+    if (!CMS_API_KEY) {
+      const data = await upstream.json();
+      return res.status(upstream.status).json(data);
+    }
 
     if (!upstream.ok) {
       const status = upstream.status === 404 ? 404 : 502;

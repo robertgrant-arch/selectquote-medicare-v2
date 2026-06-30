@@ -440,6 +440,7 @@ const STATE_CDN_URLS: Record<string, string> = {
 
 const CMS_ZIP_API = 'https://marketplace.api.healthcare.gov/api/v1/counties/by/zip';
 const CMS_API_KEY = process.env.CMS_MARKETPLACE_API_KEY ?? '';
+const PROXY_ORIGIN = 'https://medicare-quote-app.vercel.app';
 
 const stateCache = new Map<string, Record<string, any[]>>();
 const zipCache = new Map<string, { stateAbbr: string; countyName: string }>();
@@ -553,6 +554,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const zip = (typeof req.query.zip === 'string' ? req.query.zip : '').trim();
   if (!zip || !/^\d{5}$/.test(zip)) {
     return res.status(400).json({ error: 'Please provide a valid 5-digit ZIP code.', plans: [] });
+  }
+
+  // Proxy to original site until CMS_MARKETPLACE_API_KEY is provisioned
+  if (!CMS_API_KEY) {
+    const qs = new URLSearchParams(req.query as Record<string, string>).toString();
+    const proxyRes = await fetch(`${PROXY_ORIGIN}/api/plans?${qs}`, { signal: AbortSignal.timeout(20000) });
+    const data = await proxyRes.json();
+    return res.status(proxyRes.status).json(data);
   }
 
   try {
